@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.libsodium.jni.Sodium;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -18,7 +18,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Sodium.sodium_init();
         mUsername = (EditText) findViewById(R.id.username_editText);
         mPassword = (EditText) findViewById(R.id.password_editText);
 

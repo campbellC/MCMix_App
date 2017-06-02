@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ac.panoramix.uoe.xyz.debug">
+
+
+
+    <EditText
+        android:id="@+id/alice_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/debug_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
+    <EditText
+        android:id="@+id/bob_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/alice_debug"
+        android:layout_marginTop="40dp"
+        android:layout_toEndOf="@+id/debug_button"
+        android:layout_toRightOf="@+id/debug_button"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
+    <EditText
+        android:id="@+id/secret_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/alice_debug"
+        android:layout_alignStart="@+id/alice_debug"
+        android:layout_below="@+id/bob_debug"
+        android:layout_marginTop="58dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
+    <EditText
+        android:id="@+id/deaddrop_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/alice_debug"
+        android:layout_alignStart="@+id/alice_debug"
+        android:layout_below="@+id/secret_debug"
+        android:layout_marginTop="50dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+    <Button
+        android:id="@+id/debug_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log In"/>
+</RelativeLayout>
+
