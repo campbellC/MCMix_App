@@ -1,6 +1,8 @@
-package ac.panoramix.uoe.xyz;
+package ac.panoramix.uoe.xyz.MessageHandling;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import ac.panoramix.uoe.xyz.XYZConstants;
 
 /**
  * Created by: Chris Campbell
@@ -16,6 +18,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 
 public class ConversationQueue extends ConcurrentLinkedQueue<ConversationMessage> {
+
+    private static ConversationQueue sConversationQueue;
+
+    public static ConversationQueue getOrCreateQueue(){
+        if(sConversationQueue == null){
+            sConversationQueue = new ConversationQueue();
+        }
+        return sConversationQueue;
+    }
+
     @Override
     public boolean add(ConversationMessage m)
     {

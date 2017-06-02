@@ -6,6 +6,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import ac.panoramix.uoe.xyz.Accounts.Account;
+import ac.panoramix.uoe.xyz.Accounts.Buddy;
+import ac.panoramix.uoe.xyz.MessageHandling.ConversationHandler;
+import ac.panoramix.uoe.xyz.MessageHandling.Diffie_Hellman;
+
 public class debug extends AppCompatActivity {
     EditText alice, bob, secret, deaddrop;
     Button go;
@@ -45,5 +50,9 @@ public class debug extends AppCompatActivity {
 
             }
         });
+
+        ConversationHandler handler = new ConversationHandler();
+        Thread handlerThread = new Thread(handler);
+        handlerThread.start();
     }
 }

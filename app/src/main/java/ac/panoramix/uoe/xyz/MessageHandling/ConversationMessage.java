@@ -1,4 +1,6 @@
-package ac.panoramix.uoe.xyz;
+package ac.panoramix.uoe.xyz.MessageHandling;
+
+import ac.panoramix.uoe.xyz.XYZConstants;
 
 /**
  * Created by: Chris Campbell
