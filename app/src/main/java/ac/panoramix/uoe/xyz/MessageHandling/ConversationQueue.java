@@ -21,11 +21,11 @@ public class ConversationQueue extends ConcurrentLinkedQueue<ConversationMessage
 
     private static ConversationQueue sConversationQueue;
 
-    public static ConversationQueue getOrCreateQueue(){
-        if(sConversationQueue == null){
-            sConversationQueue = new ConversationQueue();
-        }
-        return sConversationQueue;
+    public static ConversationQueue getOrCreateConversationQueue(){
+       if (sConversationQueue == null){
+           sConversationQueue = new ConversationQueue();
+       }
+       return sConversationQueue;
     }
 
     @Override

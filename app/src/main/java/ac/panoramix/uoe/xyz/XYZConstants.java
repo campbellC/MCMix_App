@@ -12,4 +12,5 @@ public final class XYZConstants {
     public static final int DEAD_DROP_LENGTH = 32; // sha256 has 256 bits = 32 bytes
 
     public static final int MAX_MESSAGES_IN_QUEUE = 50;
+    public static final int INCOMING_CONVERSATION_TAG_OFFSET = 1; // THe number of bytes set aside for tagging incoming messages in the conversation protocol
 }

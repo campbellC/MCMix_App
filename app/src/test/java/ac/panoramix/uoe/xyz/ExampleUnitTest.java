@@ -1,6 +1,11 @@
 package ac.panoramix.uoe.xyz;
 
 import org.junit.Test;
+import org.libsodium.jni.crypto.Point;
+
+import ac.panoramix.uoe.xyz.Accounts.Account;
+import ac.panoramix.uoe.xyz.Accounts.Buddy;
+import ac.panoramix.uoe.xyz.MessageHandling.Diffie_Hellman;
 
 import static org.junit.Assert.*;
 
@@ -14,4 +19,5 @@ public class ExampleUnitTest {
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
     }
+
 }

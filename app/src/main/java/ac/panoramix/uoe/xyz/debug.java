@@ -51,8 +51,8 @@ public class debug extends AppCompatActivity {
             }
         });
 
-        ConversationHandler handler = new ConversationHandler();
-        Thread handlerThread = new Thread(handler);
-        handlerThread.start();
+//        ConversationHandler handler = new ConversationHandler();
+//        Thread handlerThread = new Thread(handler);
+//        handlerThread.start();
     }
 }
