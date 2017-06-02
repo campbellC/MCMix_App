@@ -15,9 +15,9 @@ import ac.panoramix.uoe.xyz.XYZConstants;
  * for: University Of Edinburgh
  * contact: c.j.campbell@ed.ac.uk
  *
- * This class is the outer layer of conversation handling. It's main responsibility is to interact
- * with the channel for conversations with the sharemind servers. It handles encryption and decryption
- * for communicating with the back end, splitting into fragments etc. of messages.
+ * This class is the outer layer of conversation handling. It's main responsibility is to act as a
+ * mediator between the network handling layer that deals with the specific SHAREMIND sharing/TLS
+ * and the UI thread that is adding messages to a queue and starting and stopping conversations.
  */
 
 
@@ -76,7 +76,7 @@ public class ConversationHandler {
             } else {
                 outgoing_payload = construct_payload(mConversationQueue.poll(), dead_drop);
             }
-            //TODO: encrypt message with alice and bob shared secret
+            encrypt_payload(outgoing_payload);
         }
         return outgoing_payload;
     }
@@ -101,5 +101,9 @@ public class ConversationHandler {
         return payload;
     }
 
-
+    private byte[] encrypt_payload(byte[] payload){
+        //TODO: make this encrypt. Note need to worry about length of message changing during encryption
+        //TODO: therefore may require more than one MESSAGE_LENGTH and use in different situations
+        return payload;
+    }
 }
