@@ -6,15 +6,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.libsodium.jni.SodiumConstants;
+import org.libsodium.jni.crypto.Random;
+import org.libsodium.jni.crypto.SecretBox;
+
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationHandler;
+import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessage;
 import ac.panoramix.uoe.xyz.MessageHandling.Diffie_Hellman;
 
 public class debug extends AppCompatActivity {
     EditText alice, bob, secret, deaddrop;
     Button go;
-    int i = 0;
+    int i = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,27 +32,42 @@ public class debug extends AppCompatActivity {
 
 
         alice = (EditText) findViewById(R.id.alice_debug);
-        alice.setText(Alice.getKeyPair().getPublicKey().toString());
         bob = (EditText) findViewById(R.id.bob_debug);
-        bob.setText(Bob.getKeyPair().getPublicKey().toString());
         secret   = (EditText) findViewById(R.id.secret_debug);
         deaddrop   = (EditText) findViewById(R.id.deaddrop_debug);
 
         go = (Button) findViewById(R.id.debug_button);
+
+
         go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Diffie_Hellman.shared_secret(Alice.getKeyPair(), Bob.getKeyPair().getPublicKey()).equals(
-                        Diffie_Hellman.shared_secret(Bob.getKeyPair(), Alice.getKeyPair().getPublicKey()))){
-                    deaddrop.setText(Diffie_Hellman.dead_drop(Bob, Alice_buddy, i).toString());
+//                String message = "This is a test string" + String.valueOf(i);
+//                i = i * i;
+//                ConversationMessage msg = new ConversationMessage(message);
+//                secret.setText(String.valueOf(msg.getBytes().length));
+//                alice.setText(message);
+//                SecretBox Alices_SecretBox = new SecretBox(Diffie_Hellman.shared_secret(Alice, Bob_buddy).toBytes());
+//                SecretBox Bobs_SecretBox = new SecretBox(Diffie_Hellman.shared_secret(Bob, Alice_buddy).toBytes());
+//                byte[] nonce = new Random().randomBytes(SodiumConstants.NONCE_BYTES);
+//
+//                byte[] ciphertext = Alices_SecretBox.encrypt(nonce, msg.getBytes());
+//                bob.setText(String.valueOf(ciphertext.length));
+//
+//                byte[] unDecrypted = Bobs_SecretBox.decrypt(nonce, ciphertext);
+//                ConversationMessage bobs_msg = new ConversationMessage(unDecrypted);
+//                deaddrop.setText(bobs_msg.getMessage());
+                String s_m1 = "test string";
+                ConversationMessage message1 = new ConversationMessage(s_m1);
+                byte[] m1_bytes = message1.getBytes();
+                if(i == 2){
+                    alice.setText(message1.getMessage());
+                    i++;
+                } else {
+                    ConversationMessage message2 = new ConversationMessage(m1_bytes);
+                    bob.setText(message2.getMessage());
+                    secret.setText(String.valueOf(message1.equals(message2)));
                 }
-                if( Diffie_Hellman.dead_drop(Alice, Bob_buddy, i).equals(  Diffie_Hellman.dead_drop(Bob, Alice_buddy, i))){
-                    secret.setText(Diffie_Hellman.dead_drop(Alice, Bob_buddy, i).toString());
-                }
-                i++;
-                secret.setText(Diffie_Hellman.dead_drop(Alice, Bob_buddy, i).toString());
-                deaddrop.setText(Diffie_Hellman.dead_drop(Bob, Alice_buddy, i).toString());
-
             }
         });
 

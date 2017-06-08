@@ -18,6 +18,10 @@ android {
     }
     productFlavors {
     }
+
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:2.0.1'
+    }
 }
 
 dependencies {
@@ -30,4 +34,5 @@ dependencies {
     compile 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.6'
   //  compile 'com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.6'
     testCompile 'junit:junit:4.12'
+    compile group: 'com.google.guava', name: 'guava', version: '22.0-android'
 }

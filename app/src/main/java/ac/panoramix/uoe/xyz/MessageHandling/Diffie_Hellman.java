@@ -21,12 +21,8 @@ import ac.panoramix.uoe.xyz.XYZConstants;
 
 public class Diffie_Hellman {
 
-    //TODO: Make the input uniform. All inputs should be of the form Account, Buddy. Or byte[] byte[]
-    // TODO: or something...
-
-
-    public static Point shared_secret(KeyPair alice_keys, PublicKey bob_key){
-        return new Point(bob_key.toBytes()).mult(alice_keys.getPrivateKey().toBytes());
+    public static Point shared_secret(Account alice, Buddy bob){
+        return new Point(bob.getPublic_key().toBytes()).mult(alice.getKeyPair().getPrivateKey().toBytes());
     }
 
 
@@ -34,7 +30,7 @@ public class Diffie_Hellman {
     // TODO: decide on format for round_number and dead_drop
     public static byte[] dead_drop(Account alice, Buddy bob, long round_number){
 
-        Point shared_secret = shared_secret(alice.getKeyPair(), bob.getPublic_key());
+        Point shared_secret = shared_secret(alice, bob);
 
         byte[] secret = shared_secret.toBytes();
         byte[] r = Utility.longToBytes(round_number);
@@ -52,14 +48,5 @@ public class Diffie_Hellman {
 
     }
 
-    public static byte[] dead_drop(Account alice){
-        // In the case that alice does not want to communicate with anyone
-        // the dead drop value is calculated with a random delivery address
-        // TODO: possible overhead generating these classes, maybe best to change signature of dead_drop to take bytes instead of Buddy etc.
-        Buddy bob = new Buddy( "",
-                        new PublicKey(
-                            new Random().randomBytes(
-                                    SodiumConstants.PUBLICKEY_BYTES)));
-        return dead_drop(alice, bob, 0);
-    }
+
 }
