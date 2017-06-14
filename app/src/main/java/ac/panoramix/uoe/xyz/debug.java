@@ -1,5 +1,6 @@
 package ac.panoramix.uoe.xyz;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -15,6 +16,7 @@ import ac.panoramix.uoe.xyz.Accounts.Buddy;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationHandler;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessage;
 import ac.panoramix.uoe.xyz.MessageHandling.Diffie_Hellman;
+import ac.panoramix.uoe.xyz.UI_Handling.ConversationActivity;
 
 public class debug extends AppCompatActivity {
     EditText alice, bob, secret, deaddrop;
@@ -57,22 +59,31 @@ public class debug extends AppCompatActivity {
 //                byte[] unDecrypted = Bobs_SecretBox.decrypt(nonce, ciphertext);
 //                ConversationMessage bobs_msg = new ConversationMessage(unDecrypted);
 //                deaddrop.setText(bobs_msg.getMessage());
-                String s_m1 = "test string";
-                ConversationMessage message1 = new ConversationMessage(s_m1);
-                byte[] m1_bytes = message1.getBytes();
-                if(i == 2){
-                    alice.setText(message1.getMessage());
-                    i++;
-                } else {
-                    ConversationMessage message2 = new ConversationMessage(m1_bytes);
-                    bob.setText(message2.getMessage());
-                    secret.setText(String.valueOf(message1.equals(message2)));
-                }
+//                String s_m1 = "test string";
+//                ConversationMessage message1 = new ConversationMessage(s_m1);
+//                byte[] m1_bytes = message1.getBytes();
+//                if(i == 2){
+//                    alice.setText(message1.getMessage());
+//                    i++;
+//                } else {
+//                    ConversationMessage message2 = new ConversationMessage(m1_bytes);
+//                    bob.setText(message2.getMessage());
+//                    secret.setText(String.valueOf(message1.equals(message2)));
+//                }
+                loadConversation(go);
+
+
             }
         });
 
 //        ConversationHandler handler = new ConversationHandler();
 //        Thread handlerThread = new Thread(handler);
 //        handlerThread.start();
+    }
+
+
+    public void loadConversation(View Pressed){
+        Intent intent = new Intent(this, ConversationActivity.class);
+        startActivity(intent);
     }
 }

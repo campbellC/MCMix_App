@@ -29,10 +29,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    //  compile 'com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.6'
+    compile group: 'com.google.guava', name: 'guava', version: '22.0-android'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.joshjdevl.libsodiumjni:libsodium-jni-aar:1.0.6'
-  //  compile 'com.github.joshjdevl.libsodiumjni:libsodium-jni:1.0.6'
     testCompile 'junit:junit:4.12'
-    compile group: 'com.google.guava', name: 'guava', version: '22.0-android'
 }

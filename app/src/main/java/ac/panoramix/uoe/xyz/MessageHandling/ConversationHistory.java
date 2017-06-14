@@ -16,4 +16,8 @@ public class ConversationHistory extends ConcurrentLinkedDeque<ConversationMessa
     Account alice;
     Buddy bob;
 
+    public ConversationHistory(Account alice, Buddy bob) {
+        this.alice = alice;
+        this.bob = bob;
+    }
 }
