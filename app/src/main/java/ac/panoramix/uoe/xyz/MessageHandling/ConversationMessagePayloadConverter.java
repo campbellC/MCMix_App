@@ -46,11 +46,11 @@ public class ConversationMessagePayloadConverter {
                 ciphertext, 0, XYZConstants.CIPHERTEXT_LENGTH);
 
         //Now we decrypt the ciphertext
-        return new ConversationMessage(mBox.decrypt(nonce, ciphertext));
+        return new ConversationMessage(mBox.decrypt(nonce, ciphertext), false);
     }
 
     public byte[] construct_null_message_payload(long round_number){
-        return construct_outgoing_payload(new ConversationMessage(""), round_number);
+        return construct_outgoing_payload(new ConversationMessage("", true), round_number);
     }
 
     public byte[] construct_outgoing_payload(ConversationMessage msg, long round_number){

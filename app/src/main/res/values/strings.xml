@@ -3,4 +3,6 @@
 
     <string name="conversation_default_message">Enter your message here...</string>
     <string name="conversation_send_button_message">Send</string>
+    <string name="Bad_Character_Toast">Only ascii values are currently supported. Please try again.</string>
+    <string name="Long_Message_Toast">This message is too long for a single communication. Sending in pieces which will take more time...</string>
 </resources>

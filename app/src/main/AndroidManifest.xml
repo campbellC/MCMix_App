@@ -22,6 +22,12 @@
         </activity>
         <activity android:name=".UI_Handling.ConversationActivity">
         </activity>
+
+        <service
+            android:name=".XYZNetworkService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
 
 </manifest>

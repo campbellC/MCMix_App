@@ -3,6 +3,7 @@ package ac.panoramix.uoe.xyz;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,7 +71,7 @@ public class debug extends AppCompatActivity {
 //                    bob.setText(message2.getMessage());
 //                    secret.setText(String.valueOf(message1.equals(message2)));
 //                }
-                loadConversation(go);
+                loadConversation(go, Alice, Bob_buddy);
 
 
             }
@@ -82,8 +83,13 @@ public class debug extends AppCompatActivity {
     }
 
 
-    public void loadConversation(View Pressed){
+    public void loadConversation(View Pressed, Account Alice, Buddy Bob){
         Intent intent = new Intent(this, ConversationActivity.class);
+        Log.d("debug_activity", "Loading Alice into intent");
+        intent.putExtra("Alice", Alice);
+        Log.d("debug_activity", "Loading Bob into intent");
+        intent.putExtra("Bob", Bob);
+        Log.d("debug_activity", "Starting intent");
         startActivity(intent);
     }
 }

@@ -1,6 +1,8 @@
 package ac.panoramix.uoe.xyz.MessageHandling;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
@@ -12,7 +14,7 @@ import ac.panoramix.uoe.xyz.Accounts.Buddy;
  * contact: c.j.campbell@ed.ac.uk
  */
 
-public class ConversationHistory extends ConcurrentLinkedDeque<ConversationMessage> {
+public class ConversationHistory extends CopyOnWriteArrayList<ConversationMessage> {
     Account alice;
     Buddy bob;
 

@@ -7,8 +7,18 @@ import android.util.Log;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Point;
+import org.libsodium.jni.crypto.Random;
+import org.libsodium.jni.keys.KeyPair;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
@@ -70,20 +80,20 @@ public class ExampleInstrumentedTest {
         String s_m2 = new String(s_m1_bytes,ConversationMessage.sEncoding);
         assertEquals(s_m1, s_m2);
 
-        ConversationMessage message1 = new ConversationMessage(s_m1);
+        ConversationMessage message1 = new ConversationMessage(s_m1, true);
         byte[] m1_bytes = message1.getBytes();
-        ConversationMessage message2 = new ConversationMessage(m1_bytes);
+        ConversationMessage message2 = new ConversationMessage(m1_bytes, false);
         assertEquals(message1, message2);
     }
 
 
     @Test
     public void empty_string_message_handling() throws Exception {
-        ConversationMessage msg = new ConversationMessage("");
+        ConversationMessage msg = new ConversationMessage("", true);
         byte[] bytes = msg.getBytes();
         assertEquals(bytes.length, XYZConstants.MESSAGE_LENGTH);
 
-        ConversationMessage msg2 = new ConversationMessage(bytes);
+        ConversationMessage msg2 = new ConversationMessage(bytes, false);
         assertEquals(msg, msg2);
         assertEquals(msg2.getMessage(), "");
 
@@ -99,7 +109,7 @@ public class ExampleInstrumentedTest {
         ConversationMessagePayloadConverter bob_converter = new ConversationMessagePayloadConverter(Bob, a_buddy);
         // generate a message from alice to bob. create payload
 
-        ConversationMessage alice_msg = new ConversationMessage("This is a random string 09432802938470928374");
+        ConversationMessage alice_msg = new ConversationMessage("This is a random string 09432802938470928374", true);
         byte[] payload = alice_converter.construct_outgoing_payload(alice_msg, 203948l);
 
         //mimic tagging by the server by prepending a 1 tag
@@ -117,5 +127,75 @@ public class ExampleInstrumentedTest {
 
 
     }
+
+    @Test
+    public void buddy_serialization() throws Exception {
+        Account Bob = new Account("Bob", "password");
+        Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
+        new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(b_buddy);
+        File file;
+        try{
+            String filename = "buddy_test.ser";
+            file = File.createTempFile(filename, null, InstrumentationRegistry.getContext().getCacheDir());
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(b_buddy);
+            oos.close();
+
+            FileInputStream fis = new FileInputStream(file);
+            ObjectInputStream ois = new ObjectInputStream(fis) ;
+            Buddy b_copy = (Buddy) ois.readObject();
+            ois.close();
+
+            assertEquals(b_copy.getPublic_key(), b_buddy.getPublic_key());
+            assertEquals(b_buddy.getUsername(), b_copy.getUsername());
+        } catch (IOException e){
+            Log.d("Serialisation","Error creating file");
+        }
+
+
+    }
+
+    @Test
+    public void keyPair_seed_test() throws Exception {
+        for(int i = 0; i < 100; ++i) {
+            byte[] seed = new Random().randomBytes(SodiumConstants.SECRETKEY_BYTES);
+            KeyPair kp = new KeyPair(seed);
+            KeyPair kp2 = new KeyPair(seed);
+            assertArrayEquals(kp.getPrivateKey().toBytes(), kp2.getPrivateKey().toBytes());
+            assertArrayEquals(kp.getPublicKey().toBytes(), kp2.getPublicKey().toBytes());
+        }
+    }
+    @Test
+    public void account_serialization() throws Exception {
+        Account Alice = new Account("Alice", "password");
+
+        new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(Alice);
+        File file;
+        try{
+            String filename = "account_test.ser";
+            file = File.createTempFile(filename, null, InstrumentationRegistry.getContext().getCacheDir());
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(Alice);
+            oos.close();
+
+            FileInputStream fis = new FileInputStream(file);
+            ObjectInputStream ois = new ObjectInputStream(fis) ;
+            Account a_copy = (Account) ois.readObject();
+            ois.close();
+
+            assertEquals(a_copy.getKeyPair().getPrivateKey(), Alice.getKeyPair().getPrivateKey());
+            assertEquals(a_copy.getKeyPair().getPublicKey(), Alice.getKeyPair().getPublicKey());
+            assertEquals(a_copy.getHash(), Alice.getHash());
+            assertEquals(a_copy.getUsername(), Alice.getUsername());
+            assertEquals(a_copy.getSalt(), Alice.getSalt());
+        } catch (IOException e){
+           Log.d("Serialisation","Error creating file");
+        }
+
+
+    }
+
 
 }

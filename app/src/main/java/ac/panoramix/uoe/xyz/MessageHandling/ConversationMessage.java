@@ -25,14 +25,18 @@ public class ConversationMessage {
 
     private String message;
     final public static Charset sEncoding = StandardCharsets.US_ASCII;
+    private boolean from_alice;
+
+
 
     /* Constructors */
-    public ConversationMessage(String message) {
+    public ConversationMessage(String message, boolean from_alice) {
         assert message.length() < XYZConstants.MESSAGE_LENGTH;
         assert CharMatcher.ascii().matchesAllOf(message);
         this.message = message;
+        this.from_alice = from_alice;
     }
-    public ConversationMessage(byte[] message) {
+    public ConversationMessage(byte[] message, boolean from_alice) {
         // need to handle 0-padded arrays.
         if(message.length == 0 || message[0] ==  0){
             this.message = "";
@@ -45,6 +49,7 @@ public class ConversationMessage {
             // now we construct a string up to that last index. i+1 since this is the length not the index
             this.message = new String(message, 0, i+1, sEncoding);
         }
+        this.from_alice = from_alice;
     }
 
     /* Utility Methods */
@@ -61,12 +66,20 @@ public class ConversationMessage {
 
     }
 
+    public boolean isFrom_alice() {
+        return from_alice;
+    }
     public String getMessage() {
         return message;
     }
 
     public int length() {
         return message.length();
+    }
+
+    @Override
+    public String toString(){
+        return message;
     }
 
     /* Object methods */

@@ -23,4 +23,7 @@ public final class XYZConstants {
 
     public static final int MAX_MESSAGES_IN_QUEUE = 50;
 
+
+    public static final int SALT_LENGTH = 32;
+
 }

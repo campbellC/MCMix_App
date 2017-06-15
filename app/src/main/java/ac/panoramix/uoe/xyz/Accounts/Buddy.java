@@ -7,22 +7,27 @@ package ac.panoramix.uoe.xyz.Accounts;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.keys.PublicKey;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationQueue;
 
 /** This class is the "friend" class for XYZ. The only information
  * you need to know about a friend to call them is their public key and username.
  */
-public class Buddy {
-    private PublicKey mPublic_key;
+public class Buddy implements Serializable{
+    private transient PublicKey mPublic_key;
     private String mUsername;
-    private ConversationQueue mConversationQueue;
+
 
     public Buddy(String mUsername, PublicKey mPublic_key) {
         this.mPublic_key = mPublic_key;
         this.mUsername = mUsername;
-        mConversationQueue = new ConversationQueue();
     }
 
     public PublicKey getPublic_key() {
@@ -31,5 +36,18 @@ public class Buddy {
 
     public String getUsername() {
         return mUsername;
+    }
+
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.write(mPublic_key.toBytes());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        byte[] buf = new byte[SodiumConstants.PUBLICKEY_BYTES];
+        in.read(buf);
+        mPublic_key = new PublicKey(buf);
     }
 }
