@@ -12,6 +12,7 @@ import org.libsodium.jni.SodiumConstants;
 public final class XYZConstants {
     // Constants for Conversation Protocol
     public static final int INCOMING_CONVERSATION_TAG_OFFSET = 1; // The number of bytes set aside for tagging incoming messages in the conversation protocol
+    public static final int CONVERSATION_ROUND_END_MESSAGE_LENGTH = INCOMING_CONVERSATION_TAG_OFFSET + 8; // tag plus round number and round number is a long integer
     public static final byte CONVERSATION_ROUND_END_TAG = 1;
     public static final byte CONVERSATION_MESSAGE_TAG = 0;
 
@@ -25,5 +26,10 @@ public final class XYZConstants {
 
 
     public static final int SALT_LENGTH = 32;
+
+
+
+
+    public static final String MESSAGE_ADDED_BROADCAST_TAG = "ac.panoramix.uoe.xyz.MESSAGE_ADDED_TO_CONVERSATION";
 
 }

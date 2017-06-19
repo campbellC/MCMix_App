@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
+import ac.panoramix.uoe.xyz.MessageHandling.ConversationHistory;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessage;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessagePayloadConverter;
 import ac.panoramix.uoe.xyz.MessageHandling.Diffie_Hellman;
@@ -128,33 +129,7 @@ public class ExampleInstrumentedTest {
 
     }
 
-    @Test
-    public void buddy_serialization() throws Exception {
-        Account Bob = new Account("Bob", "password");
-        Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
-        new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(b_buddy);
-        File file;
-        try{
-            String filename = "buddy_test.ser";
-            file = File.createTempFile(filename, null, InstrumentationRegistry.getContext().getCacheDir());
-            FileOutputStream fos = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(b_buddy);
-            oos.close();
 
-            FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis) ;
-            Buddy b_copy = (Buddy) ois.readObject();
-            ois.close();
-
-            assertEquals(b_copy.getPublic_key(), b_buddy.getPublic_key());
-            assertEquals(b_buddy.getUsername(), b_copy.getUsername());
-        } catch (IOException e){
-            Log.d("Serialisation","Error creating file");
-        }
-
-
-    }
 
     @Test
     public void keyPair_seed_test() throws Exception {
@@ -166,36 +141,128 @@ public class ExampleInstrumentedTest {
             assertArrayEquals(kp.getPublicKey().toBytes(), kp2.getPublicKey().toBytes());
         }
     }
+
+    @Test
+    public void buddy_serialization() throws Exception {
+        Account Bob = new Account("Bob", "password");
+        Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
+        new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(b_buddy);
+        File file;
+        String filename = "buddy_test.ser";
+        file = File.createTempFile(filename, null, InstrumentationRegistry.getTargetContext().getCacheDir());
+        FileOutputStream fos = new FileOutputStream(file);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(b_buddy);
+        oos.close();
+
+        FileInputStream fis = new FileInputStream(file);
+        ObjectInputStream ois = new ObjectInputStream(fis) ;
+        Buddy b_copy = (Buddy) ois.readObject();
+        ois.close();
+
+        assertArrayEquals(b_copy.getPublic_key().toBytes(), b_buddy.getPublic_key().toBytes());
+        assertEquals(b_buddy.getUsername(), b_copy.getUsername());
+
+
+    }
+    @Test
+    public void message_serialization() throws Exception {
+        Account Alice = new Account("Alice", "password");
+        ConversationMessage msg_from_alice = new ConversationMessage("test message", true);
+        ConversationMessage msg_from_bob = new ConversationMessage("test message 2", false);
+
+        new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(msg_from_alice);
+        File file;
+        String filename = "msg_from_alice.ser";
+        file = File.createTempFile(filename, null, InstrumentationRegistry.getTargetContext().getFilesDir());
+        FileOutputStream fos = new FileOutputStream(file);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(msg_from_alice);
+        oos.close();
+
+        FileInputStream fis = new FileInputStream(file);
+        ObjectInputStream ois = new ObjectInputStream(fis) ;
+        ConversationMessage a_copy = (ConversationMessage) ois.readObject();
+        ois.close();
+
+        assertEquals(a_copy,msg_from_alice);
+        assertTrue(a_copy.isFrom_alice());
+
+        filename = "msg_from_bob.ser";
+        file = File.createTempFile(filename, null, InstrumentationRegistry.getTargetContext().getCacheDir());
+        fos = new FileOutputStream(file);
+        oos = new ObjectOutputStream(fos);
+        oos.writeObject(msg_from_bob);
+        oos.close();
+
+        fis = new FileInputStream(file);
+        ois = new ObjectInputStream(fis) ;
+        ConversationMessage b_copy = (ConversationMessage) ois.readObject();
+        ois.close();
+
+        assertEquals(b_copy,msg_from_bob);
+        assertTrue(!b_copy.isFrom_alice());
+
+
+    }
     @Test
     public void account_serialization() throws Exception {
         Account Alice = new Account("Alice", "password");
 
         new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(Alice);
         File file;
-        try{
-            String filename = "account_test.ser";
-            file = File.createTempFile(filename, null, InstrumentationRegistry.getContext().getCacheDir());
-            FileOutputStream fos = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(Alice);
-            oos.close();
+        String filename = "account_test.ser";
+        file = File.createTempFile(filename, null, InstrumentationRegistry.getTargetContext().getCacheDir());
+        FileOutputStream fos = new FileOutputStream(file);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(Alice);
+        oos.close();
 
-            FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis) ;
-            Account a_copy = (Account) ois.readObject();
-            ois.close();
+        FileInputStream fis = new FileInputStream(file);
+        ObjectInputStream ois = new ObjectInputStream(fis) ;
+        Account a_copy = (Account) ois.readObject();
+        ois.close();
 
-            assertEquals(a_copy.getKeyPair().getPrivateKey(), Alice.getKeyPair().getPrivateKey());
-            assertEquals(a_copy.getKeyPair().getPublicKey(), Alice.getKeyPair().getPublicKey());
-            assertEquals(a_copy.getHash(), Alice.getHash());
-            assertEquals(a_copy.getUsername(), Alice.getUsername());
-            assertEquals(a_copy.getSalt(), Alice.getSalt());
-        } catch (IOException e){
-           Log.d("Serialisation","Error creating file");
-        }
+        assertArrayEquals(a_copy.getKeyPair().getPrivateKey().toBytes(), Alice.getKeyPair().getPrivateKey().toBytes());
+        assertArrayEquals(a_copy.getKeyPair().getPublicKey().toBytes(), Alice.getKeyPair().getPublicKey().toBytes());
+        assertArrayEquals(a_copy.getHash(), Alice.getHash());
+        assertEquals(a_copy.getUsername(), Alice.getUsername());
+        assertArrayEquals(a_copy.getSalt(), Alice.getSalt());
 
 
     }
 
+    @Test
+    public void message_history_serialization() throws Exception {
+        Account Alice = new Account("Alice", "password");
+        Account Bob = new Account("Bob", "pwd");
+        Buddy buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
+        ConversationHistory history  = new ConversationHistory(Alice, buddy);
+
+        ConversationMessage msg_from_alice = new ConversationMessage("test message", true);
+        history.add(msg_from_alice);
+        ConversationMessage msg_from_bob = new ConversationMessage("test_message_from_bob", false);
+
+
+        history.add(msg_from_bob);
+
+        new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(history);
+        File file;
+        String filename = "history.ser";
+        file = File.createTempFile(filename, null, InstrumentationRegistry.getTargetContext().getFilesDir());
+        FileOutputStream fos = new FileOutputStream(file);
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(history);
+        oos.close();
+
+        FileInputStream fis = new FileInputStream(file);
+        ObjectInputStream ois = new ObjectInputStream(fis) ;
+        ConversationHistory hist_copy = (ConversationHistory) ois.readObject();
+        ois.close();
+
+        assertEquals(hist_copy.size(), 2);
+        assertEquals(hist_copy.get(0), msg_from_alice);
+        assertEquals(hist_copy.get(1), msg_from_bob);
+    }
 
 }

@@ -14,20 +14,23 @@
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".debug">
+        </activity>
+        <activity android:name=".UI_Handling.ConversationActivity">
+        </activity>
+
+        <service
+            android:name=".Networking.XYZNetworkService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+
+        <activity android:name=".UI_Handling.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".UI_Handling.ConversationActivity">
-        </activity>
-
-        <service
-            android:name=".XYZNetworkService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
     </application>
 
 </manifest>

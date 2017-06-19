@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.common.base.CharMatcher;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -20,7 +21,7 @@ import ac.panoramix.uoe.xyz.XYZConstants;
  * The upper limit for the length of a message is XYZConstants.MESSAGE_LENGTH.
  */
 
-public class ConversationMessage {
+public class ConversationMessage implements Serializable {
 
 
     private String message;

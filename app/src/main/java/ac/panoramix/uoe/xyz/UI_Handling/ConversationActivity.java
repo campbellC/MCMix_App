@@ -1,6 +1,10 @@
 package ac.panoramix.uoe.xyz.UI_Handling;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +17,10 @@ import android.widget.Toast;
 
 import com.google.common.base.CharMatcher;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.List;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
@@ -20,7 +28,9 @@ import ac.panoramix.uoe.xyz.Accounts.Buddy;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationHistory;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessage;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationQueue;
+import ac.panoramix.uoe.xyz.Networking.XYZNetworkService;
 import ac.panoramix.uoe.xyz.R;
+import ac.panoramix.uoe.xyz.Utility;
 import ac.panoramix.uoe.xyz.XYZConstants;
 
 public class ConversationActivity extends AppCompatActivity {
@@ -30,7 +40,9 @@ public class ConversationActivity extends AppCompatActivity {
     ArrayAdapter<ConversationMessage> mAdapter;
     ConversationQueue mConversationQueue;
     ConversationHistory mConversationHistory;
-
+    private BroadcastReceiver mReceiver;
+    Account Alice;
+    Buddy Bob;
     //TODO: handle displaying history of messages
 
     @Override
@@ -45,11 +57,33 @@ public class ConversationActivity extends AppCompatActivity {
         Log.d("ConvActivity","Retrieving intent");
         Intent intent = getIntent();
         Log.d("ConvActivity","Retrieving Alice from intent");
-        Account Alice = (Account) intent.getSerializableExtra("Alice");
+        Alice = (Account) intent.getSerializableExtra("Alice");
         Log.d("ConvActivity","Retrieving Bob from intent");
-        Buddy Bob = (Buddy) intent.getSerializableExtra("Bob");
-        Log.d("ConvActivity", "Retrieving/Creating conversation history");
-        mConversationHistory = new ConversationHistory(Alice, Bob);
+        Bob = (Buddy) intent.getSerializableExtra("Bob");
+
+
+        Intent service_intent = new Intent(getApplicationContext(), XYZNetworkService.class);
+        service_intent.putExtra("Alice", Alice);
+        service_intent.putExtra("Bob", Bob);
+        getApplicationContext().startService(service_intent);
+        //Get conversation history from file
+        mConversationHistory = retrieveConversationHistory(Alice, Bob);
+        //Register receiver to stay alert for messages sent or received from the line.
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(XYZConstants.MESSAGE_ADDED_BROADCAST_TAG);
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d("ConvActivity", "Recieved Broadcast");
+                mConversationHistory = retrieveConversationHistory(Alice, Bob);
+                mAdapter = new ArrayAdapter<ConversationMessage>(getApplicationContext(),
+                        android.R.layout.simple_list_item_1,
+                        mConversationHistory);
+                conversation_view.setAdapter(mAdapter);
+
+            }
+        };
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mReceiver, filter);
 
         //Set up UI interaction
         message_entry = (EditText) findViewById(R.id.conversation_message_entry);
@@ -58,10 +92,6 @@ public class ConversationActivity extends AppCompatActivity {
         send_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //TODO: this call to add should actually only be done once message has been checked and transmitted
-                mConversationHistory.add(new ConversationMessage(message_entry.getText().toString(), true));
-                mAdapter.notifyDataSetChanged();
                 sendMessage();
             }
         });
@@ -73,12 +103,17 @@ public class ConversationActivity extends AppCompatActivity {
                 mConversationHistory);
         conversation_view.setAdapter(mAdapter);
 
-        //TODO: delete the below debugging code
-        mAdapter.add(new ConversationMessage("from alice", true));
-        mAdapter.add(new ConversationMessage("from bob", false));
-        mConversationHistory.add(new ConversationMessage("direct addition", true));
     }
+    //TODO: check whether receiver registration/deregistration should take place in onStart/Stop rather than create/destroy
 
+    @Override
+    protected void onDestroy(){
+        if(mReceiver != null){
+            LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mReceiver);
+            mReceiver = null;
+        }
+        super.onDestroy();
+    }
     private void sendMessage() {
         String msg  = message_entry.getText().toString();
 
@@ -109,11 +144,24 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     private void transmit(ConversationMessage msg){
-
+        mConversationQueue.add(msg);
     }
 
-    private void addToHistory(ConversationMessage msg){
+    private ConversationHistory retrieveConversationHistory(Account alice, Buddy bob){
+        String history_filename = Utility.filename_for_conversation(alice,bob);
+        ConversationHistory history = new ConversationHistory(alice,bob);
+        try {
+            FileInputStream fis = getApplicationContext().openFileInput(history_filename);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            history = (ConversationHistory) ois.readObject();
+        } catch (FileNotFoundException e){
 
+        } catch (IOException ioe) {
+            Log.d("ConvHandler", "IOException" , ioe);
+        } catch (ClassNotFoundException cnfe){
+            Log.d("ConvHandler", "ClassNotFoundException" + cnfe.getStackTrace());
+        }
+        return history;
     }
 
 }

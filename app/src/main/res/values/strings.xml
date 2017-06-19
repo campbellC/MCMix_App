@@ -5,4 +5,8 @@
     <string name="conversation_send_button_message">Send</string>
     <string name="Bad_Character_Toast">Only ascii values are currently supported. Please try again.</string>
     <string name="Long_Message_Toast">This message is too long for a single communication. Sending in pieces which will take more time...</string>
+
+    <string name="Start_Conversation_Button">Start Conversation</string>
+    <string name="Start_Privacy_Button">Initiate Privacy Protection</string>
+    <string name="Stop_Privacy_Button">Stop Privacy Protection</string>
 </resources>
