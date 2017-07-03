@@ -111,21 +111,15 @@ public class ExampleInstrumentedTest {
         // generate a message from alice to bob. create payload
 
         ConversationMessage alice_msg = new ConversationMessage("This is a random string 09432802938470928374", true);
-        byte[] payload = alice_converter.construct_outgoing_payload(alice_msg, 203948l);
+        String payload = alice_converter.construct_outgoing_payload(alice_msg, 203948l);
 
         //mimic tagging by the server by prepending a 1 tag
-        byte[] tagged_payload =new byte[XYZConstants.INCOMING_CONVERSATION_PAYLOAD_LENGTH];
-        tagged_payload[0] = XYZConstants.CONVERSATION_MESSAGE_TAG;
-        System.arraycopy(payload, 0,
-                tagged_payload, XYZConstants.INCOMING_CONVERSATION_TAG_OFFSET,
-                XYZConstants.OUTGOING_CONVERSATION_PAYLOAD_LENGTH);
+        String tagged_payload = "1 " + payload;
 
 
         // get bob to decrypt and check messages are equal
-        ConversationMessage bob_msg = bob_converter.payload_to_message(tagged_payload);
+        ConversationMessage bob_msg = bob_converter.tagged_payload_to_message(tagged_payload);
         assertEquals(bob_msg, alice_msg);
-
-
 
     }
 

@@ -66,23 +66,23 @@ public class NetworkingThread extends Thread{
             //TODO: poll dialing connection
 
             //TODO: remove this debugging code
-            byte[] incoming_payload = new byte[XYZConstants.CONVERSATION_ROUND_END_MESSAGE_LENGTH];
-            incoming_payload[0] = XYZConstants.CONVERSATION_ROUND_END_TAG;
-
-            //TODO: add cases for dialling messages.
-            switch (incoming_payload[0]){
-                case XYZConstants.CONVERSATION_MESSAGE_TAG:
-                    mConversationHandler.incomingConversationMessage(incoming_payload);
-                    broadcast_conversation_message_arrived();
-                    break;
-                case XYZConstants.CONVERSATION_ROUND_END_TAG:
-                    byte[] outgoing_message = mConversationHandler.incomingRoundEndMessage(incoming_payload);
-                    send_message(outgoing_message);
-                    broadcast_conversation_message_arrived();
-                    break;
-                default:
-                    Log.d("networkThread", "Unknown Incoming Message Type");
-            }
+//            byte[] incoming_payload = new byte[XYZConstants.CONVERSATION_ROUND_END_MESSAGE_LENGTH];
+//            incoming_payload[0] = XYZConstants.CONVERSATION_ROUND_END_TAG;
+//
+//            //TODO: add cases for dialling messages.
+//            switch (incoming_payload[0]){
+//                case XYZConstants.CONVERSATION_MESSAGE_TAG:
+//                    mConversationHandler.incomingConversationMessage(incoming_payload);
+//                    broadcast_conversation_message_arrived();
+//                    break;
+//                case XYZConstants.CONVERSATION_ROUND_END_TAG:
+//                    byte[] outgoing_message = mConversationHandler.incomingRoundEndMessage(incoming_payload);
+//                    send_message(outgoing_message);
+//                    broadcast_conversation_message_arrived();
+//                    break;
+//                default:
+//                    Log.d("networkThread", "Unknown Incoming Message Type");
+//            }
         }
     }
     private void broadcast_conversation_message_arrived(){

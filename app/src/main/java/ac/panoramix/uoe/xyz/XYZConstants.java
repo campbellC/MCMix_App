@@ -11,10 +11,12 @@ import org.libsodium.jni.SodiumConstants;
 
 public final class XYZConstants {
     // Constants for Conversation Protocol
-    public static final int INCOMING_CONVERSATION_TAG_OFFSET = 1; // The number of bytes set aside for tagging incoming messages in the conversation protocol
+    public static final int INCOMING_CONVERSATION_TAG_OFFSET = 1; // The -0-indexed number of the column in terms of integers the content of tagged messages will start at
     public static final int CONVERSATION_ROUND_END_MESSAGE_LENGTH = INCOMING_CONVERSATION_TAG_OFFSET + 8; // tag plus round number and round number is a long integer
     public static final byte CONVERSATION_ROUND_END_TAG = 1;
     public static final byte CONVERSATION_MESSAGE_TAG = 0;
+
+    public static final int INCOMING_CONVERSATION_TAG_COLUMN = 0; //The position in terms of integers that the tag will take in incoming messages
 
     public static final int MESSAGE_LENGTH = 160; // length in bytes of a conversation message
     public static final int DEAD_DROP_LENGTH = 32; // sha256 has 256 bits = 32 bytes
