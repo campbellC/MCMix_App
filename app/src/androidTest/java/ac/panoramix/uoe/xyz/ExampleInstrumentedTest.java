@@ -265,4 +265,22 @@ public class ExampleInstrumentedTest {
         assertEquals(hist_copy.get(1), msg_from_bob);
     }
 
+
+
+    @Test
+    public void string_to_bytes_test() throws Exception {
+        String test_str = "0 0 0 1 9 8 7 6 5 4 6 8 6 636732648 276 23876 28476384761284 761253 7165";
+        byte[] bytes = Utility.bytes_from_string(test_str);
+        String reconstructed = Utility.string_from_bytes(bytes);
+        assertEquals(test_str, reconstructed);
+
+    }
+    @Test
+    public void bytes_to_string_test() throws Exception {
+        byte[] bytes = {0,0,0,0,1,1,1,1,0,0,0,0,3,3,3,3,0,1,0,1,0,0,3,4};
+        String test_str = Utility.string_from_bytes(bytes);
+        byte[] reconstructed = Utility.bytes_from_string(test_str);
+        assertArrayEquals(bytes, reconstructed);
+
+    }
 }
