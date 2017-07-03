@@ -5,6 +5,10 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
@@ -35,6 +39,7 @@ public class NetworkingThread extends Thread{
     }
 
     public NetworkingThread(Context ctx, Account Alice){
+        Log.d("NetworkThread", "Creating no-bob network thread");
         context = ctx;
         kill_flag = false;
         mConversationHandler = new ConversationHandler(Alice, context);
@@ -42,6 +47,7 @@ public class NetworkingThread extends Thread{
     }
 
     public NetworkingThread(Context ctx, Account Alice, Buddy bob){
+        Log.d("NetworkThread", "Creating network thread with a bob");
         context = ctx;
         kill_flag = false;
         mConversationHandler = new ConversationHandler(Alice, context);
@@ -84,16 +90,51 @@ public class NetworkingThread extends Thread{
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
     private void send_message(byte[] outgoing_payload){
-        //TODO: the below is debugging code dealing with encryption to check messages are sent correctly
-        Log.d("networkThread", "Sent message");
+        try{
+            send_bytes(outgoing_payload);
+            Log.d("networkThread", "Sent message on network");
+        }  catch (IOException e){
+            Log.d("networkThread", "Failed to send message on network", e);
+        }
     }
 
 
+    private void establish_connection(){
+        try {
+            sock = new Socket(InetAddress.getByName(XYZConstants.SERVER_IP_ADDRESS), XYZConstants.SERVER_PORT);
+        } catch (IOException e) {
+            Log.d("NetworkThread", "IOException on creating socket", e);
+        }
+    }
 
-    private void establish_connection(){}
+    private void send_bytes(byte[] payload) throws IOException{
+        if(sock == null){
+            establish_connection();
+        }
 
-    private void send_bytes(byte[] payload){}
+        if(sock == null){
+            throw new IOException("Failed to establish connection.");
+        }
+        //TODO: handle if no connection is made by throwing an exception?
 
+        OutputStream os = sock.getOutputStream();
+        os.write(payload);
+
+    }
+
+    private byte[] recv_bytes() throws IOException {
+        if(sock == null){
+            establish_connection();
+        }
+        if(sock == null){
+            throw new IOException("Failed to establish connection.");
+        }
+        //TODO: this should change behaviour based on first byte in stream which determines whether this is a conversation or a dial (or error etc).
+        InputStream is = sock.getInputStream();
+        byte[] incoming_payload = new byte[XYZConstants.INCOMING_CONVERSATION_PAYLOAD_LENGTH];
+        is.read(incoming_payload);
+        return incoming_payload;
+    }
 
 
 }

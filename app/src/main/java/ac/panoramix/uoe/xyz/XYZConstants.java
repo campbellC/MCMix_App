@@ -32,4 +32,8 @@ public final class XYZConstants {
 
     public static final String MESSAGE_ADDED_BROADCAST_TAG = "ac.panoramix.uoe.xyz.MESSAGE_ADDED_TO_CONVERSATION";
 
+    //TODO: this should be a domain name presumably
+    public static final String SERVER_IP_ADDRESS = "129.215.164.45";
+    public static final int SERVER_PORT = 5013;
+
 }
