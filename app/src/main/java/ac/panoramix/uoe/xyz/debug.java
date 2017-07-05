@@ -12,6 +12,9 @@ import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Random;
 import org.libsodium.jni.crypto.SecretBox;
 
+import java.net.CookieHandler;
+import java.net.CookieManager;
+
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
 import ac.panoramix.uoe.xyz.MessageHandling.ConversationHandler;
@@ -27,6 +30,7 @@ public class debug extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_debug);
+
 
         final Account Alice = new Account("Alice", "password");
         final Account Bob = new Account("Bob", "password");

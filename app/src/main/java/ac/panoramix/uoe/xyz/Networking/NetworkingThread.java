@@ -2,14 +2,23 @@ package ac.panoramix.uoe.xyz.Networking;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.BoolRes;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URL;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
@@ -31,7 +40,9 @@ public class NetworkingThread extends Thread{
     private ConversationHandler mConversationHandler;
     private ConversationQueue mConversationQueue;
     private Socket sock;
-
+    HttpURLConnection mConnection;
+    public static String SERVER_IP_ADDR = "129.215.25.108";
+    public static int PORT = 5013;
 
 
     public void setKill_flag(boolean kill_flag) {
@@ -56,12 +67,27 @@ public class NetworkingThread extends Thread{
     }
 
     public void run(){
+        CookieHandler.setDefault(new CookieManager());
         while(!kill_flag) {
             try{
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 Log.d("networkThread","interrupted thread");
             }
+
+            ServerHandler serverHandler = new ServerHandler(context);
+            Log.d("networkThread","logging in as testuser1");
+            Log.d("networkThread","logged in: " + Boolean.toString(serverHandler.is_logged_in()));
+            serverHandler.log_cookies();
+            serverHandler.log_in("testuser1","horse_battery_staple");
+            serverHandler.log_cookies();
+            Log.d("networkThread","logged in: " + Boolean.toString(serverHandler.is_logged_in()));
+
+            String in_message = serverHandler.c_recv_message();
+            Log.d("networkThread","received message: " + in_message);
+
+
+            break;
             //TODO: poll conversation connection
             //TODO: poll dialing connection
 
