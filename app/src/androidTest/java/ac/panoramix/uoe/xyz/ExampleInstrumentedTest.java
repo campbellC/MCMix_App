@@ -47,8 +47,8 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void dead_drops_are_equal() throws Exception{
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "password");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
@@ -62,8 +62,8 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void dh_shared_secrets_are_equal() throws Exception{
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "password");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
@@ -101,8 +101,8 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void conv_payload_to_msg_test() throws Exception {
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "password");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
@@ -138,7 +138,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void buddy_serialization() throws Exception {
-        Account Bob = new Account("Bob", "password");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(b_buddy);
         File file;
@@ -161,7 +161,7 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void message_serialization() throws Exception {
-        Account Alice = new Account("Alice", "password");
+        Account Alice = new Account("Alice");
         ConversationMessage msg_from_alice = new ConversationMessage("test message", true);
         ConversationMessage msg_from_bob = new ConversationMessage("test message 2", false);
 
@@ -201,7 +201,7 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void account_serialization() throws Exception {
-        Account Alice = new Account("Alice", "password");
+        Account Alice = new Account("Alice");
 
         new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(Alice);
         File file;
@@ -219,17 +219,14 @@ public class ExampleInstrumentedTest {
 
         assertArrayEquals(a_copy.getKeyPair().getPrivateKey().toBytes(), Alice.getKeyPair().getPrivateKey().toBytes());
         assertArrayEquals(a_copy.getKeyPair().getPublicKey().toBytes(), Alice.getKeyPair().getPublicKey().toBytes());
-        assertArrayEquals(a_copy.getHash(), Alice.getHash());
-        assertEquals(a_copy.getUsername(), Alice.getUsername());
-        assertArrayEquals(a_copy.getSalt(), Alice.getSalt());
 
 
     }
 
     @Test
     public void message_history_serialization() throws Exception {
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "pwd");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         ConversationHistory history  = new ConversationHistory(Alice, buddy);
 

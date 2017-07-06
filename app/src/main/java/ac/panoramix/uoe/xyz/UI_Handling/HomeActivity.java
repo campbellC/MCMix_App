@@ -28,8 +28,8 @@ public class HomeActivity extends AppCompatActivity {
 
         start_conversation = (Button) findViewById(R.id.start_conversation_button);
         //TODO: remove the below code when accound handling is sorted
-        Alice = new Account("Alice", "password");
-        Account Bob = new Account("bob", "pwd");
+        Alice = new Account("Alice");
+        Account Bob = new Account("bob");
         bob = new Buddy("bob", Bob.getKeyPair().getPublicKey());
 
         start_conversation.setOnClickListener(new View.OnClickListener() {

@@ -27,6 +27,8 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ac.panoramix.uoe.xyz.XYZApplication;
+
 /**
  * Created by: Chris Campbell
  * on: 04/07/2017
@@ -34,7 +36,7 @@ import java.util.regex.Pattern;
  * contact: c.j.campbell@ed.ac.uk
  */
 
-class ServerHandler {
+public class ServerHandler {
 
     public static String SERVER_IP_ADDR = "129.215.25.108";
     public static int PORT = 5013;
@@ -57,24 +59,15 @@ class ServerHandler {
 
 
 
-    public ServerHandler(Context context) {
-        mContext = context;
+    public ServerHandler() {
     }
 
     private HttpURLConnection mConnection;
 
-    private Context mContext;
-    public Context getContext() {
-        return mContext;
-    }
-
-    public void setContext(Context context) {
-        mContext = context;
-    }
 
 
     public boolean is_connected_to_network() {
-        ConnectivityManager check = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager check = (ConnectivityManager) XYZApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = check.getAllNetworks();
         NetworkInfo netInfo;
         for(Network mNetwork : networks){

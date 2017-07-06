@@ -32,8 +32,8 @@ public class debug extends AppCompatActivity {
         setContentView(R.layout.activity_debug);
 
 
-        final Account Alice = new Account("Alice", "password");
-        final Account Bob = new Account("Bob", "password");
+        final Account Alice = new Account("Alice");
+        final Account Bob = new Account("Bob");
         final Buddy Alice_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey()) ;
         final Buddy Bob_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
 

@@ -20,6 +20,7 @@ import java.io.ObjectOutputStream;
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
 import ac.panoramix.uoe.xyz.Utility;
+import ac.panoramix.uoe.xyz.XYZApplication;
 import ac.panoramix.uoe.xyz.XYZConstants;
 
 /**

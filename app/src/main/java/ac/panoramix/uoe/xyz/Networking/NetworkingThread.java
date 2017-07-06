@@ -8,8 +8,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -61,7 +59,6 @@ public class NetworkingThread extends Thread{
     }
 
     public void run(){
-        CookieHandler.setDefault(new CookieManager());
         while(!kill_flag) {
             try{
                 Thread.sleep(1000);
@@ -69,7 +66,7 @@ public class NetworkingThread extends Thread{
                 Log.d("networkThread","interrupted thread");
             }
 
-            ServerHandler serverHandler = new ServerHandler(context);
+            ServerHandler serverHandler = new ServerHandler();
             Log.d("networkThread","logging in as testuser1");
             Log.d("networkThread","logged in: " + Boolean.toString(serverHandler.is_logged_in()));
             serverHandler.log_cookies();
