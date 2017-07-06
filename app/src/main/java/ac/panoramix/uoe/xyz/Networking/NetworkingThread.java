@@ -2,23 +2,17 @@ package ac.panoramix.uoe.xyz.Networking;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.BoolRes;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
-import java.net.CookiePolicy;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.Socket;
-import java.net.URL;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
