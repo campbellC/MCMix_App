@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
@@ -126,12 +125,12 @@ public class ConversationActivity extends AppCompatActivity {
 
         if(msg.length() == 0){
             return;
-        } else if(msg.length() > XYZConstants.MESSAGE_LENGTH){
+        } else if(msg.length() > XYZConstants.C_MESSAGE_BYTES){
             Toast.makeText(getApplicationContext(),
                     R.string.Long_Message_Toast,
                     Toast.LENGTH_SHORT).show();
             //TODO: add testing for this functionality
-            String re = "(?<=\\\\G.{"+String.valueOf(XYZConstants.MESSAGE_LENGTH) +"})";
+            String re = "(?<=\\\\G.{"+String.valueOf(XYZConstants.C_MESSAGE_BYTES) +"})";
             String[] msgs = msg.split(re);
             for(String s: msgs){
                 transmit(new ConversationMessage(s, true));

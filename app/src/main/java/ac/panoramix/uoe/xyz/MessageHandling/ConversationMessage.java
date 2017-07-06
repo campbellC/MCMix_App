@@ -1,12 +1,11 @@
 package ac.panoramix.uoe.xyz.MessageHandling;
 
-import android.util.Log;
-
 import com.google.common.base.CharMatcher;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 import ac.panoramix.uoe.xyz.XYZConstants;
 
@@ -18,7 +17,7 @@ import ac.panoramix.uoe.xyz.XYZConstants;
  */
 
 /** This class encapsulates a single message for the protocol.
- * The upper limit for the length of a message is XYZConstants.MESSAGE_LENGTH.
+ * The upper limit for the length of a message is XYZConstants.C_MESSAGE_BYTES.
  */
 
 public class ConversationMessage implements Serializable {
@@ -27,15 +26,30 @@ public class ConversationMessage implements Serializable {
     private String message;
     final public static Charset sEncoding = StandardCharsets.US_ASCII;
     private boolean from_alice;
+    private UUID mUUID;
+    private boolean sent;
 
 
+    public UUID getUUID() {
+        return mUUID;
+    }
+
+
+    public boolean wasSent() {
+        return sent;
+    }
+
+    public void setSent(boolean sent) {
+        this.sent = sent;
+    }
 
     /* Constructors */
     public ConversationMessage(String message, boolean from_alice) {
-        assert message.length() < XYZConstants.MESSAGE_LENGTH;
+        assert message.length() < XYZConstants.C_MESSAGE_BYTES;
         assert CharMatcher.ascii().matchesAllOf(message);
         this.message = message;
         this.from_alice = from_alice;
+        mUUID = UUID.randomUUID();
     }
     public ConversationMessage(byte[] message, boolean from_alice) {
         // need to handle 0-padded arrays.
@@ -50,6 +64,7 @@ public class ConversationMessage implements Serializable {
             // now we construct a string up to that last index. i+1 since this is the length not the index
             this.message = new String(message, 0, i+1, sEncoding);
         }
+        mUUID = UUID.randomUUID();
         this.from_alice = from_alice;
     }
 
