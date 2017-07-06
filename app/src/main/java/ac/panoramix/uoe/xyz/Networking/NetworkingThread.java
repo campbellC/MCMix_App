@@ -8,6 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -31,7 +32,9 @@ public class NetworkingThread extends Thread{
     private ConversationHandler mConversationHandler;
     private ConversationQueue mConversationQueue;
     private Socket sock;
-
+    HttpURLConnection mConnection;
+    public static String SERVER_IP_ADDR = "129.215.25.108";
+    public static int PORT = 5013;
 
 
     public void setKill_flag(boolean kill_flag) {
@@ -62,27 +65,41 @@ public class NetworkingThread extends Thread{
             } catch (InterruptedException e) {
                 Log.d("networkThread","interrupted thread");
             }
+
+            ServerHandler serverHandler = new ServerHandler();
+            Log.d("networkThread","logging in as testuser1");
+            Log.d("networkThread","logged in: " + Boolean.toString(serverHandler.is_logged_in()));
+            serverHandler.log_cookies();
+            serverHandler.log_in("testuser1","horse_battery_staple");
+            serverHandler.log_cookies();
+            Log.d("networkThread","logged in: " + Boolean.toString(serverHandler.is_logged_in()));
+
+            String in_message = serverHandler.c_recv_message();
+            Log.d("networkThread","received message: " + in_message);
+
+
+            break;
             //TODO: poll conversation connection
             //TODO: poll dialing connection
 
             //TODO: remove this debugging code
-            byte[] incoming_payload = new byte[XYZConstants.CONVERSATION_ROUND_END_MESSAGE_LENGTH];
-            incoming_payload[0] = XYZConstants.CONVERSATION_ROUND_END_TAG;
-
-            //TODO: add cases for dialling messages.
-            switch (incoming_payload[0]){
-                case XYZConstants.CONVERSATION_MESSAGE_TAG:
-                    mConversationHandler.incomingConversationMessage(incoming_payload);
-                    broadcast_conversation_message_arrived();
-                    break;
-                case XYZConstants.CONVERSATION_ROUND_END_TAG:
-                    byte[] outgoing_message = mConversationHandler.incomingRoundEndMessage(incoming_payload);
-                    send_message(outgoing_message);
-                    broadcast_conversation_message_arrived();
-                    break;
-                default:
-                    Log.d("networkThread", "Unknown Incoming Message Type");
-            }
+//            byte[] incoming_payload = new byte[XYZConstants.CONVERSATION_ROUND_END_MESSAGE_LENGTH];
+//            incoming_payload[0] = XYZConstants.CONVERSATION_ROUND_END_TAG;
+//
+//            //TODO: add cases for dialling messages.
+//            switch (incoming_payload[0]){
+//                case XYZConstants.CONVERSATION_MESSAGE_TAG:
+//                    mConversationHandler.incomingConversationMessage(incoming_payload);
+//                    broadcast_conversation_message_arrived();
+//                    break;
+//                case XYZConstants.CONVERSATION_ROUND_END_TAG:
+//                    byte[] outgoing_message = mConversationHandler.incomingRoundEndMessage(incoming_payload);
+//                    send_message(outgoing_message);
+//                    broadcast_conversation_message_arrived();
+//                    break;
+//                default:
+//                    Log.d("networkThread", "Unknown Incoming Message Type");
+//            }
         }
     }
     private void broadcast_conversation_message_arrived(){

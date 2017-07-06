@@ -5,6 +5,8 @@ package ac.panoramix.uoe.xyz.MessageHandling;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.common.primitives.UnsignedLongs;
+
 import org.libsodium.jni.crypto.Random;
 
 import java.io.File;
@@ -18,6 +20,7 @@ import java.io.ObjectOutputStream;
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
 import ac.panoramix.uoe.xyz.Utility;
+import ac.panoramix.uoe.xyz.XYZApplication;
 import ac.panoramix.uoe.xyz.XYZConstants;
 
 /**
@@ -61,11 +64,12 @@ public class ConversationHandler {
     synchronized public boolean inConversation(){
         return (bob != null);
     }
-    synchronized public void incomingConversationMessage(byte[] incoming_payload){
+
+    synchronized public void incomingConversationMessage(String incoming_payload) {
         if(inConversation()){
             // if not in conversation then this message is random noise we sent out so drop it, otherwise
             // add to the conversation history for bob
-            ConversationMessage msg = mConverter.payload_to_message(incoming_payload);
+            ConversationMessage msg = mConverter.tagged_payload_to_message(incoming_payload);
             add_message_to_history(msg);
         }
     }
@@ -80,7 +84,7 @@ public class ConversationHandler {
             ObjectInputStream ois = new ObjectInputStream(fis);
             history = (ConversationHistory) ois.readObject();
         } catch (FileNotFoundException e){
-
+            Log.d("ConvHandler", "FileNotFoundException" + e.getStackTrace());
         } catch (IOException ioe) {
             Log.d("ConvHandler", "IOException" + ioe.getStackTrace());
         } catch (ClassNotFoundException cnfe){
@@ -89,7 +93,7 @@ public class ConversationHandler {
 
         history.add(message);
         try {
-            FileOutputStream fos = context.openFileOutput(history_filename, context.MODE_PRIVATE);
+            FileOutputStream fos = context.openFileOutput(history_filename, Context.MODE_PRIVATE);
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(history);
         } catch (IOException ioe) {
@@ -99,17 +103,20 @@ public class ConversationHandler {
 
 
     }
-    synchronized public byte[] incomingRoundEndMessage(byte[] incoming_payload){
-        byte[] outgoing_payload;
+
+
+    synchronized public String incomingRoundEndMessage(String incoming_payload){
+        incoming_payload = incoming_payload.trim();
+        String outgoing_payload;
         if(!inConversation()){
             // In this case we send random noise out to the entry server
             outgoing_payload = generateRandomMessage();
         } else {
             // In conversation we must check if are any messages waiting to be sent. Otherwise,
             // create an empty message and send that.
-            long round_number = Utility.bytesToLongWithOffset(
-                            incoming_payload,
-                            XYZConstants.INCOMING_CONVERSATION_TAG_OFFSET);
+            String[] nums = incoming_payload.split("\\s+");
+            //TODO: check which Constant is correct here
+            long round_number = UnsignedLongs.parseUnsignedLong(nums[XYZConstants.INCOMING_CONVERSATION_TAG_OFFSET]);
             if(mConversationQueue.isEmpty()) {
                 outgoing_payload = mConverter.construct_null_message_payload(round_number);
                 Log.d("ConvHandler", "Sending null message");
@@ -122,9 +129,11 @@ public class ConversationHandler {
         }
         return outgoing_payload;
     }
-    private byte[] generateRandomMessage(){
-        byte[] random_payload = new Random().randomBytes(XYZConstants.INCOMING_CONVERSATION_PAYLOAD_LENGTH);
-        return random_payload;
+
+    private String generateRandomMessage(){
+        //TODO: establish what Constant is required here.
+        byte[] random_bytes = new Random().randomBytes(XYZConstants.INCOMING_CONVERSATION_PAYLOAD_LENGTH);
+        return Utility.string_from_bytes(random_bytes);
     }
 
 

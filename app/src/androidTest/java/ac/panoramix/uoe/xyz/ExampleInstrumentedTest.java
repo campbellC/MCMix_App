@@ -47,8 +47,8 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void dead_drops_are_equal() throws Exception{
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "password");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
@@ -62,8 +62,8 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void dh_shared_secrets_are_equal() throws Exception{
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "password");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
@@ -101,8 +101,8 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void conv_payload_to_msg_test() throws Exception {
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "password");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
@@ -111,21 +111,15 @@ public class ExampleInstrumentedTest {
         // generate a message from alice to bob. create payload
 
         ConversationMessage alice_msg = new ConversationMessage("This is a random string 09432802938470928374", true);
-        byte[] payload = alice_converter.construct_outgoing_payload(alice_msg, 203948l);
+        String payload = alice_converter.construct_outgoing_payload(alice_msg, 203948l);
 
         //mimic tagging by the server by prepending a 1 tag
-        byte[] tagged_payload =new byte[XYZConstants.INCOMING_CONVERSATION_PAYLOAD_LENGTH];
-        tagged_payload[0] = XYZConstants.CONVERSATION_MESSAGE_TAG;
-        System.arraycopy(payload, 0,
-                tagged_payload, XYZConstants.INCOMING_CONVERSATION_TAG_OFFSET,
-                XYZConstants.OUTGOING_CONVERSATION_PAYLOAD_LENGTH);
+        String tagged_payload = "1 " + payload;
 
 
         // get bob to decrypt and check messages are equal
-        ConversationMessage bob_msg = bob_converter.payload_to_message(tagged_payload);
+        ConversationMessage bob_msg = bob_converter.tagged_payload_to_message(tagged_payload);
         assertEquals(bob_msg, alice_msg);
-
-
 
     }
 
@@ -144,7 +138,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void buddy_serialization() throws Exception {
-        Account Bob = new Account("Bob", "password");
+        Account Bob = new Account("Bob");
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(b_buddy);
         File file;
@@ -167,7 +161,7 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void message_serialization() throws Exception {
-        Account Alice = new Account("Alice", "password");
+        Account Alice = new Account("Alice");
         ConversationMessage msg_from_alice = new ConversationMessage("test message", true);
         ConversationMessage msg_from_bob = new ConversationMessage("test message 2", false);
 
@@ -207,7 +201,7 @@ public class ExampleInstrumentedTest {
     }
     @Test
     public void account_serialization() throws Exception {
-        Account Alice = new Account("Alice", "password");
+        Account Alice = new Account("Alice");
 
         new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(Alice);
         File file;
@@ -225,17 +219,14 @@ public class ExampleInstrumentedTest {
 
         assertArrayEquals(a_copy.getKeyPair().getPrivateKey().toBytes(), Alice.getKeyPair().getPrivateKey().toBytes());
         assertArrayEquals(a_copy.getKeyPair().getPublicKey().toBytes(), Alice.getKeyPair().getPublicKey().toBytes());
-        assertArrayEquals(a_copy.getHash(), Alice.getHash());
-        assertEquals(a_copy.getUsername(), Alice.getUsername());
-        assertArrayEquals(a_copy.getSalt(), Alice.getSalt());
 
 
     }
 
     @Test
     public void message_history_serialization() throws Exception {
-        Account Alice = new Account("Alice", "password");
-        Account Bob = new Account("Bob", "pwd");
+        Account Alice = new Account("Alice");
+        Account Bob = new Account("Bob");
         Buddy buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         ConversationHistory history  = new ConversationHistory(Alice, buddy);
 
@@ -265,4 +256,22 @@ public class ExampleInstrumentedTest {
         assertEquals(hist_copy.get(1), msg_from_bob);
     }
 
+
+
+    @Test
+    public void string_to_bytes_test() throws Exception {
+        String test_str = "0 0 0 1 9 8 7 6 5 4 6 8 6 636732648 276 23876 28476384761284 761253 7165";
+        byte[] bytes = Utility.bytes_from_string(test_str);
+        String reconstructed = Utility.string_from_bytes(bytes);
+        assertEquals(test_str, reconstructed);
+
+    }
+    @Test
+    public void bytes_to_string_test() throws Exception {
+        byte[] bytes = {0,0,0,0,1,1,1,1,0,0,0,0,3,3,3,3,0,1,0,1,0,0,3,4};
+        String test_str = Utility.string_from_bytes(bytes);
+        byte[] reconstructed = Utility.bytes_from_string(test_str);
+        assertArrayEquals(bytes, reconstructed);
+
+    }
 }

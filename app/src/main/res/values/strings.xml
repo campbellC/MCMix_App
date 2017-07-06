@@ -9,4 +9,10 @@
     <string name="Start_Conversation_Button">Start Conversation</string>
     <string name="Start_Privacy_Button">Initiate Privacy Protection</string>
     <string name="Stop_Privacy_Button">Stop Privacy Protection</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="login_username_hint">Username</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_button">Log in</string>
 </resources>
