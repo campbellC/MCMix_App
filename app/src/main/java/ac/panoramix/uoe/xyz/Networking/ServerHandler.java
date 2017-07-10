@@ -4,10 +4,14 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.util.Base64;
 import android.util.Log;
+
+import com.google.common.primitives.UnsignedLongs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.libsodium.jni.keys.PublicKey;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -27,6 +31,8 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ac.panoramix.uoe.xyz.Accounts.Buddy;
+import ac.panoramix.uoe.xyz.Utility;
 import ac.panoramix.uoe.xyz.XYZApplication;
 
 /**
@@ -40,12 +46,18 @@ public class ServerHandler {
 
     public static String SERVER_IP_ADDR = "129.215.25.108";
     public static int PORT = 5013;
+    public static String good_status = "good";
     public static String protocol = "http";
     public static String LOGIN_URL = "/accounts/login/";
     public static String LOGOUT_URL = "/accounts/logout/";
     public static String C_GET_MESSAGE_URL = "/conversation/get_message";
     public static String C_SEND_MESSAGE_URL = "/conversation/send_message";
+    public static String C_GET_ROUND_NUMBER_URL = "/conversation/get_round_number";
     public static URI sURI;
+
+    public static String D_UPDATE_PUBLIC_KEY = "/dial/update_public_key";
+    public static String D_GET_PUBLIC_KEY= "/dial/get_public_key";
+
     static {
         try {
             sURI= new URI("http",  null, SERVER_IP_ADDR, PORT, null, null, null);
@@ -54,11 +66,144 @@ public class ServerHandler {
         }
     }
 
+
+
+
     private URL mURL;
+    private long c_round_number = 0;
+
+    public boolean c_round_finished(){
+        if (is_connected_to_network() && is_logged_in()) {
+            try {
+                establish_connection(C_GET_ROUND_NUMBER_URL);
+
+                mConnection.connect();
+                InputStream in = mConnection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder response = new StringBuilder();
+                String inputstr;
+                while ((inputstr = reader.readLine()) != null) {
+                    response.append(inputstr + "\n");
+                }
+                try {
+                    JSONObject json = new JSONObject(response.toString());
+                    String number_str = json.getString("round_number");
+                    long new_round_number =  UnsignedLongs.parseUnsignedLong(number_str);
+                    if( new_round_number!= c_round_number){
+                        c_round_number = new_round_number;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (JSONException e) {
+                    Log.d("ServerHandler", "Malformed JSON from server: ", e);
+                    return false;
+                }
+
+            } catch (IOException e) {
+                Log.d("ServerHandler", "Bad connection to site", e);
+            } finally {
+                if (mConnection != null)
+                    mConnection.disconnect();
+            }
+        } else {
+            Log.d("ServerHandler", "Not connected to network or not logged in.");
+        }
+        return false;
+
+    }
+
+    public Buddy get_buddy(String username){
+        if(is_connected_to_network() && is_logged_in()){
+            try {
+                String csrftoken = get_current_csrftoken();
+
+                //log_cookies();
+                //Log.d("ServerHandler","csrf_token = " + csrftoken);
+
+                establish_connection(D_GET_PUBLIC_KEY);
+                mConnection.setDoOutput(true);
+                mConnection.setDoInput(true);
+                mConnection.setRequestMethod("POST");
+
+                String formParameters = "csrfmiddlewaretoken=" + csrftoken
+                        + "&username="  + username;
+                OutputStream out = mConnection.getOutputStream();
+                out.write(formParameters.getBytes("UTF-8"));
+                mConnection.connect();
+                InputStream in = mConnection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder response = new StringBuilder();
+                String inputstr;
+                while ((inputstr = reader.readLine()) != null) {
+                    response.append(inputstr + "\n");
+                }
+                try {
+                    JSONObject json = new JSONObject(response.toString());
+                    String status = json.getString("status");
+                    if (!status.equals("good")) {
+                        return null;
+                    }
+                    String pk = json.getString("public_key");
+                    mConnection.disconnect();
+                    Log.d("ServerHandler", "public key retrieved " + pk)
+                    ;
+
+                    return  new Buddy(username, new PublicKey(Base64.decode(pk, Base64.URL_SAFE)));
+                } catch (JSONException e){
+                    Log.d("ServerHandler", "Malformed JSON in send_message", e);
+                }
 
 
+            } catch (IOException e ) {
+                Log.d("ServerHandler", "Bad connection to send_message ", e);
+                return null;
+            } finally {
+                if (mConnection != null)
+                    mConnection.disconnect();
+            }
+        } else {
+            Log.d("ServerHandler", "Not connected to network or not logged in.");
+            return null;
+        }
+        return null;
+    }
+    public boolean update_public_key(String public_key){
+        if(is_connected_to_network() && is_logged_in()){
+            try {
+                String csrftoken = get_current_csrftoken();
+
+                //log_cookies();
+                //Log.d("ServerHandler","csrf_token = " + csrftoken);
+
+                establish_connection(D_UPDATE_PUBLIC_KEY);
+                mConnection.setDoOutput(true);
+                mConnection.setDoInput(true);
+                mConnection.setRequestMethod("POST");
+
+                String formParameters = "csrfmiddlewaretoken=" + csrftoken
+                        + "&public_key="  + public_key;
+                OutputStream out = mConnection.getOutputStream();
+                out.write(formParameters.getBytes("UTF-8"));
+                mConnection.connect();
+                InputStream in = mConnection.getInputStream();
+                mConnection.disconnect();
 
 
+            } catch (IOException e ) {
+                Log.d("ServerHandler", "Bad connection to send_message ", e);
+                return false;
+            } finally {
+                if (mConnection != null)
+                    mConnection.disconnect();
+            }
+        } else {
+            Log.d("ServerHandler", "Not connected to network or not logged in.");
+            return false;
+        }
+        return true;
+
+    }
     public ServerHandler() {
     }
 
@@ -176,7 +321,6 @@ public class ServerHandler {
     }
 
     public boolean c_send_message(String message){
-        //TODO: handle multiple sends in same round
         if(is_connected_to_network() && is_logged_in()){
             try {
                 String csrftoken = get_current_csrftoken();
@@ -186,6 +330,7 @@ public class ServerHandler {
 
                 establish_connection(C_SEND_MESSAGE_URL);
                 mConnection.setDoOutput(true);
+                mConnection.setDoInput(true);
                 mConnection.setRequestMethod("POST");
 
                 String formParameters = "csrfmiddlewaretoken=" + csrftoken
@@ -193,14 +338,28 @@ public class ServerHandler {
                 OutputStream out = mConnection.getOutputStream();
                 out.write(formParameters.getBytes("UTF-8"));
                 mConnection.connect();
-                mConnection.getInputStream();
-                mConnection.disconnect();
+                InputStream in = mConnection.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder response = new StringBuilder();
+                String inputstr;
+                while ((inputstr = reader.readLine()) != null) {
+                    response.append(inputstr + "\n");
+                }
+                try {
+                    JSONObject json = new JSONObject(response.toString());
+                    String status = json.getString("status");
+                    if (status.equals("multiple_messages_submitted")) {
+                        return false;
+                    }
+                    mConnection.disconnect();
+                } catch (JSONException e){
+                    Log.d("ServerHandler", "Malformed JSON in send_message", e);
+                }
 
 
-
-            } catch (IOException e ){
-                Log.d("ServerHandler", "Bad connection to log in ", e);
-                return false;
+            } catch (IOException e ) {
+                    Log.d("ServerHandler", "Bad connection to send_message ", e);
+                    return false;
             } finally {
                 if (mConnection != null)
                     mConnection.disconnect();
@@ -212,8 +371,11 @@ public class ServerHandler {
         return true;
     }
 
+    public long getC_round_number() {
+        return c_round_number;
+    }
+
     public String c_recv_message() {
-        //TODO: add establish connection branching in case no connection established
         if (is_connected_to_network() && is_logged_in()) {
             try {
                 establish_connection(C_GET_MESSAGE_URL);
@@ -228,8 +390,11 @@ public class ServerHandler {
                 }
                 try {
                     JSONObject json = new JSONObject(response.toString());
-                    String message = json.getString("returned_message");
-                    return message;
+                    String status = json.getString("status");
+                    if(status.equals(good_status)) {
+                        String message = json.getString("returned_message");
+                        return message;
+                    }
                 } catch (JSONException e) {
                     Log.d("ServerHandler", "Malformed JSON from server: ", e);
                     return null;

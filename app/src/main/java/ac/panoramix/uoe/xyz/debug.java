@@ -25,7 +25,6 @@ import ac.panoramix.uoe.xyz.UI_Handling.ConversationActivity;
 public class debug extends AppCompatActivity {
     EditText alice, bob, secret, deaddrop;
     Button go;
-    int i = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
