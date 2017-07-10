@@ -112,7 +112,7 @@ public class ExampleInstrumentedTest {
         ConversationMessage alice_msg = new ConversationMessage("This is a random string 09432802938470928374", true);
         String payload = alice_converter.constructOutgoingPayload(alice_msg, 203948l);
 
-
+        assertEquals(payload.split(" ").length, XYZConstants.CONVERSATION_PAYLOAD_LENGTH);
 
         // get bob to decrypt and check messages are equal
         ConversationMessage bob_msg = bob_converter.encryptedPayloadToMessage(payload);

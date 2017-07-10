@@ -37,7 +37,10 @@ public class ConversationMessagePayloadConverter {
     public ConversationMessage encryptedPayloadToMessage(String payload){
         payload = payload.trim();
         Log.d("ConvMsgConverter","decrypting payload: " + payload);
-        return encryptedBytesToMessage(Utility.bytes_from_string(payload));
+
+        ConversationMessage msg = encryptedBytesToMessage(Utility.bytes_from_string(payload));
+        Log.d("ConvMsgConverter", "received message: " + msg );
+        return msg;
     }
     private ConversationMessage encryptedBytesToMessage(byte[] payload) {
         assert payload.length == XYZConstants.CONVERSATION_PAYLOAD_BYTES;

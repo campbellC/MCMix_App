@@ -41,7 +41,6 @@ public class ConversationHandler {
     private static ConversationHandler sConversationHandler;
 
     Buddy bob;
-    Account alice;
     ConversationQueue mConversationQueue;
     ConversationMessagePayloadConverter mConverter;
 
@@ -59,7 +58,7 @@ public class ConversationHandler {
         mConverter = null;
     }
 
-    public ConversationHandler getOrCreateInstance(){
+    public static ConversationHandler getOrCreateInstance(){
         if(sConversationHandler == null){
             sConversationHandler = new ConversationHandler();
         }
@@ -93,17 +92,19 @@ public class ConversationHandler {
    synchronized public void startConversation(Buddy bob){
         this.bob = bob;
         mConversationQueue.clear();
-        mConverter = new ConversationMessagePayloadConverter(alice, bob);
+        mConverter = new ConversationMessagePayloadConverter(XYZApplication.getAccount(), bob);
     }
     synchronized public boolean inConversation(){
         return (bob != null);
     }
 
     synchronized public void handleMessageFromServer(String incoming_payload){
-        if(inConversation() && buddyLastMessageWasSentTo.equals(bob)){
+        Log.d("ConvHandler", "handling message from server: " + incoming_payload);
+        if(inConversation() && buddyLastMessageWasSentTo != null && buddyLastMessageWasSentTo.equals(bob)){
             // if not in conversation then this message is random noise we sent out so drop it, otherwise
             // add to the conversation history for bob
             ConversationMessage msg = mConverter.encryptedPayloadToMessage(incoming_payload);
+            Log.d("ConvHandler", "Message contents" + msg.toString());
             if(!msg.isEmpty()) {
                 addMessageToHistory(msg);
             }
@@ -113,8 +114,8 @@ public class ConversationHandler {
     synchronized private void addMessageToHistory(ConversationMessage message){
         // This method takes a conversation message and saves a file containing the previous history of this
         // conversation. It does this by opening the old save file, appending this message and then resaving that file.
-        String history_filename = Utility.filename_for_conversation(alice,bob);
-        ConversationHistory history = new ConversationHistory(alice,bob);
+        String history_filename = Utility.filename_for_conversation(XYZApplication.getAccount(),bob);
+        ConversationHistory history = new ConversationHistory(XYZApplication.getAccount(),bob);
         try {
             FileInputStream fis = XYZApplication.getContext().openFileInput(history_filename);
             ObjectInputStream ois = new ObjectInputStream(fis);
@@ -152,32 +153,40 @@ public class ConversationHandler {
         String outgoing_payload;
         if(!inConversation()){
             // In this case we send random noise out to the entry server
+            Log.d("ConvHandler", "Sending random noise to server");
             outgoing_payload = generateRandomMessage();
             buddyLastMessageWasSentTo = null;
             lastMessage = null;
         } else {
             // In conversation we must check if are any messages waiting to be sent. Otherwise,
             // create an empty message and send that.
-            buddyLastMessageWasSentTo = bob;
-            if(mConversationQueue.isEmpty()) {
-                lastMessage = null;
-                outgoing_payload = mConverter.constructNullMessagePayload(round_number);
-                Log.d("ConvHandler", "Sending null message");
+            if(buddyLastMessageWasSentTo != null && buddyLastMessageWasSentTo.equals(bob) && lastMessage != null && !lastMessage.wasSent()){
+                Log.d("ConvHandler", "Sending Message: " + lastMessage.toString());
+                outgoing_payload = mConverter.constructOutgoingPayload(lastMessage, round_number) ;
             } else {
-                ConversationMessage msg_to_send = mConversationQueue.poll();
-                lastMessage = msg_to_send;
-                Log.d("ConvHandler", "Sending Message: " + msg_to_send.toString());
-                outgoing_payload = mConverter.constructOutgoingPayload(msg_to_send, round_number);
+                buddyLastMessageWasSentTo = bob;
+                if (mConversationQueue.isEmpty()) {
+                    lastMessage = null;
+                    outgoing_payload = mConverter.constructNullMessagePayload(round_number);
+                    Log.d("ConvHandler", "Sending null message");
+                } else {
+                    ConversationMessage msg_to_send = mConversationQueue.peek();
+                    lastMessage = msg_to_send;
+                    Log.d("ConvHandler", "Sending Message: " + msg_to_send.toString());
+                    outgoing_payload = mConverter.constructOutgoingPayload(msg_to_send, round_number);
+                }
             }
         }
+        Log.d("ConvHandler", "Actual payload" + outgoing_payload);
         return outgoing_payload;
     }
 
     synchronized  public void confirmMessageSent(){
 
-        if(inConversation() && buddyLastMessageWasSentTo.equals(bob) && lastMessage != null) {
+        if(inConversation() && buddyLastMessageWasSentTo!= null && buddyLastMessageWasSentTo.equals(bob) && lastMessage != null) {
             lastMessage.setSent(true);
             addMessageToHistory(lastMessage);
+            mConversationQueue.poll();
             lastMessage = null;
         }
     }
@@ -185,6 +194,13 @@ public class ConversationHandler {
     private String generateRandomMessage(){
         byte[] random_bytes = new Random().randomBytes(XYZConstants.CONVERSATION_PAYLOAD_BYTES);
         return Utility.string_from_bytes(random_bytes);
+    }
+
+    public void log_status(){
+        Log.d("ConvHandler", "in conversation: " + Boolean.toString(inConversation()));
+        Log.d("ConvHandler", "last message sent " + lastMessage);
+        Log.d("ConvHandler", "last buddy sent to " + buddyLastMessageWasSentTo);
+
     }
 
 
