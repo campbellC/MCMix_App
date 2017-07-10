@@ -20,8 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name=".debug">
-        </activity>
         <activity android:name=".UI_Handling.ConversationActivity">
         </activity>
 
@@ -39,8 +37,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".DemoActivity">
         </activity>
     </application>
 

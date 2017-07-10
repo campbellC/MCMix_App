@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ac.panoramix.uoe.xyz.DemoActivity;
 import ac.panoramix.uoe.xyz.Networking.ServerHandler;
 import ac.panoramix.uoe.xyz.Networking.XYZNetworkService;
 import ac.panoramix.uoe.xyz.R;
@@ -79,8 +78,6 @@ public class LoginActivity extends AppCompatActivity {
                 Intent serviceIntent = new Intent(getApplicationContext(), XYZNetworkService.class);
                 startService(serviceIntent);
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
-                //TODO: remove this demo activity load
-                intent = new Intent(getApplicationContext(), DemoActivity.class);
                 // These flags make it so that pressing Back will not return the user to the login screen
 
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
