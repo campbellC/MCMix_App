@@ -45,7 +45,7 @@ public class NetworkingThread extends Thread{
         Log.d("NetworkThread", "Creating no-bob network thread");
         context = ctx;
         kill_flag = false;
-        mConversationHandler = new ConversationHandler(Alice, context);
+        //mConversationHandler = new ConversationHandler(Alice, context);
         mConversationQueue = ConversationQueue.getOrCreateConversationQueue();
     }
 
@@ -53,7 +53,7 @@ public class NetworkingThread extends Thread{
         Log.d("NetworkThread", "Creating network thread with a bob");
         context = ctx;
         kill_flag = false;
-        mConversationHandler = new ConversationHandler(Alice, context);
+        //mConversationHandler = new ConversationHandler(Alice, context);
         mConversationHandler.startConversation(bob);
         mConversationQueue = ConversationQueue.getOrCreateConversationQueue();
     }
@@ -148,7 +148,7 @@ public class NetworkingThread extends Thread{
         }
         //TODO: this should change behaviour based on first byte in stream which determines whether this is a conversation or a dial (or error etc).
         InputStream is = sock.getInputStream();
-        byte[] incoming_payload = new byte[XYZConstants.INCOMING_CONVERSATION_PAYLOAD_LENGTH];
+        byte[] incoming_payload = new byte[XYZConstants.CONVERSATION_PAYLOAD_BYTES];
         is.read(incoming_payload);
         return incoming_payload;
     }

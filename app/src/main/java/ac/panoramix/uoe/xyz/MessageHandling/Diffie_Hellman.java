@@ -3,9 +3,6 @@ package ac.panoramix.uoe.xyz.MessageHandling;
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Hash;
 import org.libsodium.jni.crypto.Point;
-import org.libsodium.jni.crypto.Random;
-import org.libsodium.jni.keys.KeyPair;
-import org.libsodium.jni.keys.PublicKey;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
@@ -27,7 +24,7 @@ public class Diffie_Hellman {
 
 
 
-    // TODO: decide on format for round_number and dead_drop
+
     public static byte[] dead_drop(Account alice, Buddy bob, long round_number){
 
         Point shared_secret = shared_secret(alice, bob);
@@ -42,7 +39,7 @@ public class Diffie_Hellman {
 
         Hash hash = new Hash();
         byte[] dead_drop = hash.sha256(concatenated);
-        assert dead_drop.length == XYZConstants.DEAD_DROP_LENGTH;
+        assert dead_drop.length == XYZConstants.DEAD_DROP_BYTES;
 
         return dead_drop;
 

@@ -16,7 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
@@ -56,7 +55,7 @@ public class ExampleInstrumentedTest {
             byte[] Alice_dd = Diffie_Hellman.dead_drop(Alice, b_buddy, r);
             byte[] Bob_dd = Diffie_Hellman.dead_drop(Bob, a_buddy, r);
             assertEquals(Alice_dd.length, Bob_dd.length);
-            assertEquals(Alice_dd.length,XYZConstants.DEAD_DROP_LENGTH);
+            assertEquals(Alice_dd.length,XYZConstants.DEAD_DROP_BYTES);
             assertTrue(Arrays.equals(Alice_dd, Bob_dd));
         }
     }
@@ -92,7 +91,7 @@ public class ExampleInstrumentedTest {
     public void empty_string_message_handling() throws Exception {
         ConversationMessage msg = new ConversationMessage("", true);
         byte[] bytes = msg.getBytes();
-        assertEquals(bytes.length, XYZConstants.MESSAGE_LENGTH);
+        assertEquals(bytes.length, XYZConstants.C_MESSAGE_BYTES);
 
         ConversationMessage msg2 = new ConversationMessage(bytes, false);
         assertEquals(msg, msg2);
@@ -111,14 +110,12 @@ public class ExampleInstrumentedTest {
         // generate a message from alice to bob. create payload
 
         ConversationMessage alice_msg = new ConversationMessage("This is a random string 09432802938470928374", true);
-        String payload = alice_converter.construct_outgoing_payload(alice_msg, 203948l);
+        String payload = alice_converter.constructOutgoingPayload(alice_msg, 203948l);
 
-        //mimic tagging by the server by prepending a 1 tag
-        String tagged_payload = "1 " + payload;
 
 
         // get bob to decrypt and check messages are equal
-        ConversationMessage bob_msg = bob_converter.tagged_payload_to_message(tagged_payload);
+        ConversationMessage bob_msg = bob_converter.encryptedPayloadToMessage(payload);
         assertEquals(bob_msg, alice_msg);
 
     }

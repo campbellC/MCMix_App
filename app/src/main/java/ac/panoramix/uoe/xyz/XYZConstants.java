@@ -10,20 +10,14 @@ import org.libsodium.jni.SodiumConstants;
  */
 
 public final class XYZConstants {
-    // Constants for Conversation Protocol
-    public static final int INCOMING_CONVERSATION_TAG_OFFSET = 1; // The -0-indexed number of the column in terms of integers the content of tagged messages will start at
-    public static final int CONVERSATION_ROUND_END_MESSAGE_LENGTH = INCOMING_CONVERSATION_TAG_OFFSET + 8; // tag plus round number and round number is a long integer
-    public static final byte CONVERSATION_ROUND_END_TAG = 1;
-    public static final byte CONVERSATION_MESSAGE_TAG = 0;
 
     public static final int INCOMING_CONVERSATION_TAG_COLUMN = 0; //The position in terms of integers that the tag will take in incoming messages
 
-    public static final int MESSAGE_LENGTH = 160; // length in bytes of a conversation message
-    public static final int DEAD_DROP_LENGTH = 32; // sha256 has 256 bits = 32 bytes
-    public static final int CIPHERTEXT_LENGTH = MESSAGE_LENGTH + 16; // length in bytes of encrypted messages. //TODO: find proof that this is correct fomula
-    public static final int OUTGOING_CONVERSATION_PAYLOAD_LENGTH = DEAD_DROP_LENGTH + SodiumConstants.NONCE_BYTES + CIPHERTEXT_LENGTH;
-    public static final int INCOMING_CONVERSATION_PAYLOAD_LENGTH = OUTGOING_CONVERSATION_PAYLOAD_LENGTH + INCOMING_CONVERSATION_TAG_OFFSET;
-
+    public static final int C_MESSAGE_BYTES = 160; // length in bytes of a conversation message
+    public static final int DEAD_DROP_BYTES = 32; // sha256 has 256 bits = 32 bytes
+    public static final int C_CIPHERTEXT_BYTES = C_MESSAGE_BYTES + 16; // length in bytes of encrypted messages. //TODO: find proof that this is correct fomula
+    public static final int CONVERSATION_PAYLOAD_BYTES = DEAD_DROP_BYTES + SodiumConstants.NONCE_BYTES + C_CIPHERTEXT_BYTES;
+    public static final int CONVERSATION_PAYLOAD_LENGTH = CONVERSATION_PAYLOAD_BYTES / 8;
     public static final int MAX_MESSAGES_IN_QUEUE = 50;
 
 

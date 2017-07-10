@@ -28,6 +28,10 @@ public class ConversationQueue extends ConcurrentLinkedQueue<ConversationMessage
        return sConversationQueue;
     }
 
+    public ConversationQueue(){
+        super();
+    }
+
     @Override
     public boolean add(ConversationMessage m)
     {
