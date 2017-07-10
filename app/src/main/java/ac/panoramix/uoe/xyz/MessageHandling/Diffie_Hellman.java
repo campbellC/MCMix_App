@@ -24,7 +24,7 @@ public class Diffie_Hellman {
 
 
 
-    // TODO: decide on format for round_number and dead_drop
+
     public static byte[] dead_drop(Account alice, Buddy bob, long round_number){
 
         Point shared_secret = shared_secret(alice, bob);

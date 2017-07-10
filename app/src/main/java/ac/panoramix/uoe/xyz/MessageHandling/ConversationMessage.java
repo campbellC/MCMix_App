@@ -98,6 +98,7 @@ public class ConversationMessage implements Serializable {
         return message;
     }
 
+    public boolean isEmpty() {return message.equals(""); }
     /* Object methods */
     @Override
     public boolean equals(Object obj) {

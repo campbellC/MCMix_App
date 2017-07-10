@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
@@ -29,6 +30,10 @@ import ac.panoramix.uoe.xyz.XYZConstants;
  * This class is the outer layer of conversation handling. It's main responsibility is to act as a
  * mediator between the network handling layer that deals with the specific SHAREMIND sharing/TLS
  * and the UI thread that is adding messages to a queue and starting and stopping conversations.
+ *
+ * This class is a singleton that is the sole responsibility for manipulating the conversation histories
+ * and outgoing conversation queue. All requests for conversation message handling must go through an
+ * instance of this class.
  */
 
 
@@ -40,7 +45,14 @@ public class ConversationHandler {
     ConversationQueue mConversationQueue;
     ConversationMessagePayloadConverter mConverter;
 
+    /**
+     * The following two fields buddyLastMessageWasSentTo and lastMessage allow delivery reciepts.
+     * The networking thread confirms delivery and the conversation handler only adds a message
+     * to the history if still in conversation with the same person *and* the last message sent
+     * was not a null message.
+     */
     Buddy buddyLastMessageWasSentTo;
+    ConversationMessage lastMessage;
 
     private ConversationHandler(){
         mConversationQueue = new ConversationQueue();
@@ -92,7 +104,9 @@ public class ConversationHandler {
             // if not in conversation then this message is random noise we sent out so drop it, otherwise
             // add to the conversation history for bob
             ConversationMessage msg = mConverter.encryptedPayloadToMessage(incoming_payload);
-            addMessageToHistory(msg);
+            if(!msg.isEmpty()) {
+                addMessageToHistory(msg);
+            }
         }
     }
 
@@ -123,7 +137,12 @@ public class ConversationHandler {
         }
     }
 
-
+    synchronized public void handleMessageFromUser(String payload){
+        // This one liner splits the payload into strings of the correct length for sending over the wire
+        for(String s : payload.split("(?<=\\G.{"+ Integer.toString(XYZConstants.C_MESSAGE_BYTES) + "})")){
+            mConversationQueue.add(new ConversationMessage(s, true));
+        }
+    }
     /***
      *
      * @param round_number
@@ -135,15 +154,18 @@ public class ConversationHandler {
             // In this case we send random noise out to the entry server
             outgoing_payload = generateRandomMessage();
             buddyLastMessageWasSentTo = null;
+            lastMessage = null;
         } else {
             // In conversation we must check if are any messages waiting to be sent. Otherwise,
             // create an empty message and send that.
             buddyLastMessageWasSentTo = bob;
             if(mConversationQueue.isEmpty()) {
+                lastMessage = null;
                 outgoing_payload = mConverter.constructNullMessagePayload(round_number);
                 Log.d("ConvHandler", "Sending null message");
             } else {
-                ConversationMessage msg_to_send = mConversationQueue.peek();
+                ConversationMessage msg_to_send = mConversationQueue.poll();
+                lastMessage = msg_to_send;
                 Log.d("ConvHandler", "Sending Message: " + msg_to_send.toString());
                 outgoing_payload = mConverter.constructOutgoingPayload(msg_to_send, round_number);
             }
@@ -152,11 +174,11 @@ public class ConversationHandler {
     }
 
     synchronized  public void confirmMessageSent(){
-        //TODO: serious testing needed of this behaviour with stopping conversations and starting with same person etc.
-        if(inConversation() && buddyLastMessageWasSentTo.equals(bob)) {
-            assert !mConversationQueue.isEmpty();
-            ConversationMessage msg = mConversationQueue.poll();
-            addMessageToHistory(msg);
+
+        if(inConversation() && buddyLastMessageWasSentTo.equals(bob) && lastMessage != null) {
+            lastMessage.setSent(true);
+            addMessageToHistory(lastMessage);
+            lastMessage = null;
         }
     }
 
