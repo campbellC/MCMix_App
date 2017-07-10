@@ -177,7 +177,7 @@ public class ConversationHandler {
                 }
             }
         }
-        Log.d("ConvHandler", "Actual payload" + outgoing_payload);
+        Log.d("ConvHandler", "Actual payload: " + outgoing_payload);
         return outgoing_payload;
     }
 
