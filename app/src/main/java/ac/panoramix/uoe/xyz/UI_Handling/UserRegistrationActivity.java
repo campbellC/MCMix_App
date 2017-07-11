@@ -14,6 +14,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Networking.ServerHandler;
 import ac.panoramix.uoe.xyz.R;
@@ -65,13 +72,17 @@ public class UserRegistrationActivity extends AppCompatActivity {
     }
 
     private void StoreAccount(){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(XYZConstants.SHARED_PREFS_FILE, MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = prefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(XYZApplication.getAccount());
-        Log.d("UserRegAct", "Storing application with name: " + XYZApplication.getAccount().getUsername());
-        prefsEditor.putString(XYZConstants.ACCOUNT_SHARED_PREF, json);
-        prefsEditor.commit();
+        try {
+            FileOutputStream fos = openFileOutput(XYZConstants.ACCOUNT_STORAGE_FILE, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(XYZApplication.getAccount());
+            oos.close();
+            fos.close();
+        }catch (FileNotFoundException e){
+            Log.d("UserRegAct", "Cannot open the file", e);
+        } catch (IOException e) {
+            Log.d("UserRegAct", "Cannot write object to file", e);
+        }
     }
 
 
