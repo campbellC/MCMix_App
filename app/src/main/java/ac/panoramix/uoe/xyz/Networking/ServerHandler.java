@@ -8,6 +8,7 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.libsodium.jni.keys.PublicKey;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import ac.panoramix.uoe.xyz.Utility;
 import ac.panoramix.uoe.xyz.XYZApplication;
 
 /**
@@ -39,8 +41,9 @@ public class ServerHandler {
 
     public static final String SERVER_IP_ADDR = "129.215.25.108";
     public static final int PORT = 5013;
-    public static final String good_status = "good";
+    public static final String GOOD_STATUS = "good";
     public static final String protocol = "http";
+    public static final String CREATE_USER_URL = "/dial/create_user/";
     public static final String LOGIN_URL = "/accounts/login/";
     public static final String LOGOUT_URL = "/accounts/logout/";
     public static final String C_GET_MESSAGE_URL = "/conversation/get_message";
@@ -56,6 +59,15 @@ public class ServerHandler {
         } catch (URISyntaxException e) {
             Log.d("ServerHandler", "URI initialisation issue", e);
         }
+    }
+
+    private static ServerHandler sServerHandler;
+    private ServerHandler(){}
+    public static ServerHandler getOrCreateInstance(){
+        if (sServerHandler == null){
+            sServerHandler = new ServerHandler();
+        }
+        return sServerHandler;
     }
 
 
@@ -95,7 +107,7 @@ public class ServerHandler {
         Log.d("ServerHandler"," ---------Logging cookies ends---------- ");
     }
 
-    public boolean establish_connection( String resource){
+    public synchronized boolean establish_connection( String resource){
         Log.d("ServerHandler", "Establishing connection with resource: " + resource);
         if(is_connected_to_network()){
             try {
@@ -125,7 +137,7 @@ public class ServerHandler {
 
     }
 
-    public boolean log_in(String username, String password){
+    public synchronized boolean log_in(String username, String password){
         if(is_connected_to_network() && establish_connection(LOGIN_URL)){
             try {
                 mConnection.connect();
@@ -162,7 +174,7 @@ public class ServerHandler {
         }
     }
 
-    private JSONObject send_post_for_response(String resource, Map<String,String> parameters) {
+    private synchronized JSONObject send_post_for_response(String resource, Map<String,String> parameters) {
         assert is_logged_in();
         if(is_connected_to_network() && establish_connection(resource)){
             try{
@@ -206,13 +218,13 @@ public class ServerHandler {
         }
     }
 
-    public boolean c_round_finished(){
+    public synchronized boolean c_round_finished(){
         JSONObject response = send_post_for_response(C_GET_ROUND_NUMBER_URL, new HashMap<String, String>());
         if(response == null) return false;
         try{
             String status = response.getString("status");
             switch(status){
-                case good_status:
+                case GOOD_STATUS:
                     long new_round_number = response.getLong("round_number");
                     if(new_round_number != c_round_number) {
                         c_round_number = new_round_number;
@@ -238,7 +250,7 @@ public class ServerHandler {
         try{
             String status = response.getString("status");
             switch(status){
-                case good_status:
+                case GOOD_STATUS:
                     String message = response.getString("returned_message");
                     return message;
                 default:
@@ -259,7 +271,7 @@ public class ServerHandler {
         try{
             String status = response.getString("status");
             switch(status){
-                case good_status:
+                case GOOD_STATUS:
                     return true;
                 default:
                     Log.d("ServHandler", "On request for receiving c_message server returned status:" + status);
@@ -272,6 +284,58 @@ public class ServerHandler {
 
     }
 
+
+    public static final String USERNAME_ALREADY_EXISTS = "user_already_exists";
+    public static final String PASSWORD_DOES_NOT_CONFORM = "password_does_not_conform";
+    public String create_user(String username, String password){
+        Map<String,String> parameters = new HashMap<String,String>();
+        parameters.put("username", username);
+        parameters.put("password", password);
+        JSONObject response = send_post_for_response(CREATE_USER_URL, parameters);
+        if(response == null) return null;
+        try{
+            String status = response.getString("status");
+            return status;
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return null;
+        }
+    }
+
+    public PublicKey get_public_key_for_username(String username){
+        Map<String,String> parameters = new HashMap<String,String>();
+        parameters.put("username", username);
+        JSONObject response = send_post_for_response(D_GET_PUBLIC_KEY, parameters);
+        if(response == null) return null;
+        try{
+            switch(response.getString("status")){
+                case GOOD_STATUS:
+                    byte[] bytes_of_key = Utility.bytes_from_string(response.getString("public_key"));
+                    return new PublicKey(bytes_of_key);
+                default:
+                    return null;
+            }
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return null;
+        }
+    }
+
+    public static final String PUBLIC_KEY_DOES_NOT_CONFORM = "bad_public_key_format";
+    public String update_key(PublicKey key){
+        Map<String,String> parameters = new HashMap<String,String>();
+        String key_string = Utility.string_from_bytes(key.toBytes());
+        parameters.put("public_key", key_string);
+        JSONObject response = send_post_for_response(D_UPDATE_PUBLIC_KEY, parameters);
+        if(response == null) return null;
+        try{
+            String status = response.getString("status");
+            return status;
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return null;
+        }
+    }
 
 
 }

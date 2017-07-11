@@ -48,7 +48,7 @@ public class XYZNetworkService extends Service {
         public NetworkingTasks(){
             super();
             mConversationHandler = ConversationHandler.getOrCreateInstance();
-            mServerHandler = new ServerHandler();
+            mServerHandler = ServerHandler.getOrCreateInstance();
         }
 
         @Override

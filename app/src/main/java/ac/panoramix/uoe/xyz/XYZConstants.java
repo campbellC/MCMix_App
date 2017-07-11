@@ -11,6 +11,10 @@ import org.libsodium.jni.SodiumConstants;
 
 public final class XYZConstants {
 
+    public static final String ACCOUNT_SHARED_PREF = "Alice_Account";
+    public static final String SHARED_PREFS_FILE = "XYZPrefs";
+
+
     public static final int INCOMING_CONVERSATION_TAG_COLUMN = 0; //The position in terms of integers that the tag will take in incoming messages
 
     public static final int C_MESSAGE_BYTES = 160; // length in bytes of a conversation message

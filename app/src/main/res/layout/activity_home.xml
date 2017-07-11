@@ -10,42 +10,12 @@
     tools:layout_editor_absoluteX="0dp">
 
     <Button
-        android:id="@+id/start_conversation_button"
-        android:layout_width="193dp"
-        android:layout_height="62dp"
-        android:text="@string/Start_Conversation_Button"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="3dp"
-        app:layout_constraintRight_toLeftOf="@+id/start_privacy_button"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"/>
-    <Spinner
-        android:id="@+id/spinner1"
-        android:layout_width="76dp"
+        android:id="@+id/add_buddy_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"
+        android:text="@string/add_buddy_button_text"
         app:layout_constraintRight_toRightOf="parent"
-        tools:layout_editor_absoluteY="16dp"
-        android:layout_marginRight="6dp"
-        app:layout_constraintLeft_toRightOf="@+id/start_conversation_button"
-        android:layout_marginLeft="16dp"/>
-
-    <Button
-        android:id="@+id/start_privacy_button"
-        android:layout_width="201dp"
-        android:layout_height="74dp"
-        android:text="@string/Start_Privacy_Button"
-        tools:layout_editor_absoluteX="310dp"
-        tools:layout_editor_absoluteY="207dp"/>
-
-    <Button
-        android:id="@+id/stop_privacy_button"
-        android:layout_width="244dp"
-        android:layout_height="108dp"
-        android:text="@string/Stop_Privacy_Button"
-        tools:layout_editor_absoluteX="278dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/start_privacy_button"/>
-
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>

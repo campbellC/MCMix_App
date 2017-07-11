@@ -18,6 +18,8 @@ import ac.panoramix.uoe.xyz.Accounts.Buddy;
 
 public class XYZApplication extends Application {
     private static Application sApplication;
+
+
     private static Account sAccount;
 
     public static Application getApplication(){
@@ -31,6 +33,10 @@ public class XYZApplication extends Application {
     public static Account getAccount() {
         return sAccount;
     }
+
+    public static void setAccount(Account account) {
+        sAccount = account;
+    }
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,7 +44,5 @@ public class XYZApplication extends Application {
         // This initialises cookie handling to allow persistent sessions with the server.
         CookieHandler.setDefault(new CookieManager());
 
-        //TODO: replace this debugging code with a registration option
-        sAccount = new Account("Alice");
     }
 }

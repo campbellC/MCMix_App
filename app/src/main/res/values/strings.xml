@@ -1,18 +1,31 @@
 <resources>
     <string name="app_name">XYZ</string>
 
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+
     <string name="conversation_default_message">Enter your message here...</string>
     <string name="conversation_send_button_message">Send</string>
     <string name="Bad_Character_Toast">Only ascii values are currently supported. Please try again.</string>
     <string name="Long_Message_Toast">This message is too long for a single communication. Sending in pieces which will take more time...</string>
 
+    <!-- Strings related to home activity -->
+    <string name="add_buddy_button_text">Add Buddy</string>
     <string name="Start_Conversation_Button">Start Conversation</string>
     <string name="Start_Privacy_Button">Initiate Privacy Protection</string>
     <string name="Stop_Privacy_Button">Stop Privacy Protection</string>
-    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to user creation -->
+    <string name="user_creation_password_repeat_hint">Password again...</string>
+    <string name="user_creation_button">Create User</string>
+    <string name="user_creation_banner_text">Please create a user account. No spaces in username and passwords must be 8 characters or more and not common password.</string>
 
     <!-- Strings related to login -->
-    <string name="login_username_hint">Username</string>
-    <string name="login_password_hint">Password</string>
     <string name="login_button">Log in</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to updating keys -->
+    <string name="update_all_keys_button">Update all keys</string>
+    <string name="update_one_user_button">Add or update this user\'s key</string>
+
 </resources>
