@@ -21,7 +21,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
     private EditText username_input;
     private EditText password_input;
     private EditText password_repeat_input;
-
+    private Account new_account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +42,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 } else if (!password_input.getText().toString().equals(password_repeat_input.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "Passwords do not match.", Toast.LENGTH_LONG).show();
                 } else {
+                    new_account = new Account(username_input.getText().toString());
                     new CreateUserTask().execute(username_input.getText().toString(), password_input.getText().toString());
                 }
 
@@ -52,7 +53,6 @@ public class UserRegistrationActivity extends AppCompatActivity {
     private class CreateUserTask extends AsyncTask<String, Integer, String> {
         ServerHandler mServerHandler;
         String response;
-        String username;
         public CreateUserTask(){
             super();
             mServerHandler = new ServerHandler();
@@ -62,9 +62,13 @@ public class UserRegistrationActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
             String username = params[0];
-            this.username = username;
             String password = params[1];
+            // Firstly we attempt to create the user on the server. If this is succesful we then
+            // set the application account to the newly created one and send the public key to the server
             response = mServerHandler.create_user(username, password);
+            if (response != null && response.equals(ServerHandler.GOOD_STATUS)){
+                XYZApplication.setAccount(new_account);
+            }
             return "Finished creating user attempt.";
         }
 

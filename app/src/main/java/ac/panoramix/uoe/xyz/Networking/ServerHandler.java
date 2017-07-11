@@ -277,15 +277,6 @@ public class ServerHandler {
     public static final String USERNAME_ALREADY_EXISTS = "user_already_exists";
     public static final String PASSWORD_DOES_NOT_CONFORM = "password_does_not_conform";
     public String create_user(String username, String password){
-        try {
-            // This is needed to get a csrf token
-            establish_connection("/");
-            mConnection.connect();
-            mConnection.getInputStream();
-            mConnection.disconnect();
-        } catch (IOException e){
-            return null;
-        }
         Map<String,String> parameters = new HashMap<String,String>();
         parameters.put("username", username);
         parameters.put("password", password);
