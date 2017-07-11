@@ -21,6 +21,15 @@ public class UserRegistrationActivity extends AppCompatActivity {
     private EditText username_input;
     private EditText password_input;
     private EditText password_repeat_input;
+
+    public Account getNew_account() {
+        return new_account;
+    }
+
+    public void setNew_account(Account new_account) {
+        this.new_account = new_account;
+    }
+
     private Account new_account;
 
     @Override
@@ -55,7 +64,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         String response;
         public CreateUserTask(){
             super();
-            mServerHandler = new ServerHandler();
+            mServerHandler = ServerHandler.getOrCreateInstance();
 
         }
 

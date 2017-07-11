@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         ServerHandler mServerHandler;
         public LoginTask(){
             super();
-            mServerHandler = new ServerHandler();
+            mServerHandler = ServerHandler.getOrCreateInstance();
 
         }
 

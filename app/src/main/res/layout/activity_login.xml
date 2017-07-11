@@ -22,7 +22,7 @@
 
     <TextView
         android:id="@+id/login_username"
-        android:text="@string/login_username_hint"
+        android:text="@string/username_hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -37,7 +37,7 @@
 
         android:ellipsize="start"
         android:gravity="center"
-        android:hint="@string/login_password_hint"
+        android:hint="@string/password_hint"
         android:inputType="textPassword"
 
         android:maxLines="1"

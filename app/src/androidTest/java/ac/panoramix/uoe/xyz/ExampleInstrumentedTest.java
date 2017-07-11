@@ -10,7 +10,9 @@ import org.junit.runner.RunWith;
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Point;
 import org.libsodium.jni.crypto.Random;
+import org.libsodium.jni.crypto.Util;
 import org.libsodium.jni.keys.KeyPair;
+import org.libsodium.jni.keys.PublicKey;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -122,6 +124,22 @@ public class ExampleInstrumentedTest {
 
 
 
+    @Test
+    public void public_key_to_string_and_back_test() throws Exception {
+        for(int i = 0; i < 100; ++i) {
+            byte[] seed = new Random().randomBytes(SodiumConstants.SECRETKEY_BYTES);
+            KeyPair kp = new KeyPair(seed);
+            PublicKey pk1 = kp.getPublicKey();
+            byte[] bytes1 = pk1.toBytes();
+            String server_side_pk = Utility.string_from_bytes(bytes1);
+            byte[] bytes2 = Utility.bytes_from_string(server_side_pk);
+            assertArrayEquals(bytes1, bytes2);
+            PublicKey pk2 = new PublicKey(bytes2);
+            assertArrayEquals(pk1.toBytes(), pk2.toBytes());
+
+
+        }
+    }
     @Test
     public void keyPair_seed_test() throws Exception {
         for(int i = 0; i < 100; ++i) {
