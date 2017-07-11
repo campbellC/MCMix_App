@@ -273,5 +273,26 @@ public class ServerHandler {
     }
 
 
+    public boolean create_user(String username, String password){
+        Map<String,String> parameters = new HashMap<String,String>();
+        parameters.put("username", username);
+        parameters.put("password", password);
+        JSONObject response = send_post_for_response(C_SEND_MESSAGE_URL, parameters);
+        if(response == null) return false;
+        try{
+            String status = response.getString("status");
+            switch(status){
+                case good_status:
+                    return true;
+                default:
+                    Log.d("ServHandler", "On request for creating user" + status);
+                    return false;
+            }
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return false;
+        }
+    }
+
 
 }
