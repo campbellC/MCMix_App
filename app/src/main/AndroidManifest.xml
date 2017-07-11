@@ -32,6 +32,8 @@
         <activity android:name=".UI_Handling.HomeActivity">
         </activity>
         <activity android:name=".UI_Handling.LoginActivity">
+        </activity>
+        <activity android:name=".UI_Handling.UserRegistrationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

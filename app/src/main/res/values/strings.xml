@@ -11,6 +11,12 @@
     <string name="Stop_Privacy_Button">Stop Privacy Protection</string>
     <string name="title_activity_login">Sign in</string>
 
+    <!-- Strings related to user creation -->
+    <string name="user_creation_username_hint">Username</string>
+    <string name="user_creation_password_hint">Password</string>
+    <string name="user_creation_password_repeat_hint">Password again...</string>
+    <string name="user_creation_button">Create User</string>
+    <string name="user_creation_banner_text" >Please create a user account. No spaces in username and passwords must be 8 characters or more and not common password.</string>
     <!-- Strings related to login -->
     <string name="login_username_hint">Username</string>
     <string name="login_password_hint">Password</string>

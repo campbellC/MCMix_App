@@ -39,8 +39,9 @@ public class ServerHandler {
 
     public static final String SERVER_IP_ADDR = "129.215.25.108";
     public static final int PORT = 5013;
-    public static final String good_status = "good";
+    public static final String GOOD_STATUS = "good";
     public static final String protocol = "http";
+    public static final String CREATE_USER_URL = "/dial/create_user/";
     public static final String LOGIN_URL = "/accounts/login/";
     public static final String LOGOUT_URL = "/accounts/logout/";
     public static final String C_GET_MESSAGE_URL = "/conversation/get_message";
@@ -212,7 +213,7 @@ public class ServerHandler {
         try{
             String status = response.getString("status");
             switch(status){
-                case good_status:
+                case GOOD_STATUS:
                     long new_round_number = response.getLong("round_number");
                     if(new_round_number != c_round_number) {
                         c_round_number = new_round_number;
@@ -238,7 +239,7 @@ public class ServerHandler {
         try{
             String status = response.getString("status");
             switch(status){
-                case good_status:
+                case GOOD_STATUS:
                     String message = response.getString("returned_message");
                     return message;
                 default:
@@ -259,7 +260,7 @@ public class ServerHandler {
         try{
             String status = response.getString("status");
             switch(status){
-                case good_status:
+                case GOOD_STATUS:
                     return true;
                 default:
                     Log.d("ServHandler", "On request for receiving c_message server returned status:" + status);
@@ -273,24 +274,29 @@ public class ServerHandler {
     }
 
 
-    public boolean create_user(String username, String password){
+    public static final String USERNAME_ALREADY_EXISTS = "user_already_exists";
+    public static final String PASSWORD_DOES_NOT_CONFORM = "password_does_not_conform";
+    public String create_user(String username, String password){
+        try {
+            // This is needed to get a csrf token
+            establish_connection("/");
+            mConnection.connect();
+            mConnection.getInputStream();
+            mConnection.disconnect();
+        } catch (IOException e){
+            return null;
+        }
         Map<String,String> parameters = new HashMap<String,String>();
         parameters.put("username", username);
         parameters.put("password", password);
-        JSONObject response = send_post_for_response(C_SEND_MESSAGE_URL, parameters);
-        if(response == null) return false;
+        JSONObject response = send_post_for_response(CREATE_USER_URL, parameters);
+        if(response == null) return null;
         try{
             String status = response.getString("status");
-            switch(status){
-                case good_status:
-                    return true;
-                default:
-                    Log.d("ServHandler", "On request for creating user" + status);
-                    return false;
-            }
+            return status;
         } catch (JSONException e) {
             Log.d("ServHandler", "json_response does not have a key", e);
-            return false;
+            return null;
         }
     }
 

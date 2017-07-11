@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            ServerHandler handler = new ServerHandler();
             String username = params[0];
             String password = params[1];
             boolean success = mServerHandler.log_in(username, password);
