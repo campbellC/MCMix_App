@@ -1,6 +1,8 @@
 package ac.panoramix.uoe.xyz.UI_Handling;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,10 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Networking.ServerHandler;
 import ac.panoramix.uoe.xyz.R;
 import ac.panoramix.uoe.xyz.XYZApplication;
+import ac.panoramix.uoe.xyz.XYZConstants;
 
 public class UserRegistrationActivity extends AppCompatActivity {
 
@@ -59,6 +64,17 @@ public class UserRegistrationActivity extends AppCompatActivity {
         });
     }
 
+    private void StoreAccount(){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(XYZConstants.SHARED_PREFS_FILE, MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(XYZApplication.getAccount());
+        Log.d("UserRegAct", "Storing application with name: " + XYZApplication.getAccount().getUsername());
+        prefsEditor.putString(XYZConstants.ACCOUNT_SHARED_PREF, json);
+        prefsEditor.commit();
+    }
+
+
     private class CreateUserTask extends AsyncTask<String, Integer, String> {
         ServerHandler mServerHandler;
         String response;
@@ -77,6 +93,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
             response = mServerHandler.create_user(username, password);
             if (response != null && response.equals(ServerHandler.GOOD_STATUS)){
                 XYZApplication.setAccount(new_account);
+                UserRegistrationActivity.this.StoreAccount();
             }
             return "Finished creating user attempt.";
         }

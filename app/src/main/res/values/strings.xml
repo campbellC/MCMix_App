@@ -25,7 +25,7 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to updating keys -->
-    <string name="update_all_keys_button" >Update all keys</string>
-    <string name="update_one_user_button" >Add or update this user\'s key</string>
+    <string name="update_all_keys_button">Update all keys</string>
+    <string name="update_one_user_button">Add or update this user\'s key</string>
 
 </resources>

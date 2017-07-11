@@ -34,13 +34,15 @@
         <activity android:name=".UI_Handling.LoginActivity">
         </activity>
         <activity android:name=".UI_Handling.UserRegistrationActivity">
+        </activity>
+        <activity android:name=".UI_Handling.UpdateKeysActivity">
+        </activity>
+        <activity android:name=".UI_Handling.StartUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity>
-        <activity android:name=".UI_Handling.UpdateKeysActivity">
         </activity>
     </application>
 
