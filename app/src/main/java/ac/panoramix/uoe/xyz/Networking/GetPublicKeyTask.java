@@ -1,12 +1,14 @@
 package ac.panoramix.uoe.xyz.Networking;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.libsodium.jni.keys.PublicKey;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
+import ac.panoramix.uoe.xyz.Utility;
 import ac.panoramix.uoe.xyz.XYZApplication;
 
 /**
@@ -55,6 +57,7 @@ public class GetPublicKeyTask extends AsyncTask<String,Integer,String> {
                 }
             }
             Toast.makeText(XYZApplication.getContext(), "Added key for " + bob.getUsername(), Toast.LENGTH_SHORT).show();
+            Log.d("GetKey", "Added key for  " + bob.getUsername() +": "+ Utility.string_from_bytes(bob.getPublic_key().toBytes()));
             Alice.getBuddies().add(bob);
         }
     }

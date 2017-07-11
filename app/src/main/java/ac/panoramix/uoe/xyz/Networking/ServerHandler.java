@@ -321,5 +321,21 @@ public class ServerHandler {
         }
     }
 
+    public static final String PUBLIC_KEY_DOES_NOT_CONFORM = "bad_public_key_format";
+    public String update_key(PublicKey key){
+        Map<String,String> parameters = new HashMap<String,String>();
+        String key_string = Utility.string_from_bytes(key.toBytes());
+        parameters.put("public_key", key_string);
+        JSONObject response = send_post_for_response(D_UPDATE_PUBLIC_KEY, parameters);
+        if(response == null) return null;
+        try{
+            String status = response.getString("status");
+            return status;
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return null;
+        }
+    }
+
 
 }

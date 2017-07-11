@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ac.panoramix.uoe.xyz.Networking.ServerHandler;
+import ac.panoramix.uoe.xyz.Networking.UpdatePublicKeyTask;
 import ac.panoramix.uoe.xyz.Networking.XYZNetworkService;
 import ac.panoramix.uoe.xyz.R;
 import ac.panoramix.uoe.xyz.XYZApplication;
@@ -78,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                 startService(serviceIntent);
                 Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                 // These flags make it so that pressing Back will not return the user to the login screen
+                new UpdatePublicKeyTask().execute();
 
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
