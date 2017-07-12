@@ -81,6 +81,11 @@ public class ConversationHandler {
      * sent at this time.
      */
     synchronized public void endConversation(){
+        if(bob != null) {
+            Log.d("ConvHandler", "Ending conversation with " + bob.getUsername());
+        } else {
+            Log.d("ConvHandler", "Ending conversation with null bob ");
+        }
         saveConversationToDisk();
         bob = null;
         mConversationQueue.clear();
@@ -90,15 +95,23 @@ public class ConversationHandler {
     /***
      * Start a new conversation with bob. All outgoing messages will
      * be tagged with the relevant dead drop.
-     * @param bob
+     * @param new_bob
      */
-   synchronized public void startConversation(Buddy bob){
-        if(bob != null) {
-            this.bob = bob;
-            mConversationQueue.clear();
-            mConverter = new ConversationMessagePayloadConverter(XYZApplication.getAccount(), bob);
-            retrieveConversationFromDisk();
+   synchronized public void startConversation(Buddy new_bob){
+        if(new_bob == null){
+            endConversation();
+            return;
+        } else if (new_bob.equals( bob)) {
+            Log.d("ConvHandler","Tried Starting conversation with " + new_bob.getUsername() + " but already in one");
+            return;
+        } else if(bob != null) {
+            endConversation();
         }
+        Log.d("ConvHandler","Starting conversation with " + new_bob.getUsername());
+        bob = new_bob;
+        mConversationQueue.clear();
+        mConverter = new ConversationMessagePayloadConverter(XYZApplication.getAccount(), bob);
+        retrieveConversationFromDisk();
     }
     synchronized public boolean inConversation(){
         return (bob != null);

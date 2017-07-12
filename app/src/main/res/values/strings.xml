@@ -11,9 +11,8 @@
 
     <!-- Strings related to home activity -->
     <string name="add_buddy_button_text">Add Buddy</string>
-    <string name="Start_Conversation_Button">Start Conversation</string>
-    <string name="Start_Privacy_Button">Initiate Privacy Protection</string>
-    <string name="Stop_Privacy_Button">Stop Privacy Protection</string>
+    <string name="start_conversation_button_text">Start Conversation</string>
+    <string name="stop_conversation_button_text">Hang up</string>
 
     <!-- Strings related to user creation -->
     <string name="user_creation_password_repeat_hint">Password again...</string>
