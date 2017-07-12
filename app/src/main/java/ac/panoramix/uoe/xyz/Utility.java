@@ -1,10 +1,15 @@
 package ac.panoramix.uoe.xyz;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.common.primitives.UnsignedInts;
 import com.google.common.primitives.UnsignedLongs;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
@@ -73,5 +78,19 @@ public class Utility {
             System.arraycopy(longToBytes(nextLong), 0, nums_bytes, i * 8, 8);
         }
         return nums_bytes;
+    }
+
+    public static void saveAccountToDisk(){
+        try {
+            FileOutputStream fos = XYZApplication.getContext().openFileOutput(XYZConstants.ACCOUNT_STORAGE_FILE, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(XYZApplication.getAccount());
+            oos.close();
+            fos.close();
+        }catch (FileNotFoundException e){
+            Log.d("Utility", "Cannot open to save account", e);
+        } catch (IOException e) {
+            Log.d("UserRegAct", "Cannot save account to disk", e);
+        }
     }
 }
