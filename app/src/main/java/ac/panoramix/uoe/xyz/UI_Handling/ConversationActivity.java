@@ -113,6 +113,9 @@ public class ConversationActivity extends AppCompatActivity {
     }
 
     private class ConversationAdapter extends ArrayAdapter<ConversationMessage>{
+        private static final int FROM_ALICE = 0;
+        private static final int FROM_BOB = 1;
+
         public ConversationAdapter(Context context, List<ConversationMessage> messages) {
             super(context, -1, messages);
         }
@@ -122,15 +125,35 @@ public class ConversationActivity extends AppCompatActivity {
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
             ConversationMessage msg = getItem(position);
-
-            // First we see if we can recycle an old view.
-            if(convertView == null) {
-                //TODO: add if then for different view types for from_bob and from_alice messages
-                convertView = getLayoutInflater().inflate(R.layout.conversation_message_from_alice, parent, false);
+            int type = getItemViewType(position);
+            // in either case of message we check if convertView can be used to recycle views, if not
+            // we inflate a new view of the correct type and then insert the data from the message.
+            switch (type){
+                case FROM_ALICE:
+                    if(convertView == null){
+                        convertView = getLayoutInflater().inflate(R.layout.conversation_message_from_alice, parent, false);
+                    }
+                    ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
+                    break;
+                case FROM_BOB:
+                    if(convertView == null) {
+                        convertView = getLayoutInflater().inflate(R.layout.conversation_message_from_bob, parent, false);
+                    }
+                    ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
+                    break;
             }
-
-            ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
             return convertView;
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            ConversationMessage msg = getItem(position);
+            return msg.isFrom_alice() ? FROM_ALICE : FROM_BOB;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 2;
         }
     }
 
