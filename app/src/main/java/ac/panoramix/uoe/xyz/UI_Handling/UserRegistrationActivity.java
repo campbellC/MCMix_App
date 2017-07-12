@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Networking.ServerHandler;
 import ac.panoramix.uoe.xyz.R;
+import ac.panoramix.uoe.xyz.Utility;
 import ac.panoramix.uoe.xyz.XYZApplication;
 import ac.panoramix.uoe.xyz.XYZConstants;
 
@@ -72,17 +73,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
     }
 
     private void StoreAccount(){
-        try {
-            FileOutputStream fos = openFileOutput(XYZConstants.ACCOUNT_STORAGE_FILE, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(XYZApplication.getAccount());
-            oos.close();
-            fos.close();
-        }catch (FileNotFoundException e){
-            Log.d("UserRegAct", "Cannot open the file", e);
-        } catch (IOException e) {
-            Log.d("UserRegAct", "Cannot write object to file", e);
-        }
+        Utility.saveAccountToDisk();
     }
 
 
