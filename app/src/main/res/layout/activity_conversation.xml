@@ -23,7 +23,7 @@
         app:layout_constraintTop_toBottomOf="@id/conversation_history_view"/>
 
     <EditText
-        android:id="@+id/conversation_message_entry"
+        android:id="@+id/conversation_message_input"
         android:layout_width="271dp"
         android:layout_height="74dp"
         android:ems="10"
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/conversation_send_button_message"
-        app:layout_constraintStart_toEndOf="@+id/conversation_message_entry"
+        app:layout_constraintStart_toEndOf="@+id/conversation_message_input"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"

@@ -51,6 +51,8 @@ public class XYZNetworkService extends Service {
             mServerHandler = ServerHandler.getOrCreateInstance();
         }
 
+
+
         @Override
         public void run() {
             Log.d("NetworkService", "Timed interaction beginning with server.");
@@ -68,6 +70,9 @@ public class XYZNetworkService extends Service {
                 if (sent_message){
                     mConversationHandler.confirmMessageSent();
                 }
+                Intent intent = new Intent();
+                intent.setAction(XYZConstants.MESSAGE_ADDED_BROADCAST_TAG);
+                sendBroadcast(intent);
             }
 
 

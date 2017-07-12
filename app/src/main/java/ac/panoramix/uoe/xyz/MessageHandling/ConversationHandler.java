@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.libsodium.jni.crypto.Random;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -43,6 +44,7 @@ public class ConversationHandler {
     Buddy bob;
     ConversationQueue mConversationQueue;
     ConversationMessagePayloadConverter mConverter;
+    ConversationHistory mCurrentConversationHistory;
 
     /**
      * The following two fields buddyLastMessageWasSentTo and lastMessage allow delivery reciepts.
@@ -79,6 +81,7 @@ public class ConversationHandler {
      * sent at this time.
      */
     synchronized public void endConversation(){
+        saveConversationToDisk();
         bob = null;
         mConversationQueue.clear();
         mConverter = null;
@@ -90,9 +93,12 @@ public class ConversationHandler {
      * @param bob
      */
    synchronized public void startConversation(Buddy bob){
-        this.bob = bob;
-        mConversationQueue.clear();
-        mConverter = new ConversationMessagePayloadConverter(XYZApplication.getAccount(), bob);
+        if(bob != null) {
+            this.bob = bob;
+            mConversationQueue.clear();
+            mConverter = new ConversationMessagePayloadConverter(XYZApplication.getAccount(), bob);
+            retrieveConversationFromDisk();
+        }
     }
     synchronized public boolean inConversation(){
         return (bob != null);
@@ -112,30 +118,8 @@ public class ConversationHandler {
     }
 
     synchronized private void addMessageToHistory(ConversationMessage message){
-        // This method takes a conversation message and saves a file containing the previous history of this
-        // conversation. It does this by opening the old save file, appending this message and then resaving that file.
-        String history_filename = Utility.filename_for_conversation(XYZApplication.getAccount(),bob);
-        ConversationHistory history = new ConversationHistory(XYZApplication.getAccount(),bob);
-        try {
-            FileInputStream fis = XYZApplication.getContext().openFileInput(history_filename);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            history = (ConversationHistory) ois.readObject();
-        } catch (FileNotFoundException e){
-            Log.d("ConvHandler", "FileNotFoundException" + e.getStackTrace());
-        } catch (IOException ioe) {
-            Log.d("ConvHandler", "IOException" + ioe.getStackTrace());
-        } catch (ClassNotFoundException cnfe){
-            Log.d("ConvHandler", "ClassNotFoundException" + cnfe.getStackTrace());
-        }
-
-        history.add(message);
-        try {
-            FileOutputStream fos = XYZApplication.getContext().openFileOutput(history_filename, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(history);
-        } catch (IOException ioe) {
-            Log.d("ConvHandler", "IOException" + ioe.getStackTrace());
-        }
+        Log.d("ConvHandler", "Adding message to history: " + message.toString());
+        mCurrentConversationHistory.add(message);
     }
 
     synchronized public void handleMessageFromUser(String payload){
@@ -181,6 +165,10 @@ public class ConversationHandler {
         return outgoing_payload;
     }
 
+    public ConversationHistory getCurrentConversationHistory() {
+        return mCurrentConversationHistory;
+    }
+
     synchronized  public void confirmMessageSent(){
 
         if(inConversation() && buddyLastMessageWasSentTo!= null && buddyLastMessageWasSentTo.equals(bob) && lastMessage != null) {
@@ -203,6 +191,62 @@ public class ConversationHandler {
 
     }
 
+    /**
+     * This message takes the  CurrentConversationHistory and saves it to disk for later retrieval.
+     */
+    private void saveConversationToDisk(){
+        String history_filename = Utility.filename_for_conversation(XYZApplication.getAccount(),bob);
+        if(bob == null || mCurrentConversationHistory == null) {
+            Log.d("ConvHandler", "Tried to save null conversation to disk");
+            return;
+        }
+        try {
+            FileOutputStream fos = XYZApplication.getContext().openFileOutput(history_filename, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(mCurrentConversationHistory);
+            oos.close();
+            fos.close();
+        } catch (IOException ioe) {
+            Log.d("ConvHandler", "Issues writing ConvHistory to disk", ioe);
+        }
+    }
 
+    /**
+     * This message is the inverse of the saveConversationToDisk function.
+     *
+     */
+    private void retrieveConversationFromDisk() {
+        if(bob == null){
+            Log.d("ConvHandler", "Tried to retrieve null conversation from disk");
+            return;
+        }
+        String history_filename = Utility.filename_for_conversation(XYZApplication.getAccount(),bob);
+        File f = XYZApplication.getContext().getFileStreamPath(history_filename);
+
+        if(f.exists()){
+            // if this file exists then we have previously saved a conversation history for this user.
+            try (
+                    FileInputStream fis = XYZApplication.getContext().openFileInput(history_filename);
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+            ) {
+                mCurrentConversationHistory = (ConversationHistory) ois.readObject();
+                return;
+            } catch (FileNotFoundException e){
+                Log.d("ConvHandler", "Could not find ConversationHistory file", e);
+            } catch (IOException ioe) {
+                Log.d("ConvHandler", "Error reading ConvHistory file" , ioe);
+            } catch (ClassNotFoundException cnfe){
+                Log.d("ConvHandler", "Corrupted Conversation History file", cnfe);
+            }
+            // In the case we reach this point the conversation history is lost and we need to create a new one.
+            mCurrentConversationHistory = new ConversationHistory(bob);
+
+        } else {
+            // If no such file exists then we can safely create a new ConversationHistory without losing anything
+            mCurrentConversationHistory = new ConversationHistory(bob);
+        }
+
+
+    }
 
 }
