@@ -10,7 +10,8 @@
                   android:layout_height="wrap_content"
                   android:layout_alignParentEnd="true"
                   android:gravity="end"
-                  android:background="@drawable/conversation_message_box">
+                  android:background="@drawable/conversation_message_box_from_alice"
+        >
         <TextView
             android:id="@+id/conversation_message_entry"
             android:layout_width="wrap_content"
