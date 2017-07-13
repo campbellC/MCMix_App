@@ -243,7 +243,7 @@ public class ExampleInstrumentedTest {
         Account Alice = new Account("Alice");
         Account Bob = new Account("Bob");
         Buddy buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
-        ConversationHistory history  = new ConversationHistory(Alice, buddy);
+        ConversationHistory history  = new ConversationHistory();
 
         ConversationMessage msg_from_alice = new ConversationMessage("test message", true);
         history.add(msg_from_alice);

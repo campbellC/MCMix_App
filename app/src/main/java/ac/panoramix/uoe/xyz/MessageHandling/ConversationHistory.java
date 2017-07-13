@@ -16,10 +16,8 @@ import ac.panoramix.uoe.xyz.Accounts.Buddy;
  */
 
 public class ConversationHistory extends ArrayList<ConversationMessage> {
-    Buddy bob;
 
-    public ConversationHistory(Buddy bob) {
+    public ConversationHistory() {
         super();
-        this.bob = bob;
     }
 }

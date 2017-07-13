@@ -14,9 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 
-import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
 import ac.panoramix.uoe.xyz.Utility;
 import ac.panoramix.uoe.xyz.XYZApplication;
@@ -83,10 +81,10 @@ public class ConversationHandler {
     synchronized public void endConversation(){
         if(bob != null) {
             Log.d("ConvHandler", "Ending conversation with " + bob.getUsername());
+            saveConversationToDisk();
         } else {
             Log.d("ConvHandler", "Ending conversation with null bob ");
         }
-        saveConversationToDisk();
         bob = null;
         mConversationQueue.clear();
         mConverter = null;
@@ -99,7 +97,6 @@ public class ConversationHandler {
      */
    synchronized public void startConversation(Buddy new_bob){
         if(new_bob == null){
-            endConversation();
             return;
         } else if (new_bob.equals( bob)) {
             Log.d("ConvHandler","Tried Starting conversation with " + new_bob.getUsername() + " but already in one");
@@ -133,6 +130,8 @@ public class ConversationHandler {
     synchronized private void addMessageToHistory(ConversationMessage message){
         Log.d("ConvHandler", "Adding message to history: " + message.toString());
         mCurrentConversationHistory.add(message);
+        //TODO: this is probably not the most efficient way to handle persisting the conversation
+        saveConversationToDisk();
     }
 
     synchronized public void handleMessageFromUser(String payload){
@@ -252,11 +251,11 @@ public class ConversationHandler {
                 Log.d("ConvHandler", "Corrupted Conversation History file", cnfe);
             }
             // In the case we reach this point the conversation history is lost and we need to create a new one.
-            mCurrentConversationHistory = new ConversationHistory(bob);
+            mCurrentConversationHistory = new ConversationHistory();
 
         } else {
             // If no such file exists then we can safely create a new ConversationHistory without losing anything
-            mCurrentConversationHistory = new ConversationHistory(bob);
+            mCurrentConversationHistory = new ConversationHistory();
         }
 
 

@@ -35,7 +35,9 @@ public class XYZNetworkService extends Service {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy()
+    {
+        ConversationHandler.getOrCreateInstance().endConversation();
         super.onDestroy();
     }
 
