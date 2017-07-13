@@ -15,14 +15,24 @@ import ac.panoramix.uoe.xyz.R;
 import ac.panoramix.uoe.xyz.XYZApplication;
 
 public class HomeActivity extends AppCompatActivity {
-    Button add_buddy_button;
+    private Button add_buddy_button;
 
-    Button start_conversation_button;
+    private Button stop_conversation_button;
+
+    private Button start_conversation_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        stop_conversation_button = (Button) findViewById(R.id.stop_conversation_button);
+        stop_conversation_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ConversationHandler.getOrCreateInstance().endConversation();
+            }
+        });
 
         add_buddy_button = (Button) findViewById(R.id.add_buddy_button);
         add_buddy_button.setOnClickListener(new View.OnClickListener() {
