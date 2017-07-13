@@ -16,8 +16,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationQueue;
-
 /** This class is the "friend" class for XYZ. The only information
  * you need to know about a friend to call them is their public key and username.
  */

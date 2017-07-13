@@ -21,9 +21,9 @@ import com.google.common.base.CharMatcher;
 
 import java.util.List;
 
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationHandler;
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationHistory;
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessage;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationHandler;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationHistory;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationMessage;
 import ac.panoramix.uoe.xyz.R;
 import ac.panoramix.uoe.xyz.XYZConstants;
 

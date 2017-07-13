@@ -1,12 +1,6 @@
-package ac.panoramix.uoe.xyz.MessageHandling;
+package ac.panoramix.uoe.xyz.ConversationProtocol;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import ac.panoramix.uoe.xyz.Accounts.Account;
-import ac.panoramix.uoe.xyz.Accounts.Buddy;
 
 /**
  * Created by: Chris Campbell

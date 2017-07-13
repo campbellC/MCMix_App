@@ -3,17 +3,12 @@ package ac.panoramix.uoe.xyz.Networking;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Base64;
 import android.util.Log;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import ac.panoramix.uoe.xyz.Accounts.Account;
-import ac.panoramix.uoe.xyz.Accounts.Buddy;
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationHandler;
-import ac.panoramix.uoe.xyz.XYZApplication;
-import ac.panoramix.uoe.xyz.XYZConstants;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationHandler;
 
 
 public class XYZNetworkService extends Service {
@@ -62,19 +57,33 @@ public class XYZNetworkService extends Service {
              * Conversation portion of networking code. We check the server for a change of round number
              * if there is one we get incoming message and submit the next message.
              */
-            if(mServerHandler.c_round_finished()){
-                String incoming = mServerHandler.c_recv_message();
-                if(incoming != null) {
-                    mConversationHandler.handleMessageFromServer(incoming);
+//            if(mServerHandler.c_round_finished()){
+//                String incoming = mServerHandler.c_recv_message();
+//                if(incoming != null) {
+//                    mConversationHandler.handleMessageFromServer(incoming);
+//                }
+//                String outgoing = mConversationHandler.getNextMessageForServer(mServerHandler.getC_round_number());
+//                boolean sent_message = mServerHandler.c_send_message(outgoing);
+//                if (sent_message){
+//                    mConversationHandler.confirmMessageSent();
+//                }
+//                Intent intent = new Intent();
+//                intent.setAction(XYZConstants.MESSAGE_ADDED_BROADCAST_TAG);
+//                sendBroadcast(intent);
+//            }
+
+            if(mServerHandler.d_round_finished()){
+                String incoming_dial = mServerHandler.d_recv_dial();
+                if(incoming_dial != null){
+                    //TODO: handle the dial
                 }
-                String outgoing = mConversationHandler.getNextMessageForServer(mServerHandler.getC_round_number());
-                boolean sent_message = mServerHandler.c_send_message(outgoing);
-                if (sent_message){
-                    mConversationHandler.confirmMessageSent();
+                //TODO: get next dial
+                String outgoing_dial = null;
+                boolean sent_dial = mServerHandler.d_send_dial(outgoing_dial);
+                if(sent_dial){
+                    // TODO: tell dialhandler dial was succesfully submitted
                 }
-                Intent intent = new Intent();
-                intent.setAction(XYZConstants.MESSAGE_ADDED_BROADCAST_TAG);
-                sendBroadcast(intent);
+
             }
 
 

@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.xyz.MessageHandling;
+package ac.panoramix.uoe.xyz.ConversationProtocol;
 
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Hash;

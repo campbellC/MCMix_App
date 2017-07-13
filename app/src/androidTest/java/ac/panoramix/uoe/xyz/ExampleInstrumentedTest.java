@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Point;
 import org.libsodium.jni.crypto.Random;
-import org.libsodium.jni.crypto.Util;
 import org.libsodium.jni.keys.KeyPair;
 import org.libsodium.jni.keys.PublicKey;
 
@@ -24,10 +23,10 @@ import java.util.Arrays;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationHistory;
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessage;
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationMessagePayloadConverter;
-import ac.panoramix.uoe.xyz.MessageHandling.Diffie_Hellman;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationHistory;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationMessage;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationMessagePayloadConverter;
+import ac.panoramix.uoe.xyz.ConversationProtocol.Diffie_Hellman;
 
 import static org.junit.Assert.*;
 

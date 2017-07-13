@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.Accounts.Buddy;
-import ac.panoramix.uoe.xyz.MessageHandling.ConversationHandler;
+import ac.panoramix.uoe.xyz.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.xyz.R;
 import ac.panoramix.uoe.xyz.XYZApplication;
 

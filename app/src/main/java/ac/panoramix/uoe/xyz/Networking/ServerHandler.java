@@ -51,6 +51,9 @@ public class ServerHandler {
     public static final String C_GET_ROUND_NUMBER_URL = "/conversation/get_round_number";
     public static final String D_UPDATE_PUBLIC_KEY = "/dial/update_public_key";
     public static final String D_GET_PUBLIC_KEY= "/dial/get_public_key";
+    public static final String D_GET_DIAL_URL = "/dial/get_dial";
+    public static final String D_SEND_DIAL_URL = "/dial/send_dial";
+    public static final String D_GET_ROUND_NUMBER = "/dial/get_round_number";
 
     public static URI sURI;
     static {
@@ -74,7 +77,7 @@ public class ServerHandler {
     private URL mURL;
     private HttpURLConnection mConnection;
     private long c_round_number = 0;
-
+    private long d_round_number = 0;
     private boolean is_connected_to_network() {
         ConnectivityManager check = (ConnectivityManager) XYZApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = check.getAllNetworks();
@@ -111,7 +114,7 @@ public class ServerHandler {
         Log.d("ServerHandler", "Establishing connection with resource: " + resource);
         if(is_connected_to_network()){
             try {
-                mURL= new URL("http", SERVER_IP_ADDR, PORT, resource);
+                mURL= new URL(protocol, SERVER_IP_ADDR, PORT, resource);
                 mConnection = (HttpURLConnection) mURL.openConnection();
                 return true;
             } catch (MalformedURLException e) {
@@ -218,6 +221,29 @@ public class ServerHandler {
         }
     }
 
+    public synchronized boolean d_round_finished(){
+        JSONObject response = send_post_for_response(D_GET_ROUND_NUMBER, new HashMap<String, String>());
+        if(response == null) return false;
+        try{
+            String status = response.getString("status");
+            switch(status){
+                case GOOD_STATUS:
+                    long new_round_number = response.getLong("round_number");
+                    if(new_round_number != d_round_number) {
+                        d_round_number = new_round_number;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                default:
+                    Log.d("ServHandler", "On request for receiving d_round_number server returned status:" + status);
+                    return false;
+            }
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return false;
+        }
+    }
     public synchronized boolean c_round_finished(){
         JSONObject response = send_post_for_response(C_GET_ROUND_NUMBER_URL, new HashMap<String, String>());
         if(response == null) return false;
@@ -233,7 +259,7 @@ public class ServerHandler {
                         return false;
                     }
                 default:
-                    Log.d("ServHandler", "On request for receiving c_message server returned status:" + status);
+                    Log.d("ServHandler", "On request for receiving c_round_number server returned status:" + status);
                     return false;
             }
         } catch (JSONException e) {
@@ -337,5 +363,43 @@ public class ServerHandler {
         }
     }
 
+    public String d_recv_dial(){
+        JSONObject response = send_post_for_response(D_GET_DIAL_URL, new HashMap<String, String>());
+        if (response == null) return null;
+        try{
+            String status = response.getString("status");
+            switch(status){
+                case GOOD_STATUS:
+                    String message = response.getString("returned_message");
+                    return message;
+                default:
+                    Log.d("ServHandler", "On request for receiving d_dial server returned status:" + status);
+                    return null;
+            }
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return null;
+        }
+    }
 
+    public boolean d_send_dial(String dial){
+        Map<String,String> parameters = new HashMap<String,String>();
+        parameters.put("payload", dial);
+        JSONObject response = send_post_for_response(D_SEND_DIAL_URL, parameters);
+        if(response == null) return false;
+        try{
+            String status = response.getString("status");
+            switch(status){
+                case GOOD_STATUS:
+                    return true;
+                default:
+                    Log.d("ServHandler", "On request for sending d_dial server returned status:" + status);
+                    return false;
+            }
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return false;
+        }
+
+    }
 }
