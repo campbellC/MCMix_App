@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">XYZ</string>
+    <string name="app_name">MCMix</string>
 
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>

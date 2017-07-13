@@ -3,7 +3,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "ac.panoramix.uoe.xyz"
+        applicationId "ac.panoramix.uoe.mcmix"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ac.panoramix.uoe.xyz.UI_Handling.UserRegistrationActivity"
+    tools:context="ac.panoramix.uoe.mcmix.ac.panoramix.uoe.mcmix.UI_Handling.UserRegistrationActivity"
     tools:layout_editor_absoluteY="81dp"
     tools:layout_editor_absoluteX="0dp">
 
