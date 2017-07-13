@@ -7,25 +7,15 @@ package ac.panoramix.uoe.xyz.Accounts;
  * contact: c.j.campbell@ed.ac.uk
  */
 
-import android.os.Parcelable;
-
 import org.libsodium.jni.SodiumConstants;
-import org.libsodium.jni.crypto.Hash;
 import org.libsodium.jni.crypto.Random;
 import org.libsodium.jni.keys.KeyPair;
-import org.libsodium.jni.keys.PublicKey;
-
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import ac.panoramix.uoe.xyz.XYZConstants;
 
 public class Account implements Serializable{
 

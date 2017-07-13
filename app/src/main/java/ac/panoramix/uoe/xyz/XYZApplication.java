@@ -7,7 +7,6 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
-import ac.panoramix.uoe.xyz.Accounts.Buddy;
 
 /**
  * Created by: Chris Campbell

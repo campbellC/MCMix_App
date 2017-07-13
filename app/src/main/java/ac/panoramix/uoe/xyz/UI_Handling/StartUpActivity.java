@@ -1,13 +1,10 @@
 package ac.panoramix.uoe.xyz.UI_Handling;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +14,6 @@ import java.io.ObjectInputStream;
 
 import ac.panoramix.uoe.xyz.Accounts.Account;
 import ac.panoramix.uoe.xyz.R;
-import ac.panoramix.uoe.xyz.Utility;
 import ac.panoramix.uoe.xyz.XYZApplication;
 import ac.panoramix.uoe.xyz.XYZConstants;
 
