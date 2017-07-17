@@ -13,8 +13,8 @@ public final class MCMixConstants {
 
     public static final String ACCOUNT_STORAGE_FILE = "ACCOUNT_STORAGE.ser";
 
+    public static int USERNAME_LENGTH_IN_UINTS = 1;
 
-    public static final int INCOMING_CONVERSATION_TAG_COLUMN = 0; //The position in terms of integers that the tag will take in incoming messages
 
     public static final int C_MESSAGE_BYTES = 160; // length in bytes of a conversation message
     public static final int DEAD_DROP_BYTES = 32; // sha256 has 256 bits = 32 bytes
@@ -24,15 +24,11 @@ public final class MCMixConstants {
     public static final int MAX_MESSAGES_IN_QUEUE = 50;
 
 
-    public static final int SALT_LENGTH = 32;
 
 
 
 
     public static final String MESSAGE_ADDED_BROADCAST_TAG = "ac.panoramix.uoe.mcmix.MESSAGE_ADDED_TO_CONVERSATION";
 
-    //TODO: this should be a domain name presumably
-    public static final String SERVER_IP_ADDRESS = "129.215.164.45";
-    public static final int SERVER_PORT = 5013;
 
 }

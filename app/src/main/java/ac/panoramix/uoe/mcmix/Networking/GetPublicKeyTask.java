@@ -57,7 +57,7 @@ public class GetPublicKeyTask extends AsyncTask<String,Integer,String> {
                 }
             }
             Toast.makeText(MCMixApplication.getContext(), "Added key for " + bob.getUsername(), Toast.LENGTH_SHORT).show();
-            Log.d("GetKey", "Added key for  " + bob.getUsername() +": "+ Utility.string_from_bytes(bob.getPublic_key().toBytes()));
+            Log.d("GetKey", "Added key for  " + bob.getUsername() +": "+ Utility.uint_string_from_bytes(bob.getPublic_key().toBytes()));
             Alice.getBuddies().add(bob);
             Utility.saveAccountToDisk();
         }

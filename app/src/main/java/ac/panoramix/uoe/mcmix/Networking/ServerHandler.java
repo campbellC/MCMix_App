@@ -49,8 +49,8 @@ public class ServerHandler {
     public static final String C_GET_MESSAGE_URL = "/conversation/get_message";
     public static final String C_SEND_MESSAGE_URL = "/conversation/send_message";
     public static final String C_GET_ROUND_NUMBER_URL = "/conversation/get_round_number";
-    public static final String D_UPDATE_PUBLIC_KEY = "/dial/update_public_key";
-    public static final String D_GET_PUBLIC_KEY= "/dial/get_public_key";
+    public static final String UPDATE_PUBLIC_KEY_URL = "/pks/update_public_key";
+    public static final String GET_PUBLIC_KEY_URL = "/pks/get_public_key";
     public static final String D_GET_DIAL_URL = "/dial/get_dial";
     public static final String D_SEND_DIAL_URL = "/dial/send_dial";
     public static final String D_GET_ROUND_NUMBER = "/dial/get_round_number";
@@ -331,12 +331,12 @@ public class ServerHandler {
     public PublicKey get_public_key_for_username(String username){
         Map<String,String> parameters = new HashMap<String,String>();
         parameters.put("username", username);
-        JSONObject response = send_post_for_response(D_GET_PUBLIC_KEY, parameters);
+        JSONObject response = send_post_for_response(GET_PUBLIC_KEY_URL, parameters);
         if(response == null) return null;
         try{
             switch(response.getString("status")){
                 case GOOD_STATUS:
-                    byte[] bytes_of_key = Utility.bytes_from_string(response.getString("public_key"));
+                    byte[] bytes_of_key = Utility.bytes_from_uint_string(response.getString("public_key"));
                     return new PublicKey(bytes_of_key);
                 default:
                     return null;
@@ -350,9 +350,9 @@ public class ServerHandler {
     public static final String PUBLIC_KEY_DOES_NOT_CONFORM = "bad_public_key_format";
     public String update_key(PublicKey key){
         Map<String,String> parameters = new HashMap<String,String>();
-        String key_string = Utility.string_from_bytes(key.toBytes());
+        String key_string = Utility.uint_string_from_bytes(key.toBytes());
         parameters.put("public_key", key_string);
-        JSONObject response = send_post_for_response(D_UPDATE_PUBLIC_KEY, parameters);
+        JSONObject response = send_post_for_response(UPDATE_PUBLIC_KEY_URL, parameters);
         if(response == null) return null;
         try{
             String status = response.getString("status");

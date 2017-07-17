@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.R;
@@ -17,6 +21,9 @@ import ac.panoramix.uoe.mcmix.Utility;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 
 public class UserRegistrationActivity extends AppCompatActivity {
+
+
+
 
     private Button user_create_button;
     private EditText username_input;
@@ -37,6 +44,10 @@ public class UserRegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_registration);
+
+
+
+
 
         username_input = (EditText) findViewById(R.id.user_creation_username);
         password_input = (EditText) findViewById(R.id.user_creation_password);

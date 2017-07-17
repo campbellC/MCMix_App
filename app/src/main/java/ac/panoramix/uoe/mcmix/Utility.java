@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
@@ -56,7 +58,7 @@ public class Utility {
     }
 
 
-    public static String string_from_bytes(byte[] payload){
+    public static String uint_string_from_bytes(byte[] payload){
         assert(payload.length % 8 == 0);
         String ret_str = "";
         for(int offset = 0; offset < payload.length; offset += 8){
@@ -66,7 +68,7 @@ public class Utility {
         return ret_str.trim();
     }
 
-    public static byte[] bytes_from_string(String long_str){
+    public static byte[] bytes_from_uint_string(String long_str){
         assert( Pattern.compile("([0-9]|\\s)+").matcher(long_str).matches());
         String trimmed = long_str.trim();
         String[] nums_strs = trimmed.split("\\s+");
@@ -91,4 +93,64 @@ public class Utility {
             Log.d("UserRegAct", "Cannot save account to disk", e);
         }
     }
+
+
+    public static String UInt_String_From_String(String username){
+
+        if(username.length() == 0){
+            return "";
+        } else if(username.length() <= 8){
+            byte[] as_bytes = username.getBytes(StandardCharsets.US_ASCII);
+            if(as_bytes.length == 8){
+                return uint_string_from_bytes(as_bytes);
+            } else {
+                byte[] padded_bytes = new byte[8];
+                int padding_length = 8 - (as_bytes.length % 8);
+                System.arraycopy(as_bytes, 0, padded_bytes, padding_length, as_bytes.length);
+                return uint_string_from_bytes(padded_bytes);
+            }
+
+        } else {
+            String answer = "";
+            String[] split_up = username.split("(?<=\\G.{8})");
+            for(String piece : split_up){
+                answer += UInt_String_From_String(piece) + " ";
+            }
+            return answer;
+        }
+    }
+
+    private static byte null_byte;
+    static{
+        try {
+            null_byte = "\0".getBytes("US-ASCII")[0];
+        } catch (UnsupportedEncodingException e){
+            Log.d("Utility", "Null byte not supported in ascii", e);
+        }
+    }
+
+    public static String String_From_UInt_String(String uints){
+        byte[] as_bytes = bytes_from_uint_string(uints);
+        int num_null_bytes = 0;
+        for(byte b : as_bytes){
+            if(b == null_byte){
+                ++num_null_bytes;
+            }
+        }
+        byte[] non_null_bytes = new byte[as_bytes.length - num_null_bytes];
+        int j = 0;
+        for(int i = 0; i < as_bytes.length; ++i){
+            if(as_bytes[i] != null_byte){
+                non_null_bytes[j] = as_bytes[i];
+                ++j;
+            }
+        }
+        try {
+            return new String(non_null_bytes, "US-ASCII");
+        } catch (UnsupportedEncodingException e){
+            Log.d("Utility", "Bad encoding in uint string", e);
+            return "";
+        }
+    }
+
 }
