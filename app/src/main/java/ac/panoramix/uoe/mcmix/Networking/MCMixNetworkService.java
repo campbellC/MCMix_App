@@ -60,20 +60,20 @@ public class MCMixNetworkService extends Service {
              * Conversation portion of networking code. We check the server for a change of round number
              * if there is one we get incoming message and submit the next message.
              */
-//            if(mServerHandler.c_round_finished()){
-//                String incoming = mServerHandler.c_recv_message();
-//                if(incoming != null) {
-//                    mConversationHandler.handleMessageFromServer(incoming);
-//                }
-//                String outgoing = mConversationHandler.getNextMessageForServer(mServerHandler.getC_round_number());
-//                boolean sent_message = mServerHandler.c_send_message(outgoing);
-//                if (sent_message){
-//                    mConversationHandler.confirmMessageSent();
-//                }
-//                Intent intent = new Intent();
-//                intent.setAction(MCMixConstants.MESSAGE_ADDED_BROADCAST_TAG);
-//                sendBroadcast(intent);
-//            }
+            if(mServerHandler.c_round_finished()){
+                String incoming = mServerHandler.c_recv_message();
+                if(incoming != null) {
+                    mConversationHandler.handleMessageFromServer(incoming);
+                }
+                String outgoing = mConversationHandler.getNextMessageForServer(mServerHandler.getC_round_number());
+                boolean sent_message = mServerHandler.c_send_message(outgoing);
+                if (sent_message){
+                    mConversationHandler.confirmMessageSent();
+                }
+                Intent intent = new Intent();
+                intent.setAction(MCMixConstants.MESSAGE_ADDED_BROADCAST_TAG);
+                sendBroadcast(intent);
+            }
 
             if(mServerHandler.d_round_finished()){
                 String incoming_dial = mServerHandler.d_recv_dial();
