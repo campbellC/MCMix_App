@@ -30,6 +30,7 @@ public class DialHandler {
     private Buddy bob = null;
     private boolean user_wants_to_dialcheck = true;
     private Buddy last_incoming_dial = null;
+    private boolean last_dial_was_null = true;
 
     private boolean next_dial_is_dialcheck(){
         return bob == null && user_wants_to_dialcheck;
@@ -52,10 +53,13 @@ public class DialHandler {
     public synchronized void handle_dial_from_server(String dial){
         //TODO: currently this method makes calls to the server for the public key. Should this be wrapped in a PKS class?
         if(DialMessagePayloadConverter.is_username(dial)){
+            last_dial_was_null = false;
             String bob_username = DialMessagePayloadConverter.get_username(dial);
             PublicKey bob_pk = ServerHandler.getOrCreateInstance().get_public_key_for_username(bob_username);
             //TODO: if this user is a known buddy then no need to create a new one right?
             last_incoming_dial = new Buddy(bob_username, bob_pk);
+        } else {
+            last_dial_was_null = true;
         }
     }
 
@@ -67,5 +71,12 @@ public class DialHandler {
         } else {
             return DialMessagePayloadConverter.dial_nobody();
         }
+    }
+
+    public synchronized Buddy get_last_dial_for_user(){
+        return last_incoming_dial;
+    }
+    public synchronized boolean was_last_dial_null(){
+        return last_dial_was_null;
     }
 }

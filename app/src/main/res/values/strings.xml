@@ -13,6 +13,8 @@
     <string name="add_buddy_button_text">Add Buddy</string>
     <string name="start_conversation_button_text">Start Conversation</string>
     <string name="stop_conversation_button_text">Hang up</string>
+    <string name="dial_buddy_button_text">Dial Buddy</string>
+    <string name="start_conversation_with_last_dial_button_text">Start Conversation With Incoming Dialer</string>
 
     <!-- Strings related to user creation -->
     <string name="user_creation_password_repeat_hint">Password again...</string>
