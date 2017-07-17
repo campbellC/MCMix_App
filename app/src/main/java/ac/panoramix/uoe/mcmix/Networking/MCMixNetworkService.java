@@ -9,6 +9,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
+import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
+import ac.panoramix.uoe.mcmix.MCMixConstants;
 
 
 public class MCMixNetworkService extends Service {
@@ -41,11 +43,12 @@ public class MCMixNetworkService extends Service {
     private class NetworkingTasks extends TimerTask {
         private ServerHandler mServerHandler;
         private ConversationHandler mConversationHandler;
-
+        private DialHandler mDialHandler;
         public NetworkingTasks(){
             super();
             mConversationHandler = ConversationHandler.getOrCreateInstance();
             mServerHandler = ServerHandler.getOrCreateInstance();
+            mDialHandler = DialHandler.getOrCreateInstance();
         }
 
 
@@ -75,15 +78,13 @@ public class MCMixNetworkService extends Service {
             if(mServerHandler.d_round_finished()){
                 String incoming_dial = mServerHandler.d_recv_dial();
                 if(incoming_dial != null){
-                    //TODO: handle the dial
+                    mDialHandler.handle_dial_from_server(incoming_dial);
+                    Intent intent = new Intent();
+                    intent.setAction(MCMixConstants.DIAL_ADDED_BROADCAST_TAG);
+                    sendBroadcast(intent);
                 }
-                //TODO: get next dial
-                String outgoing_dial = null;
-                boolean sent_dial = mServerHandler.d_send_dial(outgoing_dial);
-                if(sent_dial){
-                    // TODO: tell dialhandler dial was succesfully submitted
-                }
-
+                String outgoing_dial = mDialHandler.get_dial_for_server();
+                mServerHandler.d_send_dial(outgoing_dial);
             }
 
 

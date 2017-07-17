@@ -40,4 +40,10 @@ public class DialMessagePayloadConverter {
     public static String get_username(String response){
         return Utility.String_From_UInt_String(response);
     }
+
+    public static String dial_nobody(){
+        String username_string = Utility.UInt_String_From_String(MCMixApplication.getAccount().getUsername());
+        return username_string + " " + username_string;
+
+    }
 }
