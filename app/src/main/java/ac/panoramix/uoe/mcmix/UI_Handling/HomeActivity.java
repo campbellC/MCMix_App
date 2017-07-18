@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
@@ -30,6 +29,11 @@ public class HomeActivity extends AppCompatActivity {
 
     private Button dial_buddy_button;
     private Button start_conversation_with_incoming_dial;
+
+    private Button start_conversation_with_outgoing_dial;
+
+    private Button block_incoming_dials;
+    private Button allow_incoming_dials;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +88,7 @@ public class HomeActivity extends AppCompatActivity {
         start_conversation_with_incoming_dial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Buddy bob = DialHandler.getOrCreateInstance().get_last_dial_for_user();
+                Buddy bob = DialHandler.getOrCreateInstance().get_last_incoming_dial_for_user();
                 if(bob != null){
                     launch_conversation(bob);
                 } else {
@@ -92,6 +96,39 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        start_conversation_with_outgoing_dial = (Button) findViewById(R.id.start_conversation_with_outgoing_dial);
+        start_conversation_with_outgoing_dial.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Buddy bob = DialHandler.getOrCreateInstance().getLast_outgoing_dial();
+                if(bob != null){
+                    launch_conversation(bob);
+                } else {
+                    Toast.makeText(HomeActivity.this, "You haven't dialed anyone yet", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        block_incoming_dials = (Button) findViewById(R.id.block_incoming_dials_button);
+        block_incoming_dials.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialHandler.getOrCreateInstance().handle_user_request_to_block_dials();
+                Toast.makeText(HomeActivity.this, "Blocking all incoming dials", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        allow_incoming_dials = (Button) findViewById(R.id.allow_incoming_dials_button);
+        allow_incoming_dials.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialHandler.getOrCreateInstance().handle_user_request_to_dialcheck();
+                Toast.makeText(HomeActivity.this, "Allowing all incoming dials", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 
 
     }
@@ -155,7 +192,7 @@ public class HomeActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if(!DialHandler.getOrCreateInstance().was_last_dial_null()){
                 Toast.makeText(HomeActivity.this,
-                        DialHandler.getOrCreateInstance().get_last_dial_for_user().getUsername() + " has dialed you",
+                        DialHandler.getOrCreateInstance().get_last_incoming_dial_for_user().getUsername() + " has dialed you",
                         Toast.LENGTH_LONG).show();
             }
         }
