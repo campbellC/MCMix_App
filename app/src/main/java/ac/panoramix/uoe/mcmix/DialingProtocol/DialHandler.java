@@ -15,10 +15,6 @@ import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 
 public class DialHandler {
 
-    //TODO: user should be able to state he wants to dialcheck
-    //TODO: user should be able to state he wants to not converse with anyone
-    //TODO: user should be able to tell when a dial has gone out and when a response has come in.
-    //TODO: If a user dials out then he should be able to start a conversation with that person easily assuming the dial gets though
     private static DialHandler mDialHandler;
     private DialHandler(){
 
