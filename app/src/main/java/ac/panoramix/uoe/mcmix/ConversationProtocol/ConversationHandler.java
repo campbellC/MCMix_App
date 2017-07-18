@@ -193,7 +193,7 @@ public class ConversationHandler {
 
     private String generateRandomMessage(){
         byte[] random_bytes = new Random().randomBytes(MCMixConstants.CONVERSATION_PAYLOAD_BYTES);
-        return Utility.string_from_bytes(random_bytes);
+        return Utility.uint_string_from_bytes(random_bytes);
     }
 
     public void log_status(){

@@ -7,6 +7,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
+import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 
 /**
  * Created by: Chris Campbell
@@ -43,5 +44,14 @@ public class MCMixApplication extends Application {
         // This initialises cookie handling to allow persistent sessions with the server.
         CookieHandler.setDefault(new CookieManager());
 
+    }
+
+    public static Buddy getBuddy(String username){
+        for(Buddy b : getAccount().getBuddies()){
+            if(b.getUsername().equals(username)){
+                return b;
+            }
+        }
+        return null;
     }
 }

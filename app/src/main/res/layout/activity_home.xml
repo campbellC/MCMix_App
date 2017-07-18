@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ac.panoramix.uoe.mcmix.ac.panoramix.uoe.mcmix.UI_Handling.HomeActivity"
+    tools:context="ac.panoramix.uoe.mcmix.UI_Handling.HomeActivity"
     tools:layout_editor_absoluteY="89dp"
     tools:layout_editor_absoluteX="0dp">
 
@@ -54,6 +54,77 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintHorizontal_bias="0.503"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/allow_incoming_dials_button"
+        android:layout_marginBottom="0dp"/>
+
+    <EditText
+        android:id="@+id/buddy_for_dialing_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/username_hint"
+        app:layout_constraintLeft_toRightOf="@+id/send_dial_button"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="24dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/stop_conversation_button"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="24dp"/>
+
+    <Button
+        android:id="@+id/send_dial_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/dial_buddy_button_text"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stop_conversation_button"
+        android:layout_marginStart="24dp"/>
+
+    <Button
+        android:id="@+id/start_conversation_with_last_dial_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_conversation_with_last_dial_button_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/start_conversation_with_outgoing_dial"/>
+
+    <Button
+        android:id="@+id/start_conversation_with_outgoing_dial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_conversation_with_outgoing_dial_button_text"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/buddy_for_dialing_input"/>
+
+    <Button
+        android:id="@+id/block_incoming_dials_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/block_incoming_dials_button_text"
+        app:layout_constraintRight_toLeftOf="@+id/allow_incoming_dials_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/start_conversation_with_last_dial_button"/>
+
+    <Button
+        android:id="@+id/allow_incoming_dials_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/allow_incoming_dials_button_text"
+        app:layout_constraintLeft_toRightOf="@+id/block_incoming_dials_button"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@+id/start_conversation_with_last_dial_button"
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

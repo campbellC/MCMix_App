@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ac.panoramix.uoe.mcmix.ac.panoramix.uoe.mcmix.UI_Handling.UpdateKeysActivity">
+    tools:context="ac.panoramix.uoe.mcmix.UI_Handling.UpdateKeysActivity">
 
     <EditText
         android:id="@+id/update_key_username_input"

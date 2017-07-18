@@ -38,7 +38,7 @@ public class ConversationMessagePayloadConverter {
         payload = payload.trim();
         Log.d("ConvMsgConverter","decrypting payload: " + payload);
 
-        ConversationMessage msg = encryptedBytesToMessage(Utility.bytes_from_string(payload));
+        ConversationMessage msg = encryptedBytesToMessage(Utility.bytes_from_uint_string(payload));
         Log.d("ConvMsgConverter", "received message: " + msg );
         return msg;
     }
@@ -87,7 +87,7 @@ public class ConversationMessagePayloadConverter {
     }
 
     public String constructOutgoingPayload(ConversationMessage msg, long round_number){
-        return Utility.string_from_bytes(constructOutgoingPayloadBytes(msg, round_number));
+        return Utility.uint_string_from_bytes(constructOutgoingPayloadBytes(msg, round_number));
     }
 
 }
