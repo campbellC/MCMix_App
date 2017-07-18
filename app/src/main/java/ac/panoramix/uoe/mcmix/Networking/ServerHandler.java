@@ -125,7 +125,8 @@ public class ServerHandler {
             try {
                 mURL= new URL(protocol, SERVER_IP_ADDR, PORT, resource);
                 mConnection = (HttpsURLConnection) mURL.openConnection();
-                mConnection.setSSLSocketFactory(MCMixApplication.getSSLContext().getSocketFactory());
+                mConnection.addRequestProperty("REFERER", protocol + "://"+ SERVER_IP_ADDR);
+                mConnection.setSSLSocketFactory(MCMixApplication.getSocketFactory());
                 return true;
             } catch (MalformedURLException e) {
                 Log.d("ServerHandler", "Malformed URL", e);
@@ -204,6 +205,7 @@ public class ServerHandler {
                 out.write(formParameters.getBytes("UTF-8"));
                 mConnection.connect();
 
+                Log.d("ServHandler", Integer.toString(mConnection.getResponseCode()));
                 //retrieve the output JSON object
                 InputStream in = mConnection.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));

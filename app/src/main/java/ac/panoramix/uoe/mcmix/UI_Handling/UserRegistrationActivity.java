@@ -48,7 +48,6 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
 
 
-
         username_input = (EditText) findViewById(R.id.user_creation_username);
         password_input = (EditText) findViewById(R.id.user_creation_password);
         password_repeat_input= (EditText) findViewById(R.id.user_creation_password_repeat);

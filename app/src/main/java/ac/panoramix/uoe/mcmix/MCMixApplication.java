@@ -20,8 +20,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
@@ -39,8 +41,7 @@ public class MCMixApplication extends Application {
 
 
     private static Account sAccount;
-    private static SSLContext sSSLContext;
-
+    private static SSLSocketFactory sSocketFactory;
     public static Application getApplication(){
         return sApplication;
     }
@@ -57,8 +58,9 @@ public class MCMixApplication extends Application {
         sAccount = account;
     }
 
-    public static SSLContext getSSLContext() {
-        return sSSLContext;
+
+    public static SSLSocketFactory getSocketFactory() {
+        return sSocketFactory;
     }
 
     @Override
@@ -70,26 +72,29 @@ public class MCMixApplication extends Application {
         // Initialise certificate handling for ssl connection
         try {
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream caInput = getResources().openRawResource(R.raw.mcmix);
-            Certificate ca;
+            InputStream cert_input = getResources().openRawResource(R.raw.mcmix);
+            X509Certificate cert ;
             try{
-                ca = cf.generateCertificate(caInput);
+                cert = (X509Certificate) cf.generateCertificate(cert_input);
 
             } finally {
-                caInput.close();
+                cert_input.close();
             }
+            Log.d("MCMixApp", "cert: " + cert.toString());
             String keyStoreType = KeyStore.getDefaultType();
             KeyStore keyStore = KeyStore.getInstance(keyStoreType);
             keyStore.load(null, null);
-            keyStore.setCertificateEntry("ca", ca);
+            keyStore.setCertificateEntry("mcmix", cert);
+
 
             String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             tmf.init(keyStore);
 
-            sSSLContext= SSLContext.getInstance("TLS");
-            sSSLContext.init(null, tmf.getTrustManagers(), null);
-
+            SSLContext context;
+            context= SSLContext.getInstance("TLS");
+            context.init(null, tmf.getTrustManagers(), null);
+            sSocketFactory = context.getSocketFactory();
 
         }   catch (CertificateException e){
             Log.d("MCMixApplication", "Bad certificate", e);
