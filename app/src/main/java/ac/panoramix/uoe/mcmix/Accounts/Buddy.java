@@ -16,7 +16,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
-/** This class is the "friend" class for MCMix. The only information
+/** This class is the "friend" class for mcmix. The only information
  * you need to know about a friend to call them is their public key and username.
  */
 public class Buddy implements Serializable{

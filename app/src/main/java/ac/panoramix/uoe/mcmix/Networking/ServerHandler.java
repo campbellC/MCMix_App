@@ -10,7 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.libsodium.jni.keys.PublicKey;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,8 +25,12 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import ac.panoramix.uoe.mcmix.Utility;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
@@ -42,7 +48,7 @@ public class ServerHandler {
     public static final String SERVER_IP_ADDR = "129.215.25.108";
     public static final int PORT = 5013;
     public static final String GOOD_STATUS = "good";
-    public static final String protocol = "http";
+    public static final String protocol = "https";
     public static final String CREATE_USER_URL = "/dial/create_user/";
     public static final String LOGIN_URL = "/accounts/login/";
     public static final String LOGOUT_URL = "/accounts/logout/";
@@ -65,7 +71,10 @@ public class ServerHandler {
     }
 
     private static ServerHandler sServerHandler;
-    private ServerHandler(){}
+    private ServerHandler(){
+
+
+    }
     public static ServerHandler getOrCreateInstance(){
         if (sServerHandler == null){
             sServerHandler = new ServerHandler();
@@ -75,7 +84,7 @@ public class ServerHandler {
 
 
     private URL mURL;
-    private HttpURLConnection mConnection;
+    private HttpsURLConnection mConnection;
     private long c_round_number = 0;
     private long d_round_number = 0;
     private boolean is_connected_to_network() {
@@ -115,7 +124,9 @@ public class ServerHandler {
         if(is_connected_to_network()){
             try {
                 mURL= new URL(protocol, SERVER_IP_ADDR, PORT, resource);
-                mConnection = (HttpURLConnection) mURL.openConnection();
+                mConnection = (HttpsURLConnection) mURL.openConnection();
+                mConnection.addRequestProperty("REFERER", protocol + "://"+ SERVER_IP_ADDR);
+                mConnection.setSSLSocketFactory(MCMixApplication.getSocketFactory());
                 return true;
             } catch (MalformedURLException e) {
                 Log.d("ServerHandler", "Malformed URL", e);
@@ -194,6 +205,7 @@ public class ServerHandler {
                 out.write(formParameters.getBytes("UTF-8"));
                 mConnection.connect();
 
+                Log.d("ServHandler", Integer.toString(mConnection.getResponseCode()));
                 //retrieve the output JSON object
                 InputStream in = mConnection.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
