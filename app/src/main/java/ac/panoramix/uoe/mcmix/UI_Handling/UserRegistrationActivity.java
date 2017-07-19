@@ -13,8 +13,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
+import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
@@ -59,6 +61,8 @@ public class UserRegistrationActivity extends AppCompatActivity {
 
                 if(username_input.getText().length() == 0 || password_input.getText().length() == 0){
 
+                } else if (!validate_username(username_input.getText().toString())) {
+                    Toast.makeText(UserRegistrationActivity.this, "Username does not meet requirements", Toast.LENGTH_SHORT).show();
                 } else if (!password_input.getText().toString().equals(password_repeat_input.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "Passwords do not match.", Toast.LENGTH_LONG).show();
                 } else {
@@ -126,5 +130,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private boolean validate_username(String name){
+         return Pattern.compile("(\\w|\\d)+").matcher(name).matches() && name.length() <= MCMixConstants.USERNAME_LENGTH_IN_CHARS;
     }
 }
