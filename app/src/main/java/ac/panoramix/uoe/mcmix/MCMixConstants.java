@@ -14,6 +14,7 @@ public final class MCMixConstants {
     public static final String ACCOUNT_STORAGE_FILE = "ACCOUNT_STORAGE.ser";
 
     public static int USERNAME_LENGTH_IN_UINTS = 1;
+    public static int USERNAME_LENGTH_IN_CHARS = USERNAME_LENGTH_IN_UINTS * 8;
 
 
     public static final int C_MESSAGE_BYTES = 160; // length in bytes of a conversation message

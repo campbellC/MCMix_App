@@ -205,7 +205,6 @@ public class ServerHandler {
                 out.write(formParameters.getBytes("UTF-8"));
                 mConnection.connect();
 
-                Log.d("ServHandler", Integer.toString(mConnection.getResponseCode()));
                 //retrieve the output JSON object
                 InputStream in = mConnection.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));

@@ -80,7 +80,6 @@ public class MCMixApplication extends Application {
             } finally {
                 cert_input.close();
             }
-            Log.d("MCMixApp", "cert: " + cert.toString());
             String keyStoreType = KeyStore.getDefaultType();
             KeyStore keyStore = KeyStore.getInstance(keyStoreType);
             keyStore.load(null, null);
