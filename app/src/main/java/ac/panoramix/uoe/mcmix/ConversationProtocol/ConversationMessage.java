@@ -6,8 +6,6 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
 
 
 import ac.panoramix.uoe.mcmix.MCMixConstants;
@@ -29,7 +27,6 @@ public class ConversationMessage implements Serializable {
     private String message;
     final public static Charset sEncoding = StandardCharsets.US_ASCII;
     private boolean from_alice;
-    private UUID mUUID;
     private boolean sent;
     private Date timestamp;
 
@@ -44,9 +41,6 @@ public class ConversationMessage implements Serializable {
 
 
 
-    public UUID getUUID() {
-        return mUUID;
-    }
 
 
     public boolean wasSent() {
@@ -63,7 +57,6 @@ public class ConversationMessage implements Serializable {
         assert CharMatcher.ascii().matchesAllOf(message);
         this.message = message;
         this.from_alice = from_alice;
-        mUUID = UUID.randomUUID();
     }
     public ConversationMessage(byte[] message, boolean from_alice) {
         // need to handle 0-padded arrays.
@@ -78,7 +71,6 @@ public class ConversationMessage implements Serializable {
             // now we construct a string up to that last index. i+1 since this is the length not the index
             this.message = new String(message, 0, i+1, sEncoding);
         }
-        mUUID = UUID.randomUUID();
         this.from_alice = from_alice;
     }
 
