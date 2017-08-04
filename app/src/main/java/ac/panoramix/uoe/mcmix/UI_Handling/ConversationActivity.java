@@ -211,6 +211,9 @@ public class ConversationActivity extends AppCompatActivity {
                     ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
                     String formatted_date = Utility.format_date_for_display(msg.getTimestamp());
                     ((TextView) convertView.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
+                    if(msg.wasSent()){
+                        ((TextView) convertView.findViewById(R.id.sent_confirmation_tick)).setText("\u2714");
+                    }
 
                     break;
                 case FROM_BOB:

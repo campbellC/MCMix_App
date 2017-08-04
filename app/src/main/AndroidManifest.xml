@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.ConversationActivity">
+        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.ConversationActivity"
+                  android:windowSoftInputMode="adjustResize" >
         </activity>
 
         <service
