@@ -39,10 +39,6 @@ public class DebugHomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        MCMixApplication.setAccount(new Account("Alice"));
-        Account B = new Account("Bob");
-        Buddy Bob = new Buddy(B.getUsername(), B.getKeyPair().getPublicKey());
-        MCMixApplication.getAccount().addBuddy(Bob);
 
 
         stop_conversation_button = (Button) findViewById(R.id.stop_conversation_button);
@@ -139,14 +135,13 @@ public class DebugHomeActivity extends AppCompatActivity {
     }
 
     private void launch_conversation(Buddy bob){
-        ConversationHandler.getOrCreateInstance().startConversation(bob);
         Intent intent = new Intent(DebugHomeActivity.this, ConversationActivity.class);
         intent.putExtra(MCMixConstants.BUDDY_EXTRA, bob);
         startActivity(intent);
     }
     private Buddy get_buddy_for_conversation(){
         EditText user_text = (EditText) findViewById(R.id.buddy_for_conversation_text);
-        user_text.setText("Bob");
+        user_text.setText("Alice");
         if(user_text.getText().length() == 0){
             return null;
         } else{
