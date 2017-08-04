@@ -35,9 +35,6 @@ public class Account implements Serializable{
         return new KeyPair(seed);
     }
 
-    public void addBuddy(Buddy inBuddy){
-        mBuddies.add(inBuddy);
-    }
 
     public KeyPair getKeyPair() {
         return mKeyPair;

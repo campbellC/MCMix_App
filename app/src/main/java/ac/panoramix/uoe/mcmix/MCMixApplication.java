@@ -109,12 +109,4 @@ public class MCMixApplication extends Application {
         }
     }
 
-    public static Buddy getBuddy(String username){
-        for(Buddy b : getAccount().getBuddies()){
-            if(b.getUsername().equals(username)){
-                return b;
-            }
-        }
-        return null;
-    }
 }

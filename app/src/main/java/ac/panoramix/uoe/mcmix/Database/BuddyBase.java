@@ -1,0 +1,85 @@
+package ac.panoramix.uoe.mcmix.Database;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Base64;
+
+import org.libsodium.jni.keys.PublicKey;
+
+import ac.panoramix.uoe.mcmix.Accounts.Buddy;
+
+/**
+ * Created by: Chris Campbell
+ * on: 04/08/2017
+ * for: University Of Edinburgh
+ * contact: c.j.campbell@ed.ac.uk
+ */
+
+public class BuddyBase {
+    private SQLiteDatabase mDatabase;
+    private Context mContext;
+    private static BuddyBase mBase;
+
+    private BuddyBase(Context context){
+        mContext = context;
+        mDatabase = new MCMixDbHelper(context).getWritableDatabase();
+    }
+
+    public BuddyBase getOrCreateInstance(Context context){
+        if(mBase == null){
+            mBase = new BuddyBase(context);
+        }
+        return mBase;
+    }
+
+    public Buddy getBuddy(String username){
+        Cursor cursor = mDatabase.query(
+                MCMixDbContract.BuddyEntry.TABLE_NAME,
+                null,
+                MCMixDbContract.BuddyEntry.BUDDY_COLUMN + " = ?" ,
+                new String[] {username },
+                null,
+                null,
+                null
+        );
+        if(cursor == null || cursor.getCount() == 0){
+            return null;
+        } else {
+            try{
+                while (cursor.moveToFirst()){
+                    String pk_str = cursor.getString(cursor.getColumnIndex(MCMixDbContract.BuddyEntry.PUBLIC_KEY_COLUMN));
+                    PublicKey pk = new PublicKey(Base64.decode(pk_str, Base64.DEFAULT));
+                    return new Buddy(username, pk);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public void updateBuddy(Buddy bob){
+        ContentValues values = getContentValues(bob);
+        if(getBuddy(bob.getUsername()) == null){
+            mDatabase.insert(MCMixDbContract.BuddyEntry.TABLE_NAME, null, values);
+        } else {
+            mDatabase.update(MCMixDbContract.BuddyEntry.TABLE_NAME, values,
+                    MCMixDbContract.BuddyEntry.BUDDY_COLUMN + " = ?",
+                    new String[] {bob.getUsername()} );
+        }
+    }
+
+    public void addBuddy(Buddy bob){
+        updateBuddy(bob);
+    }
+
+    public ContentValues getContentValues(Buddy bob) {
+        ContentValues values = new ContentValues();
+        values.put(MCMixDbContract.BuddyEntry.BUDDY_COLUMN, bob.getUsername());
+        values.put(MCMixDbContract.BuddyEntry.PUBLIC_KEY_COLUMN, Base64.encodeToString(bob.getPublic_key().toBytes(), Base64.DEFAULT));
+        return values;
+    }
+
+}

@@ -25,7 +25,7 @@ public final class MCMixDbContract {
     public static final String SQL_CREATE_BUDDY_ENTRIES =
             "CREATE TABLE " + BuddyEntry.TABLE_NAME + " (" +
                     BuddyEntry._ID + " INTEGER PRIMARY KEY," +
-                    BuddyEntry.BUDDY_COLUMN + " TEXT," +
+                    BuddyEntry.BUDDY_COLUMN + " TEXT UNIQUE," +
                     BuddyEntry.PUBLIC_KEY_COLUMN + " TEXT" + ")";
 
     public static final String SQL_DELETE_BUDDY_ENTRIES =
