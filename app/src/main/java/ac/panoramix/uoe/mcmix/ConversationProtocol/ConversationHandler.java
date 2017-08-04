@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Date;
 
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.Utility;
@@ -137,7 +138,9 @@ public class ConversationHandler {
     synchronized public void handleMessageFromUser(String payload){
         // This one liner splits the payload into strings of the correct length for sending over the wire
         for(String s : payload.split("(?<=\\G.{"+ Integer.toString(MCMixConstants.C_MESSAGE_BYTES) + "})")){
-            mConversationQueue.add(new ConversationMessage(s, true));
+            ConversationMessage msg = new ConversationMessage(s, true);
+            msg.setTimestamp(new Date());
+            mConversationQueue.add(msg);
         }
     }
     /***
@@ -261,5 +264,8 @@ public class ConversationHandler {
 
     }
 
+    public boolean inConversationWith(Buddy b){
+        return bob != null && b != null && b.equals(bob);
+    }
 
 }

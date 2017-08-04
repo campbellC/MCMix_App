@@ -5,17 +5,30 @@
                 android:background="@null">
 
     <LinearLayout
-                  android:orientation="horizontal"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_alignParentEnd="true"
-                  android:gravity="end"
-                  android:background="@drawable/conversation_message_box_from_alice"
-        >
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal"
+        android:background="@null" >
+
+        <LinearLayout
+                      android:orientation="horizontal"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:gravity="end"
+                      android:background="@drawable/conversation_message_box_from_alice"
+            >
+            <TextView
+                android:id="@+id/conversation_message_entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end" />
+        </LinearLayout>
         <TextView
-            android:id="@+id/conversation_message_entry"
+            android:id="@+id/conversation_message_timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end" />
+            android:textSize="15sp"
+            android:gravity="end"/>
     </LinearLayout>
 </RelativeLayout>

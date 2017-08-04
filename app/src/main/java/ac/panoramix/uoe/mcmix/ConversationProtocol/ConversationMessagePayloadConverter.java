@@ -6,6 +6,8 @@ import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Random;
 import org.libsodium.jni.crypto.SecretBox;
 
+import java.util.Date;
+
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
@@ -57,7 +59,9 @@ public class ConversationMessagePayloadConverter {
                 ciphertext, 0, MCMixConstants.C_CIPHERTEXT_BYTES);
 
         //Now we decrypt the ciphertext
-        return new ConversationMessage(mBox.decrypt(nonce, ciphertext), false);
+        ConversationMessage msg = new ConversationMessage(mBox.decrypt(nonce, ciphertext), false);
+        msg.setTimestamp(new Date());
+        return msg;
     }
 
     public String constructNullMessagePayload(long round_number){

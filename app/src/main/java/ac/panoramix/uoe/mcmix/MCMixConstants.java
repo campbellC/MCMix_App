@@ -28,6 +28,7 @@ public final class MCMixConstants {
 
 
 
+    public static final String BUDDY_EXTRA = "ac.panoramix.uoe.mcmix.BUDDY_EXTRA";
 
     public static final String MESSAGE_ADDED_BROADCAST_TAG = "ac.panoramix.uoe.mcmix.MESSAGE_ADDED_TO_CONVERSATION";
     public static final String DIAL_ADDED_BROADCAST_TAG = "ac.panoramix.uoe.mcmix.INCOMING_DIAL_RECEIVED";

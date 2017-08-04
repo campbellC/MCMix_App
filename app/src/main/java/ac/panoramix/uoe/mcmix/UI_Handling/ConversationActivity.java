@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,27 +14,50 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.google.common.base.CharMatcher;
 
 import java.util.List;
 
+import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
+import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHistory;
 import ac.panoramix.uoe.mcmix.R;
+import ac.panoramix.uoe.mcmix.Utility;
 
 public class ConversationActivity extends AppCompatActivity {
-    Button send_button;
-    EditText message_entry;
+
+    /* A ConversationActivity does not exist without a Buddy who the
+     *   conversation is with.
+     */
+    Buddy bob;
+
+    /* The top portion of the screen is a view on the history
+        of this conversation.
+     */
     ListView conversation_view;
     ConversationAdapter mAdapter;
-    MessageSentReceiver mMessageSentReceiver;
 
+    /* The bottom portion of the screen is either a send message
+        area or a button for dialing bob.
+     */
+    Button send_button;
+    EditText message_entry;
+    Button dial_bob;
+    ViewSwitcher send_message_switcher;
+    View send_message_view;
+    View dial_bob_view;
+    ImageButton back_button;
+
+    MessageSentReceiver mMessageSentReceiver;
     private ConversationHistory mHistory;
     private ConversationHandler mConversationHandler = ConversationHandler.getOrCreateInstance();
 
@@ -41,6 +65,36 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
+
+        back_button = (ImageButton) findViewById(R.id.previous);
+        back_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+
+
+        bob = (Buddy) getIntent().getSerializableExtra(MCMixConstants.BUDDY_EXTRA);
+        ((TextView) findViewById(R.id.toolbar_buddy_name)).setText(bob.getUsername());
+
+        send_message_switcher = (ViewSwitcher) findViewById(R.id.conversation_dial_or_type_switcher);
+        dial_bob_view = findViewById(R.id.dial_bob_view);
+        send_message_view = findViewById(R.id.send_message_view);
+
+
+        dial_bob = (Button) findViewById(R.id.start_conversation_button);
+        dial_bob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mConversationHandler.startConversation(bob);
+                DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
+                changeDialView();
+                Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast),Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         message_entry = (EditText) findViewById(R.id.conversation_message_input);
 
@@ -57,7 +111,7 @@ public class ConversationActivity extends AppCompatActivity {
         conversation_view = (ListView) findViewById(R.id.conversation_history_view);
         conversation_view.setAdapter(mAdapter);
 
-
+        changeDialView();
     }
 
     @Override
@@ -69,7 +123,7 @@ public class ConversationActivity extends AppCompatActivity {
 
     }
 
-    @Override
+   @Override
     protected void onStop() {
         if(mMessageSentReceiver != null){
             getApplicationContext().unregisterReceiver(mMessageSentReceiver);
@@ -112,6 +166,27 @@ public class ConversationActivity extends AppCompatActivity {
 
     }
 
+    private boolean conversationIsActive(){
+        return mConversationHandler.inConversationWith(bob);
+    }
+
+    private void changeDialView(){
+        if(conversationIsActive()) {
+            while(send_message_switcher.getCurrentView() != send_message_view){
+                send_message_switcher.showNext();
+            }
+            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText("Active Conversation.");
+        } else {
+            while(send_message_switcher.getCurrentView() != dial_bob_view){
+                send_message_switcher.showNext();
+            }
+            dial_bob.setTransformationMethod(null);
+            dial_bob.setText(getResources().getString(R.string.start_conversation_button_text) + " with " + bob.getUsername());
+            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText("Inactive Conversation.");
+        }
+
+    }
+
     private class ConversationAdapter extends ArrayAdapter<ConversationMessage>{
         private static final int FROM_ALICE = 0;
         private static final int FROM_BOB = 1;
@@ -134,12 +209,17 @@ public class ConversationActivity extends AppCompatActivity {
                         convertView = getLayoutInflater().inflate(R.layout.conversation_message_from_alice, parent, false);
                     }
                     ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
+                    String formatted_date = Utility.format_date_for_display(msg.getTimestamp());
+                    ((TextView) convertView.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
+
                     break;
                 case FROM_BOB:
                     if(convertView == null) {
                         convertView = getLayoutInflater().inflate(R.layout.conversation_message_from_bob, parent, false);
                     }
                     ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
+                    formatted_date = Utility.format_date_for_display(msg.getTimestamp());
+                    ((TextView) convertView.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
                     break;
             }
             return convertView;

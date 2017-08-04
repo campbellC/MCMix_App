@@ -5,7 +5,10 @@ import com.google.common.base.CharMatcher;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
+
 
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 
@@ -28,6 +31,17 @@ public class ConversationMessage implements Serializable {
     private boolean from_alice;
     private UUID mUUID;
     private boolean sent;
+    private Date timestamp;
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+
 
 
     public UUID getUUID() {

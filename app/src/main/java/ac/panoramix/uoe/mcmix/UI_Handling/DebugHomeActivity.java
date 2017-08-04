@@ -15,11 +15,11 @@ import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.R;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 
-public class HomeActivity extends AppCompatActivity {
+public class DebugHomeActivity extends AppCompatActivity {
     BroadcastReceiver mDialRecievedReceiver;
     private Button add_buddy_button;
 
@@ -39,6 +39,11 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        MCMixApplication.setAccount(new Account("Alice"));
+        Account B = new Account("Bob");
+        Buddy Bob = new Buddy(B.getUsername(), B.getKeyPair().getPublicKey());
+        MCMixApplication.getAccount().addBuddy(Bob);
+
 
         stop_conversation_button = (Button) findViewById(R.id.stop_conversation_button);
         stop_conversation_button.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +69,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Buddy bob = get_buddy_for_conversation();
                 if(bob == null){
-                    Toast.makeText(HomeActivity.this, "Buddy not known.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DebugHomeActivity.this, "Buddy not known.", Toast.LENGTH_SHORT).show();
                 } else {
                     launch_conversation(bob);
                 }
@@ -79,7 +84,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(bob != null){
                     DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
                 } else {
-                    Toast.makeText(HomeActivity.this, "Buddy not known. Try adding them to your buddies.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DebugHomeActivity.this, "Buddy not known. Try adding them to your buddies.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -92,7 +97,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(bob != null){
                     launch_conversation(bob);
                 } else {
-                    Toast.makeText(HomeActivity.this, "Nobody has dialed you", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DebugHomeActivity.this, "Nobody has dialed you", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -105,7 +110,7 @@ public class HomeActivity extends AppCompatActivity {
                 if(bob != null){
                     launch_conversation(bob);
                 } else {
-                    Toast.makeText(HomeActivity.this, "You haven't dialed anyone yet", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DebugHomeActivity.this, "You haven't dialed anyone yet", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -115,7 +120,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DialHandler.getOrCreateInstance().handle_user_request_to_block_dials();
-                Toast.makeText(HomeActivity.this, "Blocking all incoming dials", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DebugHomeActivity.this, "Blocking all incoming dials", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -124,7 +129,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 DialHandler.getOrCreateInstance().handle_user_request_to_dialcheck();
-                Toast.makeText(HomeActivity.this, "Allowing all incoming dials", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DebugHomeActivity.this, "Allowing all incoming dials", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -135,12 +140,13 @@ public class HomeActivity extends AppCompatActivity {
 
     private void launch_conversation(Buddy bob){
         ConversationHandler.getOrCreateInstance().startConversation(bob);
-        Intent intent = new Intent(HomeActivity.this, ConversationActivity.class);
+        Intent intent = new Intent(DebugHomeActivity.this, ConversationActivity.class);
         intent.putExtra(MCMixConstants.BUDDY_EXTRA, bob);
         startActivity(intent);
     }
     private Buddy get_buddy_for_conversation(){
         EditText user_text = (EditText) findViewById(R.id.buddy_for_conversation_text);
+        user_text.setText("Bob");
         if(user_text.getText().length() == 0){
             return null;
         } else{
@@ -192,7 +198,7 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if(!DialHandler.getOrCreateInstance().was_last_dial_null()){
-                Toast.makeText(HomeActivity.this,
+                Toast.makeText(DebugHomeActivity.this,
                         DialHandler.getOrCreateInstance().get_last_incoming_dial_for_user().getUsername() + " has dialed you",
                         Toast.LENGTH_LONG).show();
             }
