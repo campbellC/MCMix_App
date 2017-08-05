@@ -19,11 +19,13 @@ public class MCMixDbHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    @Override
     public void onCreate(SQLiteDatabase db){
         db.execSQL(MCMixDbContract.SQL_CREATE_BUDDY_ENTRIES);
         db.execSQL(MCMixDbContract.SQL_CREATE_MESSAGES_ENTRIES);
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
         // For now we simply delete all tables
         db.execSQL(MCMixDbContract.SQL_DELETE_BUDDY_ENTRIES);
@@ -31,5 +33,12 @@ public class MCMixDbHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            // Enable foreign key constraints
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
+    }
 }

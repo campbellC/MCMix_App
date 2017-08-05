@@ -46,8 +46,8 @@ public final class MCMixDbContract {
                     ConversationMessageEntry._ID + " INTEGER PRIMARY KEY," +
                     ConversationMessageEntry.BUDDY_COLUMN + " INTEGER," +
                     "FOREIGN KEY ( " + ConversationMessageEntry.BUDDY_COLUMN + " ) REFERENCES "
-                                    + BuddyEntry.TABLE_NAME+"(" + BuddyEntry._ID +"), " +
-                    ConversationMessageEntry.MESSAGE_COLUMN + " TEXT," +
+                                   + BuddyEntry.TABLE_NAME+"(" + BuddyEntry._ID + ") ON DELETE CASCADE, "
+                    + ConversationMessageEntry.MESSAGE_COLUMN + " TEXT," +
                     ConversationMessageEntry.SENT_COLUMN + " BOOLEAN," +
                     ConversationMessageEntry.TIMESTAMP_COLUMN + " INTEGER" + ")";
 
