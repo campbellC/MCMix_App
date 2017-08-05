@@ -7,6 +7,9 @@ package ac.panoramix.uoe.mcmix.Accounts;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+import android.content.ContentValues;
+import android.util.Base64;
+
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.keys.PublicKey;
 
@@ -15,6 +18,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Objects;
+
+import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
 
 /** This class is the "friend" class for mcmix. The only information
  * you need to know about a friend to call them is their public key and username.
@@ -62,4 +67,5 @@ public class Buddy implements Serializable{
         in.read(buf);
         mPublic_key = new PublicKey(buf);
     }
+
 }
