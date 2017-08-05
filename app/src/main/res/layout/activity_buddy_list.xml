@@ -14,6 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="@android:color/transparent"
         android:layout_gravity="start"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         tools:layout_editor_absoluteX="0dp">
@@ -48,10 +49,10 @@
 
                 <ImageButton
                     android:id="@+id/add_buddy_button"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="end|center_vertical"
-                    android:background="@null"
                     android:contentDescription="@string/add_buddy_button_text"
                     app:srcCompat="@android:drawable/ic_menu_add"/>
 

@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
@@ -18,15 +20,29 @@ import ac.panoramix.uoe.mcmix.R;
 public class BuddyListActivity extends AppCompatActivity {
 
     private BuddyBase mBase;
+    private ListView mBuddyListview;
+    private BuddyCursorAdapter mAdapter;
+    private ImageButton mAddBuddyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buddy_list);
-        mBase = BuddyBase.getOrCreateInstance(this);
-        ListView buddy_listview = (ListView) findViewById(R.id.buddy_list_list_view);
-        buddy_listview.setAdapter(new BuddyCursorAdapter(this, mBase.getBuddies()));
 
+        // We populate the list view from the database of buddies
+        mBase = BuddyBase.getOrCreateInstance(this);
+        mBuddyListview = (ListView) findViewById(R.id.buddy_list_list_view);
+        mAdapter = new BuddyCursorAdapter(this, mBase.getBuddies());
+        mBuddyListview.setAdapter(mAdapter);
+
+        mAddBuddyButton = (ImageButton) findViewById(R.id.add_buddy_button);
+        mAddBuddyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: this should launch an activity for adding a buddy to the database
+                Toast.makeText(BuddyListActivity.this, "Adding buddy", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
