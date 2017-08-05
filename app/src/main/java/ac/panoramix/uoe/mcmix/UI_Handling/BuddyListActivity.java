@@ -1,13 +1,17 @@
 package ac.panoramix.uoe.mcmix.UI_Handling;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,8 +43,26 @@ public class BuddyListActivity extends AppCompatActivity {
         mAddBuddyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: this should launch an activity for adding a buddy to the database
-                Toast.makeText(BuddyListActivity.this, "Adding buddy", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder alert = new AlertDialog.Builder(BuddyListActivity.this);
+                final EditText edittext = new EditText(getApplicationContext());
+                alert.setMessage("Enter Buddy's Name");
+                alert.setTitle("Add Buddy");
+
+                alert.setView(edittext);
+
+                alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Toast.makeText(BuddyListActivity.this, "Adding " + edittext.getText().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+
+                alert.show();
             }
         });
 

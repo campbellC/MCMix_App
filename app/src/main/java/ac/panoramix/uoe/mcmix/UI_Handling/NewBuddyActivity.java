@@ -14,7 +14,7 @@ import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 
-public class UpdateKeysActivity extends AppCompatActivity {
+public class NewBuddyActivity extends AppCompatActivity {
     Button update_all_keys_button;
     Button update_one_key_button;
     EditText username_input;

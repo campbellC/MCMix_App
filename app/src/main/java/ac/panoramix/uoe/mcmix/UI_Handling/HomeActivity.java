@@ -52,7 +52,7 @@ public class HomeActivity extends AppCompatActivity {
         add_buddy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), UpdateKeysActivity.class);
+                Intent intent = new Intent(getApplicationContext(), NewBuddyActivity.class);
                 startActivity(intent);
             }
         });
