@@ -34,11 +34,22 @@ public class BuddyBase {
         return mBase;
     }
 
+    public Cursor getBuddies(){
+        return mDatabase.query(
+                MCMixDbContract.BuddyEntry.TABLE_NAME,//table name
+                null, //all columns
+                null, //all rows
+                null, //no arguments for WHERE
+                null, //no group by
+                null, //no having clause
+                MCMixDbContract.BuddyEntry.USERNAME_COLUMN, //order alphabetically by username
+                null); //no limit on numbers
+    }
     public Buddy getBuddy(String username){
         Cursor cursor = mDatabase.query(
                 MCMixDbContract.BuddyEntry.TABLE_NAME,
                 null,
-                MCMixDbContract.BuddyEntry.BUDDY_COLUMN + " = ?" ,
+                MCMixDbContract.BuddyEntry.USERNAME_COLUMN + " = ?" ,
                 new String[] {username },
                 null,
                 null,
@@ -66,7 +77,7 @@ public class BuddyBase {
             mDatabase.insert(MCMixDbContract.BuddyEntry.TABLE_NAME, null, values);
         } else {
             mDatabase.update(MCMixDbContract.BuddyEntry.TABLE_NAME, values,
-                    MCMixDbContract.BuddyEntry.BUDDY_COLUMN + " = ?",
+                    MCMixDbContract.BuddyEntry.USERNAME_COLUMN + " = ?",
                     new String[] {bob.getUsername()} );
         }
     }
@@ -77,7 +88,7 @@ public class BuddyBase {
 
     public ContentValues getContentValues(Buddy bob) {
         ContentValues values = new ContentValues();
-        values.put(MCMixDbContract.BuddyEntry.BUDDY_COLUMN, bob.getUsername());
+        values.put(MCMixDbContract.BuddyEntry.USERNAME_COLUMN, bob.getUsername());
         values.put(MCMixDbContract.BuddyEntry.PUBLIC_KEY_COLUMN, Base64.encodeToString(bob.getPublic_key().toBytes(), Base64.DEFAULT));
         return values;
     }
