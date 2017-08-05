@@ -27,7 +27,7 @@ public class BuddyBase {
         mDatabase = new MCMixDbHelper(context).getWritableDatabase();
     }
 
-    public BuddyBase getOrCreateInstance(Context context){
+    public static BuddyBase getOrCreateInstance(Context context){
         if(mBase == null){
             mBase = new BuddyBase(context);
         }

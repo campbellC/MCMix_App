@@ -45,11 +45,11 @@ public final class MCMixDbContract {
             "CREATE TABLE " + ConversationMessageEntry.TABLE_NAME + " (" +
                     ConversationMessageEntry._ID + " INTEGER PRIMARY KEY," +
                     ConversationMessageEntry.BUDDY_COLUMN + " INTEGER," +
-                    "FOREIGN KEY ( " + ConversationMessageEntry.BUDDY_COLUMN + " ) REFERENCES "
-                                   + BuddyEntry.TABLE_NAME+"(" + BuddyEntry._ID + ") ON DELETE CASCADE, "
-                    + ConversationMessageEntry.MESSAGE_COLUMN + " TEXT," +
+                    ConversationMessageEntry.MESSAGE_COLUMN + " TEXT," +
                     ConversationMessageEntry.SENT_COLUMN + " BOOLEAN," +
-                    ConversationMessageEntry.TIMESTAMP_COLUMN + " INTEGER" + ")";
+                    ConversationMessageEntry.TIMESTAMP_COLUMN + " INTEGER," +
+                    "FOREIGN KEY(" + ConversationMessageEntry.BUDDY_COLUMN + ") REFERENCES "
+                        + BuddyEntry.TABLE_NAME+"(" + BuddyEntry._ID + ") ON DELETE CASCADE" + ")";
 
     public static final String SQL_DELETE_MESSAGES_ENTRIES =
             "DROP TABLE IF EXISTS " + ConversationMessageEntry.TABLE_NAME;

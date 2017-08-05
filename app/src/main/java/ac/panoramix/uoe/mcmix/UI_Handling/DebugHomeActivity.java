@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
+import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
@@ -21,43 +23,23 @@ import ac.panoramix.uoe.mcmix.R;
 
 public class DebugHomeActivity extends AppCompatActivity {
     BroadcastReceiver mDialRecievedReceiver;
-    private Button add_buddy_button;
-
-    private Button stop_conversation_button;
-
     private Button start_conversation_button;
-
-    private Button dial_buddy_button;
-    private Button start_conversation_with_incoming_dial;
-
-    private Button start_conversation_with_outgoing_dial;
-
-    private Button block_incoming_dials;
-    private Button allow_incoming_dials;
-
+    private Button buddy_list_button;
+    private BuddyBase mBase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_debug_home);
 
 
-        stop_conversation_button = (Button) findViewById(R.id.stop_conversation_button);
-        stop_conversation_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ConversationHandler.getOrCreateInstance().endConversation();
-            }
-        });
-
-        add_buddy_button = (Button) findViewById(R.id.add_buddy_button);
-        add_buddy_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), UpdateKeysActivity.class);
-                startActivity(intent);
-            }
-        });
-
+        mBase = BuddyBase.getOrCreateInstance(MCMixApplication.getContext());
+        for(int i = 0; i <= 5; ++i){
+            String name = "Bob" + Integer.toString(i);
+            Account a = new Account(name);
+            Buddy bob = new Buddy(name, a.getKeyPair().getPublicKey());
+            mBase.addBuddy(bob);
+            Log.d("debuggingAct", "Added buddy: " + name);
+        }
 
         start_conversation_button = (Button) findViewById(R.id.start_conversation_button);
         start_conversation_button.setOnClickListener(new View.OnClickListener() {
@@ -72,63 +54,18 @@ public class DebugHomeActivity extends AppCompatActivity {
             }
         });
 
-        dial_buddy_button = (Button) findViewById(R.id.send_dial_button);
-        dial_buddy_button.setOnClickListener(new View.OnClickListener() {
+
+
+
+
+        buddy_list_button = (Button) findViewById(R.id.BuddyListButton);
+        buddy_list_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Buddy bob = get_buddy_for_dial();
-                if(bob != null){
-                    DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
-                } else {
-                    Toast.makeText(DebugHomeActivity.this, "Buddy not known. Try adding them to your buddies.", Toast.LENGTH_SHORT).show();
-                }
+
+                launch_buddy_list();
             }
         });
-
-        start_conversation_with_incoming_dial = (Button) findViewById(R.id.start_conversation_with_last_dial_button);
-        start_conversation_with_incoming_dial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Buddy bob = DialHandler.getOrCreateInstance().get_last_incoming_dial_for_user();
-                if(bob != null){
-                    launch_conversation(bob);
-                } else {
-                    Toast.makeText(DebugHomeActivity.this, "Nobody has dialed you", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        start_conversation_with_outgoing_dial = (Button) findViewById(R.id.start_conversation_with_outgoing_dial);
-        start_conversation_with_outgoing_dial.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Buddy bob = DialHandler.getOrCreateInstance().getLast_outgoing_dial();
-                if(bob != null){
-                    launch_conversation(bob);
-                } else {
-                    Toast.makeText(DebugHomeActivity.this, "You haven't dialed anyone yet", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        block_incoming_dials = (Button) findViewById(R.id.block_incoming_dials_button);
-        block_incoming_dials.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialHandler.getOrCreateInstance().handle_user_request_to_block_dials();
-                Toast.makeText(DebugHomeActivity.this, "Blocking all incoming dials", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        allow_incoming_dials = (Button) findViewById(R.id.allow_incoming_dials_button);
-        allow_incoming_dials.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialHandler.getOrCreateInstance().handle_user_request_to_dialcheck();
-                Toast.makeText(DebugHomeActivity.this, "Allowing all incoming dials", Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
 
 
@@ -155,23 +92,11 @@ public class DebugHomeActivity extends AppCompatActivity {
             return null;
         }
     }
-    private Buddy get_buddy_for_dial(){
-        EditText user_text = (EditText) findViewById(R.id.buddy_for_dialing_input);
-        if(user_text.getText().length() == 0){
-            return null;
-        } else{
-            String username = user_text.getText().toString();
-            Account Alice = MCMixApplication.getAccount();
-            for(Buddy bob : Alice.getBuddies()){
-                if(bob.getUsername().equals(username)){
-                    return bob;
-                }
-            }
-            return null;
-        }
+
+    private void launch_buddy_list(){
+        Intent intent = new Intent(DebugHomeActivity.this, BuddyListActivity.class);
+        startActivity(intent);
     }
-
-
 
     @Override
     protected void onStart() {
