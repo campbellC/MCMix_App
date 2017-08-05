@@ -37,16 +37,14 @@
         </activity>
         <activity android:name=".UI_Handling.UserRegistrationActivity">
         </activity>
-        <activity android:name=".UI_Handling.NewBuddyActivity">
-        </activity>
         <activity android:name=".UI_Handling.StartUpActivity">
-        </activity>
-        <activity android:name=".UI_Handling.DebugHomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".UI_Handling.DebugHomeActivity">
         </activity>
         <activity android:name=".UI_Handling.BuddyListActivity">
         </activity>

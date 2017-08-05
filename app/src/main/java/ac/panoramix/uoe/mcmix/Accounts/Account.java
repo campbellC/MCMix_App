@@ -22,12 +22,10 @@ public class Account implements Serializable{
     private String mUsername;
     private byte[] seed;
     private transient KeyPair mKeyPair;
-    private List<Buddy> mBuddies;
 
     public Account(String username) {
         mUsername = username;
         mKeyPair = generateKeys();
-        mBuddies = new ArrayList<>();
     }
 
     private KeyPair generateKeys() {
@@ -45,9 +43,6 @@ public class Account implements Serializable{
     }
 
 
-    public List<Buddy> getBuddies() {
-        return mBuddies;
-    }
 
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {

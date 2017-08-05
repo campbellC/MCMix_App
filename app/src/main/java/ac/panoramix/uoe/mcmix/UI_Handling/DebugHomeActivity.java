@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
-import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
@@ -78,13 +77,12 @@ public class DebugHomeActivity extends AppCompatActivity {
     }
     private Buddy get_buddy_for_conversation(){
         EditText user_text = (EditText) findViewById(R.id.buddy_for_conversation_text);
-        user_text.setText("Alice");
+
         if(user_text.getText().length() == 0){
             return null;
         } else{
             String username = user_text.getText().toString();
-            Account Alice = MCMixApplication.getAccount();
-            for(Buddy bob : Alice.getBuddies()){
+            for(Buddy bob : mBase.getBuddies()){
                 if(bob.getUsername().equals(username)){
                     return bob;
                 }

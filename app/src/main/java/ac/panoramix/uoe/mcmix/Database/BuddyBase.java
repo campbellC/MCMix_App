@@ -8,6 +8,9 @@ import android.util.Base64;
 
 import org.libsodium.jni.keys.PublicKey;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 
 /**
@@ -34,7 +37,26 @@ public class BuddyBase {
         return mBase;
     }
 
-    public Cursor getBuddies(){
+    private Buddy buddyFromCursor(Cursor cursor){
+        if(!cursor.isAfterLast()) {
+            String username = cursor.getString(cursor.getColumnIndex(MCMixDbContract.BuddyEntry.USERNAME_COLUMN));
+            String pk_str = cursor.getString(cursor.getColumnIndex(MCMixDbContract.BuddyEntry.PUBLIC_KEY_COLUMN));
+            PublicKey pk = new PublicKey(Base64.decode(pk_str, Base64.DEFAULT));
+            return new Buddy(username, pk);
+        } else {
+            return null;
+        }
+    }
+    public List<Buddy> getBuddies(){
+        ArrayList<Buddy> ret = new ArrayList<>();
+        Cursor cursor = getBuddiesCursor();
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            Buddy bob = buddyFromCursor(cursor);
+            ret.add(bob);
+        }
+        return ret;
+    }
+    public Cursor getBuddiesCursor(){
         return mDatabase.query(
                 MCMixDbContract.BuddyEntry.TABLE_NAME,//table name
                 null, //all columns

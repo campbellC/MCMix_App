@@ -1,8 +1,10 @@
 package ac.panoramix.uoe.mcmix.UI_Handling;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +21,8 @@ import android.widget.Toast;
 
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
+import ac.panoramix.uoe.mcmix.MCMixConstants;
+import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 
 public class BuddyListActivity extends AppCompatActivity {
@@ -27,6 +31,7 @@ public class BuddyListActivity extends AppCompatActivity {
     private ListView mBuddyListview;
     private BuddyCursorAdapter mAdapter;
     private ImageButton mAddBuddyButton;
+    MessageSentReceiver mMessageSentReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +41,7 @@ public class BuddyListActivity extends AppCompatActivity {
         // We populate the list view from the database of buddies
         mBase = BuddyBase.getOrCreateInstance(this);
         mBuddyListview = (ListView) findViewById(R.id.buddy_list_list_view);
-        mAdapter = new BuddyCursorAdapter(this, mBase.getBuddies());
+        mAdapter = new BuddyCursorAdapter(this, mBase.getBuddiesCursor());
         mBuddyListview.setAdapter(mAdapter);
 
         mAddBuddyButton = (ImageButton) findViewById(R.id.add_buddy_button);
@@ -52,7 +57,11 @@ public class BuddyListActivity extends AppCompatActivity {
 
                 alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Toast.makeText(BuddyListActivity.this, "Adding " + edittext.getText().toString(), Toast.LENGTH_SHORT).show();
+                        String username = edittext.getText().toString();
+                        if(username.length() > 0){
+                            new GetPublicKeyTask().execute(username);
+                            dialog.dismiss();
+                        }
                     }
                 });
 
@@ -83,5 +92,32 @@ public class BuddyListActivity extends AppCompatActivity {
             String buddy_name = cursor.getString(cursor.getColumnIndex(MCMixDbContract.BuddyEntry.USERNAME_COLUMN));
             buddy_name_view.setText(buddy_name);
         }
+    }
+    private class MessageSentReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mMessageSentReceiver = new MessageSentReceiver();
+        IntentFilter intentFilter = new IntentFilter(MCMixConstants.BUDDY_ADDED_BROADCAST_TAG);
+        getApplicationContext().registerReceiver(mMessageSentReceiver, intentFilter);
+
+    }
+    @Override
+    protected void onStop() {
+        if(mMessageSentReceiver != null){
+            getApplicationContext().unregisterReceiver(mMessageSentReceiver);
+        }
+        super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter.notifyDataSetChanged();
     }
 }
