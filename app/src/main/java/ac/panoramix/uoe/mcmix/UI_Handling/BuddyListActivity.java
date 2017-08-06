@@ -23,13 +23,14 @@ import android.widget.TextView;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 
 public class BuddyListActivity extends AppCompatActivity {
 
-    private BuddyBase mBase = BuddyBase.getOrCreateInstance(getApplicationContext());
+    private BuddyBase mBase = BuddyBase.getOrCreateInstance(MCMixApplication.getContext());
     private ListView mBuddyListview;
     private BuddyCursorAdapter mAdapter;
     private ImageButton mAddBuddyButton;

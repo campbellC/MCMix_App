@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.UUID;
@@ -69,12 +70,13 @@ public class ConversationBase {
                 null
         );
         if(cursor == null || cursor.getCount() == 0){
+            Log.d("ConvBase", "Searched for uuid of message. No such message.");
             return null;
         } else {
             cursor.moveToFirst();
-            getMessageFromCursor(cursor);
+            Log.d("ConvBase", "Found message on uuid search");
+            return getMessageFromCursor(cursor);
         }
-        return null;
     }
 
     public ConversationMessage getMessageFromCursor(Cursor cursor){
@@ -90,6 +92,21 @@ public class ConversationBase {
         }
     }
 
+    public void setMessageSent(UUID uuid, Buddy bob){
+        ConversationMessage msg = getMessage(uuid);
+        msg.setSent(true);
+        updateMessage(msg, bob);
+    }
+
+    public boolean deleteMessage(UUID uuid){
+        return mDatabase.delete(MCMixDbContract.ConversationMessageEntry.TABLE_NAME,
+                MCMixDbContract.ConversationMessageEntry.UUID_COLUMN + " = ?",
+                new String[] {uuid.toString()}) > 0;
+    }
+
+    public void addMessage(ConversationMessage message, Buddy bob){
+        updateMessage(message, bob);
+    }
     public void updateMessage(ConversationMessage message, Buddy bob){
         ContentValues values = getContentValues(message, bob);
         if(getMessage(message.getUuid()) == null){

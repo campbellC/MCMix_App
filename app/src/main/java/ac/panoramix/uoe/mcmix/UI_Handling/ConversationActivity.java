@@ -5,15 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
@@ -25,15 +21,13 @@ import android.widget.ViewSwitcher;
 
 import com.google.common.base.CharMatcher;
 
-import java.util.List;
-
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
 import ac.panoramix.uoe.mcmix.Database.ConversationBase;
 import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
-import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHistory;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
 
@@ -67,7 +61,7 @@ public class ConversationActivity extends AppCompatActivity {
     MessageSentReceiver mMessageSentReceiver;
 
     private ConversationHandler mConversationHandler = ConversationHandler.getOrCreateInstance();
-    private ConversationBase mBase = ConversationBase.getOrCreateInstance(getApplicationContext());
+    private ConversationBase mBase = ConversationBase.getOrCreateInstance(MCMixApplication.getContext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +124,7 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mMessageSentReceiver = new MessageSentReceiver();
-        IntentFilter intentFilter = new IntentFilter(MCMixConstants.MESSAGE_ADDED_BROADCAST_TAG);
+        IntentFilter intentFilter = new IntentFilter(MCMixConstants.MESSAGES_UPDATED_BROADCAST_TAG);
         getApplicationContext().registerReceiver(mMessageSentReceiver, intentFilter);
     }
 
@@ -261,7 +255,7 @@ public class ConversationActivity extends AppCompatActivity {
     private class MessageSentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mAdapter.notifyDataSetChanged();
+            updateUI();
         }
     }
 
