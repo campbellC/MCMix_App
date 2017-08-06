@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
+import ac.panoramix.uoe.mcmix.Networking.UpdatePublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
@@ -53,7 +54,8 @@ public class UserRegistrationActivity extends AppCompatActivity {
         username_input = (EditText) findViewById(R.id.user_creation_username);
         password_input = (EditText) findViewById(R.id.user_creation_password);
         password_repeat_input= (EditText) findViewById(R.id.user_creation_password_repeat);
-
+        password_repeat_input.setText("horse_battery");
+        password_input.setText("horse_battery");
         user_create_button = (Button) findViewById(R.id.user_creation_button);
         user_create_button.setOnClickListener(new View.OnClickListener() {
             @Override

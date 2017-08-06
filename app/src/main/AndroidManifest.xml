@@ -37,8 +37,6 @@
         </activity>
         <activity android:name=".UI_Handling.UserRegistrationActivity">
         </activity>
-        <activity android:name=".UI_Handling.UpdateKeysActivity">
-        </activity>
         <activity android:name=".UI_Handling.StartUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

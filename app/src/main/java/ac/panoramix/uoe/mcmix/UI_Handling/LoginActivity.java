@@ -78,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent serviceIntent = new Intent(getApplicationContext(), MCMixNetworkService.class);
                 startService(serviceIntent);
                 //TODO: fix which activity is launched by this
-                Intent intent = new Intent(getApplicationContext(), DebugHomeActivity.class);
+                Intent intent = new Intent(getApplicationContext(), BuddyListActivity.class);
                 // These flags make it so that pressing Back will not return the user to the login screen
                 new UpdatePublicKeyTask().execute();
 

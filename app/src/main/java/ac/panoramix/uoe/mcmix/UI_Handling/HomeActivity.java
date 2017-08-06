@@ -52,8 +52,7 @@ public class HomeActivity extends AppCompatActivity {
         add_buddy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), UpdateKeysActivity.class);
-                startActivity(intent);
+
             }
         });
 
@@ -146,11 +145,12 @@ public class HomeActivity extends AppCompatActivity {
         } else{
             String username = user_text.getText().toString();
             Account Alice = MCMixApplication.getAccount();
-            for(Buddy bob : Alice.getBuddies()){
-                if(bob.getUsername().equals(username)){
-                    return bob;
-                }
-            }
+            //TODO: replace with BuddyBase getBuddies
+//            for(Buddy bob : Alice.getBuddies()){
+//                if(bob.getUsername().equals(username)){
+//                    return bob;
+//                }
+//            }
             return null;
         }
     }
@@ -161,11 +161,12 @@ public class HomeActivity extends AppCompatActivity {
         } else{
             String username = user_text.getText().toString();
             Account Alice = MCMixApplication.getAccount();
-            for(Buddy bob : Alice.getBuddies()){
-                if(bob.getUsername().equals(username)){
-                    return bob;
-                }
-            }
+            //TODO: REplace with BuddyBase getBuddies
+//            for(Buddy bob : Alice.getBuddies()){
+//                if(bob.getUsername().equals(username)){
+//                    return bob;
+//                }
+//            }
             return null;
         }
     }
