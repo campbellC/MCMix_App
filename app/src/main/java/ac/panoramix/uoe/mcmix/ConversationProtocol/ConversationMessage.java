@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 
 import ac.panoramix.uoe.mcmix.MCMixConstants;
@@ -29,6 +30,7 @@ public class ConversationMessage implements Serializable {
     private boolean from_alice;
     private boolean sent;
     private Date timestamp;
+    private UUID uuid;
 
     public Date getTimestamp() {
         return timestamp;
@@ -39,9 +41,13 @@ public class ConversationMessage implements Serializable {
     }
 
 
-
-
-
+    public ConversationMessage(String message, boolean from_alice, boolean sent, Date timestamp, UUID uuid) {
+        this.message = message;
+        this.from_alice = from_alice;
+        this.sent = sent;
+        this.timestamp = timestamp;
+        this.uuid = uuid;
+    }
 
     public boolean wasSent() {
         return sent;
@@ -57,7 +63,18 @@ public class ConversationMessage implements Serializable {
         assert CharMatcher.ascii().matchesAllOf(message);
         this.message = message;
         this.from_alice = from_alice;
+        uuid = UUID.randomUUID();
     }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public UUID getUuid() {
+
+        return uuid;
+    }
+
     public ConversationMessage(byte[] message, boolean from_alice) {
         // need to handle 0-padded arrays.
         if(message.length == 0 || message[0] ==  0){
@@ -72,6 +89,7 @@ public class ConversationMessage implements Serializable {
             this.message = new String(message, 0, i+1, sEncoding);
         }
         this.from_alice = from_alice;
+        uuid = UUID.randomUUID();
     }
 
     /* Utility Methods */

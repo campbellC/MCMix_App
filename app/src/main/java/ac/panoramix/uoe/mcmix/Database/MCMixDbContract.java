@@ -36,17 +36,21 @@ public final class MCMixDbContract {
         public static final String MESSAGE_COLUMN = "messages";
         public static final String SENT_COLUMN = "sent";
         public static final String TIMESTAMP_COLUMN = "timestamp";
-        public static final String BUDDY_COLUMN = "buddy";
+        public static final String BUDDY_ID_COLUMN = "buddy";
+        public static final String FROM_ALICE = "from_alice";
+        public static final String UUID_COLUMN = "message_uuid";
     }
 
     public static final String SQL_CREATE_MESSAGES_ENTRIES =
             "CREATE TABLE " + ConversationMessageEntry.TABLE_NAME + " (" +
                     ConversationMessageEntry._ID + " INTEGER PRIMARY KEY," +
-                    ConversationMessageEntry.BUDDY_COLUMN + " INTEGER," +
+                    ConversationMessageEntry.BUDDY_ID_COLUMN + " INTEGER," +
+                    ConversationMessageEntry.UUID_COLUMN + " TEXT," +
                     ConversationMessageEntry.MESSAGE_COLUMN + " TEXT," +
+                    ConversationMessageEntry.FROM_ALICE + " BOOLEAN," +
                     ConversationMessageEntry.SENT_COLUMN + " BOOLEAN," +
                     ConversationMessageEntry.TIMESTAMP_COLUMN + " INTEGER," +
-                    "FOREIGN KEY(" + ConversationMessageEntry.BUDDY_COLUMN + ") REFERENCES "
+                    "FOREIGN KEY(" + ConversationMessageEntry.BUDDY_ID_COLUMN + ") REFERENCES "
                         + BuddyEntry.TABLE_NAME+"(" + BuddyEntry._ID + ") ON DELETE CASCADE" + ")";
 
     public static final String SQL_DELETE_MESSAGES_ENTRIES =
