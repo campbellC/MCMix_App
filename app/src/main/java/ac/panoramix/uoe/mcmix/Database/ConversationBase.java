@@ -35,16 +35,27 @@ public class ConversationBase {
     }
 
 
-    //TODO: get a cursor for all message from a given buddy
-    public Cursor getMessageCursor(){
+    public Cursor getMessageCursor(Buddy bob){
+        Cursor cursor = mDatabase.query(
+                MCMixDbContract.BuddyEntry.TABLE_NAME, // get a buddy id for this buddy
+                new String[] {MCMixDbContract.BuddyEntry._ID},
+                MCMixDbContract.BuddyEntry.USERNAME_COLUMN + " = ?" ,
+                new String[] {bob.getUsername() },
+                null,
+                null,
+                null
+        );
+        cursor.moveToFirst();
+        int buddy_id = cursor.getInt(cursor.getColumnIndex(MCMixDbContract.BuddyEntry._ID));
+
         return mDatabase.query(
-                MCMixDbContract.BuddyEntry.TABLE_NAME,//table name
+                MCMixDbContract.ConversationMessageEntry.TABLE_NAME,//table name
                 null, //all columns
-                null, //all rows
-                null, //no arguments for WHERE
+                MCMixDbContract.ConversationMessageEntry.BUDDY_ID_COLUMN + " = ?", //only rows for this buddy
+                new String[] {Integer.toString(buddy_id)},
                 null, //no group by
                 null, //no having clause
-                MCMixDbContract.BuddyEntry.USERNAME_COLUMN, //order alphabetically by username
+                MCMixDbContract.ConversationMessageEntry.TIMESTAMP_COLUMN + " ASC", //order by time sent/received
                 null); //no limit on numbers
     }
     public ConversationMessage getMessage(UUID message_uuid){
