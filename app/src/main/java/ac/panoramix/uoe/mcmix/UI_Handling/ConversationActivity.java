@@ -4,15 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.Image;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -22,14 +21,13 @@ import android.widget.ViewSwitcher;
 
 import com.google.common.base.CharMatcher;
 
-import java.util.List;
-
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
+import ac.panoramix.uoe.mcmix.Database.ConversationBase;
 import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
-import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHistory;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
 
@@ -57,9 +55,13 @@ public class ConversationActivity extends AppCompatActivity {
     View dial_bob_view;
     ImageButton back_button;
 
+    /* The message sent receiver is used so that when a message is added to the conversation the
+        activity will update to show it.
+     */
     MessageSentReceiver mMessageSentReceiver;
-    private ConversationHistory mHistory;
+
     private ConversationHandler mConversationHandler = ConversationHandler.getOrCreateInstance();
+    private ConversationBase mBase = ConversationBase.getOrCreateInstance(MCMixApplication.getContext());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +78,12 @@ public class ConversationActivity extends AppCompatActivity {
 
 
 
+        /* The launching activity must attach the Buddy this conversation is with.
+         */
         bob = (Buddy) getIntent().getSerializableExtra(MCMixConstants.BUDDY_EXTRA);
         ((TextView) findViewById(R.id.toolbar_buddy_name)).setText(bob.getUsername());
+
+
 
         send_message_switcher = (ViewSwitcher) findViewById(R.id.conversation_dial_or_type_switcher);
         dial_bob_view = findViewById(R.id.dial_bob_view);
@@ -106,7 +112,7 @@ public class ConversationActivity extends AppCompatActivity {
             }
         });
 
-        mAdapter = new ConversationAdapter(this, mConversationHandler.getCurrentConversationHistory());
+        mAdapter = new ConversationAdapter(this, mBase.getMessageCursor(bob));
 
         conversation_view = (ListView) findViewById(R.id.conversation_history_view);
         conversation_view.setAdapter(mAdapter);
@@ -118,9 +124,8 @@ public class ConversationActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mMessageSentReceiver = new MessageSentReceiver();
-        IntentFilter intentFilter = new IntentFilter(MCMixConstants.MESSAGE_ADDED_BROADCAST_TAG);
+        IntentFilter intentFilter = new IntentFilter(MCMixConstants.MESSAGES_UPDATED_BROADCAST_TAG);
         getApplicationContext().registerReceiver(mMessageSentReceiver, intentFilter);
-
     }
 
    @Override
@@ -134,7 +139,7 @@ public class ConversationActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapter.notifyDataSetChanged();
+        updateUI();
     }
 
     /**
@@ -161,15 +166,14 @@ public class ConversationActivity extends AppCompatActivity {
         message_entry.setText(null);
     }
 
-    private void updateView(){
-        mHistory = mConversationHandler.getCurrentConversationHistory();
-
-    }
 
     private boolean conversationIsActive(){
         return mConversationHandler.inConversationWith(bob);
     }
 
+    private void updateUI(){
+        mAdapter.changeCursor(mBase.getMessageCursor(bob));
+    }
     private void changeDialView(){
         if(conversationIsActive()) {
             while(send_message_switcher.getCurrentView() != send_message_view){
@@ -187,51 +191,58 @@ public class ConversationActivity extends AppCompatActivity {
 
     }
 
-    private class ConversationAdapter extends ArrayAdapter<ConversationMessage>{
+    private class ConversationAdapter extends CursorAdapter{
         private static final int FROM_ALICE = 0;
         private static final int FROM_BOB = 1;
 
-        public ConversationAdapter(Context context, List<ConversationMessage> messages) {
-            super(context, -1, messages);
+        public ConversationAdapter(Context context, Cursor cursor){
+            super(context, cursor, 0);
         }
 
-        @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            switch (getItemViewType(cursor)){
+                case FROM_ALICE:
+                    return LayoutInflater.from(context).inflate(R.layout.conversation_message_from_alice, parent, false);
+                case FROM_BOB:
+                    return LayoutInflater.from(context).inflate(R.layout.conversation_message_from_bob, parent, false);
+                default:
+                    return null;
+            }
+        }
 
-            ConversationMessage msg = getItem(position);
-            int type = getItemViewType(position);
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+
+            ConversationMessage msg = mBase.getMessageFromCursor(cursor);
+            int type = getItemViewType(cursor);
             // in either case of message we check if convertView can be used to recycle views, if not
             // we inflate a new view of the correct type and then insert the data from the message.
             switch (type){
                 case FROM_ALICE:
-                    if(convertView == null){
-                        convertView = getLayoutInflater().inflate(R.layout.conversation_message_from_alice, parent, false);
-                    }
-                    ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
+                    ((TextView) view.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
                     String formatted_date = Utility.format_date_for_display(msg.getTimestamp());
-                    ((TextView) convertView.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
+                    ((TextView) view.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
                     if(msg.wasSent()){
-                        ((TextView) convertView.findViewById(R.id.sent_confirmation_tick)).setText("\u2714");
+                        ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u2714");
                     }
-
                     break;
                 case FROM_BOB:
-                    if(convertView == null) {
-                        convertView = getLayoutInflater().inflate(R.layout.conversation_message_from_bob, parent, false);
-                    }
-                    ((TextView) convertView.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
+                    ((TextView) view.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
                     formatted_date = Utility.format_date_for_display(msg.getTimestamp());
-                    ((TextView) convertView.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
+                    ((TextView) view.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
                     break;
             }
-            return convertView;
         }
 
+        private int getItemViewType(Cursor cursor){
+            ConversationMessage msg = mBase.getMessageFromCursor(cursor);
+            return msg.isFrom_alice() ? FROM_ALICE : FROM_BOB;
+        }
         @Override
         public int getItemViewType(int position) {
-            ConversationMessage msg = getItem(position);
-            return msg.isFrom_alice() ? FROM_ALICE : FROM_BOB;
+            Cursor cursor = (Cursor) getItem(position);
+            return getItemViewType(cursor);
         }
 
         @Override
@@ -244,7 +255,7 @@ public class ConversationActivity extends AppCompatActivity {
     private class MessageSentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mAdapter.notifyDataSetChanged();
+            updateUI();
         }
     }
 
