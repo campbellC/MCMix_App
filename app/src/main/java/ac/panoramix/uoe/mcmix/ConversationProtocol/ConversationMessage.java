@@ -5,7 +5,9 @@ import com.google.common.base.CharMatcher;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.UUID;
+
 
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 
@@ -26,14 +28,26 @@ public class ConversationMessage implements Serializable {
     private String message;
     final public static Charset sEncoding = StandardCharsets.US_ASCII;
     private boolean from_alice;
-    private UUID mUUID;
     private boolean sent;
+    private Date timestamp;
+    private UUID uuid;
 
-
-    public UUID getUUID() {
-        return mUUID;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+
+    public ConversationMessage(String message, boolean from_alice, boolean sent, Date timestamp, UUID uuid) {
+        this.message = message;
+        this.from_alice = from_alice;
+        this.sent = sent;
+        this.timestamp = timestamp;
+        this.uuid = uuid;
+    }
 
     public boolean wasSent() {
         return sent;
@@ -49,8 +63,18 @@ public class ConversationMessage implements Serializable {
         assert CharMatcher.ascii().matchesAllOf(message);
         this.message = message;
         this.from_alice = from_alice;
-        mUUID = UUID.randomUUID();
+        uuid = UUID.randomUUID();
     }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    public UUID getUuid() {
+
+        return uuid;
+    }
+
     public ConversationMessage(byte[] message, boolean from_alice) {
         // need to handle 0-padded arrays.
         if(message.length == 0 || message[0] ==  0){
@@ -64,8 +88,8 @@ public class ConversationMessage implements Serializable {
             // now we construct a string up to that last index. i+1 since this is the length not the index
             this.message = new String(message, 0, i+1, sEncoding);
         }
-        mUUID = UUID.randomUUID();
         this.from_alice = from_alice;
+        uuid = UUID.randomUUID();
     }
 
     /* Utility Methods */

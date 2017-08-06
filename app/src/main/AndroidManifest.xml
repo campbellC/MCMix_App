@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
-        android:name="ac.panoramix.uoe.mcmix.MCMixApplication"
+        android:name=".MCMixApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,29 +20,33 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.ConversationActivity">
+        <activity
+            android:name=".UI_Handling.ConversationActivity"
+            android:windowSoftInputMode="adjustResize">
         </activity>
 
         <service
-            android:name="ac.panoramix.uoe.mcmix.Networking.MCMixNetworkService"
+            android:name=".Networking.MCMixNetworkService"
             android:enabled="true"
             android:exported="true">
         </service>
 
-        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.HomeActivity">
+        <activity android:name=".UI_Handling.HomeActivity">
         </activity>
-        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.LoginActivity">
+        <activity android:name=".UI_Handling.LoginActivity">
         </activity>
-        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.UserRegistrationActivity">
+        <activity android:name=".UI_Handling.UserRegistrationActivity">
         </activity>
-        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.UpdateKeysActivity">
-        </activity>
-        <activity android:name="ac.panoramix.uoe.mcmix.UI_Handling.StartUpActivity">
+        <activity android:name=".UI_Handling.StartUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".UI_Handling.DebugHomeActivity">
+        </activity>
+        <activity android:name=".UI_Handling.BuddyListActivity">
         </activity>
     </application>
 

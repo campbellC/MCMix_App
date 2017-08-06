@@ -2,20 +2,49 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@null">
+                android:background="@null" >
 
     <LinearLayout
-                  android:orientation="horizontal"
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_alignParentEnd="true"
-                  android:gravity="end"
-                  android:background="@drawable/conversation_message_box_from_alice"
-        >
-        <TextView
-            android:id="@+id/conversation_message_entry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal"
+        android:background="@null"
+        android:padding="4dp">
+
+        <LinearLayout
+                      android:orientation="horizontal"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:gravity="end"
+                      android:background="@drawable/conversation_message_box_from_alice"
+            >
+            <TextView
+                android:id="@+id/conversation_message_entry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end" />
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="end" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="2dp"
+            android:gravity="right|center">
+            <TextView
+                android:id="@+id/conversation_message_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="textEnd"
+                android:textSize="10sp"
+                android:gravity="end"/>
+            <TextView
+                android:id="@+id/sent_confirmation_tick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:text="."
+                android:textAlignment="center"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -70,9 +70,6 @@ public class MCMixNetworkService extends Service {
                 if (sent_message){
                     mConversationHandler.confirmMessageSent();
                 }
-                Intent intent = new Intent();
-                intent.setAction(MCMixConstants.MESSAGE_ADDED_BROADCAST_TAG);
-                sendBroadcast(intent);
             }
 
             if(mServerHandler.d_round_finished()){

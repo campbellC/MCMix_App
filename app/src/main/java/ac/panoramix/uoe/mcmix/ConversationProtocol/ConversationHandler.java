@@ -2,20 +2,18 @@ package ac.panoramix.uoe.mcmix.ConversationProtocol;
 
 
 
-import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import org.libsodium.jni.crypto.Random;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.UUID;
 
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
+import ac.panoramix.uoe.mcmix.Database.ConversationBase;
 import ac.panoramix.uoe.mcmix.Utility;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
@@ -39,22 +37,22 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
 public class ConversationHandler {
     private static ConversationHandler sConversationHandler;
 
-    Buddy bob;
-    ConversationQueue mConversationQueue;
-    ConversationMessagePayloadConverter mConverter;
-    ConversationHistory mCurrentConversationHistory;
+    private Buddy bob;
+    private LinkedList<UUID> outgoingMessages;
+    private ConversationMessagePayloadConverter mConverter;
+    private ConversationBase mBase = ConversationBase.getOrCreateInstance(MCMixApplication.getContext());
 
     /**
-     * The following two fields buddyLastMessageWasSentTo and lastMessage allow delivery reciepts.
+     * The following two fields buddyLastMessageWasSentTo and lastMessageUUID allow delivery receipts.
      * The networking thread confirms delivery and the conversation handler only adds a message
      * to the history if still in conversation with the same person *and* the last message sent
      * was not a null message.
      */
     Buddy buddyLastMessageWasSentTo;
-    ConversationMessage lastMessage;
+    UUID lastMessageUUID;
 
     private ConversationHandler(){
-        mConversationQueue = new ConversationQueue();
+        outgoingMessages = new LinkedList<>();
         mConverter = null;
     }
 
@@ -71,7 +69,7 @@ public class ConversationHandler {
      * @return
      */
     synchronized public boolean outgoingQueueIsEmpty(){
-        return mConversationQueue.isEmpty();
+        return outgoingMessages.isEmpty();
     }
 
     /***
@@ -81,12 +79,11 @@ public class ConversationHandler {
     synchronized public void endConversation(){
         if(bob != null) {
             Log.d("ConvHandler", "Ending conversation with " + bob.getUsername());
-            saveConversationToDisk();
         } else {
             Log.d("ConvHandler", "Ending conversation with null bob ");
         }
         bob = null;
-        mConversationQueue.clear();
+        outgoingMessages.clear();
         mConverter = null;
     }
 
@@ -106,9 +103,8 @@ public class ConversationHandler {
         }
         Log.d("ConvHandler","Starting conversation with " + new_bob.getUsername());
         bob = new_bob;
-        mConversationQueue.clear();
+        outgoingMessages.clear();
         mConverter = new ConversationMessagePayloadConverter(MCMixApplication.getAccount(), bob);
-        retrieveConversationFromDisk();
     }
     synchronized public boolean inConversation(){
         return (bob != null);
@@ -129,16 +125,38 @@ public class ConversationHandler {
 
     synchronized private void addMessageToHistory(ConversationMessage message){
         Log.d("ConvHandler", "Adding message to history: " + message.toString());
-        mCurrentConversationHistory.add(message);
-        //TODO: this is probably not the most efficient way to handle persisting the conversation
-        saveConversationToDisk();
+        mBase.addMessage(message, bob);
     }
 
+    synchronized private void broadcastMessagesUpdated(){
+        Intent intent = new Intent();
+        intent.setAction(MCMixConstants.MESSAGES_UPDATED_BROADCAST_TAG);
+        MCMixApplication.getContext().sendBroadcast(intent);
+    }
     synchronized public void handleMessageFromUser(String payload){
         // This one liner splits the payload into strings of the correct length for sending over the wire
         for(String s : payload.split("(?<=\\G.{"+ Integer.toString(MCMixConstants.C_MESSAGE_BYTES) + "})")){
-            mConversationQueue.add(new ConversationMessage(s, true));
+            ConversationMessage msg = new ConversationMessage(s, true);
+            msg.setTimestamp(new Date());
+            addMessageToHistory(msg);
+            outgoingMessages.add(msg.getUuid());
+            broadcastMessagesUpdated();
         }
+    }
+
+    synchronized public void handleDeleteRequestFromUser(ConversationMessage msg){
+        UUID uuid = msg.getUuid();
+        // Firstly we check if this msg is waiting to be sent, in which case we delete this
+        for(Iterator<UUID> it = outgoingMessages.iterator(); it.hasNext();){
+            if(uuid.equals(it.next())){
+                it.remove();
+                break;
+            }
+        }
+        //Then we ask the database to delete the message as well
+        mBase.deleteMessage(uuid);
+        // Finally we let any viewing activities know that a change has been made
+        broadcastMessagesUpdated();
     }
     /***
      *
@@ -152,42 +170,34 @@ public class ConversationHandler {
             Log.d("ConvHandler", "Sending random noise to server");
             outgoing_payload = generateRandomMessage();
             buddyLastMessageWasSentTo = null;
-            lastMessage = null;
+            lastMessageUUID = null;
         } else {
             // In conversation we must check if are any messages waiting to be sent. Otherwise,
             // create an empty message and send that.
-            if(buddyLastMessageWasSentTo != null && buddyLastMessageWasSentTo.equals(bob) && lastMessage != null && !lastMessage.wasSent()){
-                Log.d("ConvHandler", "Sending Message: " + lastMessage.toString());
-                outgoing_payload = mConverter.constructOutgoingPayload(lastMessage, round_number) ;
+            buddyLastMessageWasSentTo = bob;
+            if (outgoingMessages.isEmpty()) {
+                outgoing_payload = mConverter.constructNullMessagePayload(round_number);
+                lastMessageUUID = null;
+                Log.d("ConvHandler", "Sending null message");
             } else {
-                buddyLastMessageWasSentTo = bob;
-                if (mConversationQueue.isEmpty()) {
-                    lastMessage = null;
-                    outgoing_payload = mConverter.constructNullMessagePayload(round_number);
-                    Log.d("ConvHandler", "Sending null message");
-                } else {
-                    ConversationMessage msg_to_send = mConversationQueue.peek();
-                    lastMessage = msg_to_send;
-                    Log.d("ConvHandler", "Sending Message: " + msg_to_send.toString());
-                    outgoing_payload = mConverter.constructOutgoingPayload(msg_to_send, round_number);
-                }
+                UUID uuid_of_next_message = outgoingMessages.peek();
+                lastMessageUUID = uuid_of_next_message;
+                Log.d("ConvHandler", "UUID of message to send: " + uuid_of_next_message.toString());
+                ConversationMessage msg_to_send = mBase.getMessage(uuid_of_next_message);
+                Log.d("ConvHandler", "Sending Message: " + msg_to_send.toString());
+                outgoing_payload = mConverter.constructOutgoingPayload(msg_to_send, round_number);
             }
         }
         Log.d("ConvHandler", "Actual payload: " + outgoing_payload);
         return outgoing_payload;
     }
 
-    public ConversationHistory getCurrentConversationHistory() {
-        return mCurrentConversationHistory;
-    }
-
-    synchronized  public void confirmMessageSent(){
-
-        if(inConversation() && buddyLastMessageWasSentTo!= null && buddyLastMessageWasSentTo.equals(bob) && lastMessage != null) {
-            lastMessage.setSent(true);
-            addMessageToHistory(lastMessage);
-            mConversationQueue.poll();
-            lastMessage = null;
+    synchronized public void confirmMessageSent(){
+        if(inConversation() && buddyLastMessageWasSentTo!= null && buddyLastMessageWasSentTo.equals(bob) && lastMessageUUID != null) {
+            mBase.setMessageSent(lastMessageUUID, bob);
+            outgoingMessages.poll();
+            lastMessageUUID = null;
+            broadcastMessagesUpdated();
         }
     }
 
@@ -198,68 +208,14 @@ public class ConversationHandler {
 
     public void log_status(){
         Log.d("ConvHandler", "in conversation: " + Boolean.toString(inConversation()));
-        Log.d("ConvHandler", "last message sent " + lastMessage);
+        Log.d("ConvHandler", "last message sent " + lastMessageUUID);
         Log.d("ConvHandler", "last buddy sent to " + buddyLastMessageWasSentTo);
 
     }
 
-    /**
-     * This message takes the  CurrentConversationHistory and saves it to disk for later retrieval.
-     */
-    private void saveConversationToDisk(){
-        String history_filename = Utility.filename_for_conversation(MCMixApplication.getAccount(),bob);
-        if(bob == null || mCurrentConversationHistory == null) {
-            Log.d("ConvHandler", "Tried to save null conversation to disk");
-            return;
-        }
-        try {
-            FileOutputStream fos = MCMixApplication.getContext().openFileOutput(history_filename, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(mCurrentConversationHistory);
-            oos.close();
-            fos.close();
-        } catch (IOException ioe) {
-            Log.d("ConvHandler", "Issues writing ConvHistory to disk", ioe);
-        }
+
+    public boolean inConversationWith(Buddy b){
+        return bob != null && b != null && b.equals(bob);
     }
-
-    /**
-     * This message is the inverse of the saveConversationToDisk function.
-     *
-     */
-    private void retrieveConversationFromDisk() {
-        if(bob == null){
-            Log.d("ConvHandler", "Tried to retrieve null conversation from disk");
-            return;
-        }
-        String history_filename = Utility.filename_for_conversation(MCMixApplication.getAccount(),bob);
-        File f = MCMixApplication.getContext().getFileStreamPath(history_filename);
-
-        if(f.exists()){
-            // if this file exists then we have previously saved a conversation history for this user.
-            try (
-                    FileInputStream fis = MCMixApplication.getContext().openFileInput(history_filename);
-                    ObjectInputStream ois = new ObjectInputStream(fis);
-            ) {
-                mCurrentConversationHistory = (ConversationHistory) ois.readObject();
-                return;
-            } catch (FileNotFoundException e){
-                Log.d("ConvHandler", "Could not find ConversationHistory file", e);
-            } catch (IOException ioe) {
-                Log.d("ConvHandler", "Error reading ConvHistory file" , ioe);
-            } catch (ClassNotFoundException cnfe){
-                Log.d("ConvHandler", "Corrupted Conversation History file", cnfe);
-            }
-            // In the case we reach this point the conversation history is lost and we need to create a new one.
-            mCurrentConversationHistory = new ConversationHistory();
-
-        } else {
-            // If no such file exists then we can safely create a new ConversationHistory without losing anything
-            mCurrentConversationHistory = new ConversationHistory();
-        }
-
-
-    }
-
 
 }

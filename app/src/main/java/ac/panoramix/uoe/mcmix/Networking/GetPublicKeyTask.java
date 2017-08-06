@@ -1,5 +1,6 @@
 package ac.panoramix.uoe.mcmix.Networking;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -8,6 +9,8 @@ import org.libsodium.jni.keys.PublicKey;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
+import ac.panoramix.uoe.mcmix.Database.BuddyBase;
+import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Utility;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 
@@ -47,19 +50,12 @@ public class GetPublicKeyTask extends AsyncTask<String,Integer,String> {
         if (bob == null) {
             Toast.makeText(MCMixApplication.getContext(), "Username does not exists, connection is down or user has no public key.", Toast.LENGTH_LONG).show();
         } else {
-            Account Alice = MCMixApplication.getAccount();
-            for(int i = 0; i < Alice.getBuddies().size(); ++i){
-                if (bob.getUsername().equals(Alice.getBuddies().get(i).getUsername())){
-                    Alice.getBuddies().set(i, bob);
-                    Toast.makeText(MCMixApplication.getContext(), "Updated key for " + bob.getUsername(), Toast.LENGTH_SHORT).show();
-                    Utility.saveAccountToDisk();
-                    return;
-                }
-            }
-            Toast.makeText(MCMixApplication.getContext(), "Added key for " + bob.getUsername(), Toast.LENGTH_SHORT).show();
-            Log.d("GetKey", "Added key for  " + bob.getUsername() +": "+ Utility.uint_string_from_bytes(bob.getPublic_key().toBytes()));
-            Alice.getBuddies().add(bob);
-            Utility.saveAccountToDisk();
+            BuddyBase.getOrCreateInstance(MCMixApplication.getContext()).updateBuddy(bob);
+            Log.d("GetKey", "Added or updated key for  " + bob.getUsername() +": "+ Utility.uint_string_from_bytes(bob.getPublic_key().toBytes()));
+            Intent intent = new Intent();
+            intent.setAction(MCMixConstants.BUDDY_ADDED_BROADCAST_TAG);
+            MCMixApplication.getContext().sendBroadcast(intent);
+            Log.d("GetPublicKey", "Sent Broadcast");
         }
     }
 

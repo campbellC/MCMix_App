@@ -63,7 +63,9 @@ public class DialHandler {
         if(DialMessagePayloadConverter.is_username(dial)){
             last_incoming_dial_was_null = false;
             String bob_username = DialMessagePayloadConverter.get_username(dial);
-            last_incoming_dial = MCMixApplication.getBuddy(bob_username);
+            //TODO: the below line is used to check whether we have seen the person before. For now just create new buddy always.
+            last_incoming_dial = null;
+//            last_incoming_dial = MCMixApplication.getBuddy(bob_username);
             if(last_incoming_dial == null) {
                 PublicKey bob_pk = ServerHandler.getOrCreateInstance().get_public_key_for_username(bob_username);
                 last_incoming_dial = new Buddy(bob_username, bob_pk);

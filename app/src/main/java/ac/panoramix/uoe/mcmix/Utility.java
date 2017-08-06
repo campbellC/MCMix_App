@@ -1,6 +1,7 @@
 package ac.panoramix.uoe.mcmix;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.google.common.primitives.UnsignedLongs;
@@ -11,6 +12,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
@@ -153,4 +156,14 @@ public class Utility {
         }
     }
 
+
+    public static String format_date_for_display(Date date){
+        String ret;
+        if(DateUtils.isToday(date.getTime())){
+           ret = new SimpleDateFormat("hh:mm").format(date);
+        } else {
+            ret = new SimpleDateFormat("MMM dd").format(date);
+        }
+        return ret;
+    }
 }

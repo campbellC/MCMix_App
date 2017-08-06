@@ -8,7 +8,9 @@
     <string name="conversation_send_button_message">Send</string>
     <string name="Bad_Character_Toast">Only ascii values are currently supported. Please try again.</string>
     <string name="Long_Message_Toast">This message is too long for a single communication. Sending in pieces which will take more time&#8230;</string>
+    <string name="dial_buddy_toast">Dialing. It may take a few minutes to complete.</string>
 
+    <string name="buddy_list_title_text">Buddies</string>
     <!-- Strings related to home activity -->
     <string name="add_buddy_button_text">Add Buddy</string>
     <string name="start_conversation_button_text">Start Conversation</string>
