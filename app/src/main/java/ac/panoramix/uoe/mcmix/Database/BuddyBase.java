@@ -22,11 +22,9 @@ import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 
 public class BuddyBase {
     private SQLiteDatabase mDatabase;
-    private Context mContext;
     private static BuddyBase mBase;
 
     private BuddyBase(Context context){
-        mContext = context;
         mDatabase = new MCMixDbHelper(context).getWritableDatabase();
     }
 
