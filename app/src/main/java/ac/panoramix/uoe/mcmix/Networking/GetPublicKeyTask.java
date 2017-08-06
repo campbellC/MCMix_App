@@ -55,6 +55,7 @@ public class GetPublicKeyTask extends AsyncTask<String,Integer,String> {
             Intent intent = new Intent();
             intent.setAction(MCMixConstants.BUDDY_ADDED_BROADCAST_TAG);
             MCMixApplication.getContext().sendBroadcast(intent);
+            Log.d("GetPublicKey", "Sent Broadcast");
         }
     }
 

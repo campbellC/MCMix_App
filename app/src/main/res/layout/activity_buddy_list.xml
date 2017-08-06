@@ -60,6 +60,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <ListView
+        android:clickable="true"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintVertical_weight="10"

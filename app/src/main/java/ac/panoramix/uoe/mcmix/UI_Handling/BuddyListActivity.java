@@ -10,15 +10,17 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
@@ -43,6 +45,16 @@ public class BuddyListActivity extends AppCompatActivity {
         mBuddyListview = (ListView) findViewById(R.id.buddy_list_list_view);
         mAdapter = new BuddyCursorAdapter(this, mBase.getBuddiesCursor());
         mBuddyListview.setAdapter(mAdapter);
+
+        //The list view is clickable. On click it should launch the conversation activity for that buddy
+        mBuddyListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor) mBuddyListview.getItemAtPosition(position);
+                Buddy bob = mBase.buddyFromCursor(cursor);
+                launchConversation(bob);
+            }
+        });
 
         mAddBuddyButton = (ImageButton) findViewById(R.id.add_buddy_button);
         mAddBuddyButton.setOnClickListener(new View.OnClickListener() {
@@ -93,10 +105,14 @@ public class BuddyListActivity extends AppCompatActivity {
             buddy_name_view.setText(buddy_name);
         }
     }
+    private void updateUI(){
+        mAdapter.changeCursor(mBase.getBuddiesCursor());
+    }
     private class MessageSentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            mAdapter.notifyDataSetChanged();
+            Log.d("BuddyList", "Received broadcast of added buddy");
+            updateUI();
         }
     }
     @Override
@@ -118,6 +134,12 @@ public class BuddyListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapter.notifyDataSetChanged();
+        updateUI();
+    }
+
+    private void launchConversation(Buddy bob){
+        Intent intent = new Intent(BuddyListActivity.this, ConversationActivity.class);
+        intent.putExtra(MCMixConstants.BUDDY_EXTRA, bob);
+        startActivity(intent);
     }
 }

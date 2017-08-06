@@ -37,7 +37,7 @@ public class BuddyBase {
         return mBase;
     }
 
-    private Buddy buddyFromCursor(Cursor cursor){
+    public Buddy buddyFromCursor(Cursor cursor){
         if(!cursor.isAfterLast()) {
             String username = cursor.getString(cursor.getColumnIndex(MCMixDbContract.BuddyEntry.USERNAME_COLUMN));
             String pk_str = cursor.getString(cursor.getColumnIndex(MCMixDbContract.BuddyEntry.PUBLIC_KEY_COLUMN));
