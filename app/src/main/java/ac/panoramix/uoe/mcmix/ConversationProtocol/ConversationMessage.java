@@ -1,10 +1,13 @@
 package ac.panoramix.uoe.mcmix.ConversationProtocol;
 
+import android.util.Log;
+
 import com.google.common.base.CharMatcher;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -64,6 +67,7 @@ public class ConversationMessage implements Serializable {
         this.message = message;
         this.from_alice = from_alice;
         uuid = UUID.randomUUID();
+        timestamp = new Date();
     }
 
     public void setUuid(UUID uuid) {
@@ -139,5 +143,12 @@ public class ConversationMessage implements Serializable {
     @Override
     public int hashCode() {
         return message.hashCode();
+    }
+
+    public void logDate(){
+        Log.d("ConvMessage", "---------------- Logging date for message -------------");
+        Log.d("ConvMessage", getMessage());
+        Log.d("ConvMessage", "Date: " + new SimpleDateFormat("yyyy:MM:dd:hh:mm:ss").format(timestamp));
+        Log.d("ConvMessage", "---------------- End Logging date for message -------------");
     }
 }

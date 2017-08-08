@@ -126,6 +126,7 @@ public class ConversationHandler {
     synchronized private void addMessageToHistory(ConversationMessage message){
         Log.d("ConvHandler", "Adding message to history: " + message.toString());
         mBase.addMessage(message, bob);
+        broadcastMessagesUpdated();
     }
 
     synchronized private void broadcastMessagesUpdated(){
@@ -137,7 +138,6 @@ public class ConversationHandler {
         // This one liner splits the payload into strings of the correct length for sending over the wire
         for(String s : payload.split("(?<=\\G.{"+ Integer.toString(MCMixConstants.C_MESSAGE_BYTES) + "})")){
             ConversationMessage msg = new ConversationMessage(s, true);
-            msg.setTimestamp(new Date());
             addMessageToHistory(msg);
             outgoingMessages.add(msg.getUuid());
             broadcastMessagesUpdated();
