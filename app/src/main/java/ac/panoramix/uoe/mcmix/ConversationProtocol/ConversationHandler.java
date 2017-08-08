@@ -111,7 +111,7 @@ public class ConversationHandler {
     }
 
     synchronized public void handleMessageFromServer(String incoming_payload){
-        Log.d("ConvHandler", "handling message from server: " + incoming_payload);
+        //Log.d("ConvHandler", "handling message from server: " + incoming_payload);
         if(inConversation() && buddyLastMessageWasSentTo != null && buddyLastMessageWasSentTo.equals(bob)){
             // if not in conversation then this message is random noise we sent out so drop it, otherwise
             // add to the conversation history for bob
@@ -138,6 +138,10 @@ public class ConversationHandler {
         // This one liner splits the payload into strings of the correct length for sending over the wire
         for(String s : payload.split("(?<=\\G.{"+ Integer.toString(MCMixConstants.C_MESSAGE_BYTES) + "})")){
             ConversationMessage msg = new ConversationMessage(s, true);
+            //TODO: delete this debugging code
+            Log.d("ConvActivity", "msg: " + msg.getMessage());
+            Log.d("ConvHandler", "uuid: " + msg.getUuid().toString());
+            Log.d("ConvHandler", "wasSent: " + msg.wasSent());
             addMessageToHistory(msg);
             outgoingMessages.add(msg.getUuid());
             broadcastMessagesUpdated();
@@ -188,12 +192,13 @@ public class ConversationHandler {
                 outgoing_payload = mConverter.constructOutgoingPayload(msg_to_send, round_number);
             }
         }
-        Log.d("ConvHandler", "Actual payload: " + outgoing_payload);
+        //Log.d("ConvHandler", "Actual payload: " + outgoing_payload);
         return outgoing_payload;
     }
 
     synchronized public void confirmMessageSent(){
         if(inConversation() && buddyLastMessageWasSentTo!= null && buddyLastMessageWasSentTo.equals(bob) && lastMessageUUID != null) {
+            Log.d("ConvHandler", "Message confirmed sent: " + lastMessageUUID.toString());
             mBase.setMessageSent(lastMessageUUID, bob);
             outgoingMessages.poll();
             lastMessageUUID = null;

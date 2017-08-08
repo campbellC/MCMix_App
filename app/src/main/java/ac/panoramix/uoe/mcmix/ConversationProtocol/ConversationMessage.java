@@ -68,6 +68,7 @@ public class ConversationMessage implements Serializable {
         this.from_alice = from_alice;
         uuid = UUID.randomUUID();
         timestamp = new Date();
+        this.sent = false;
     }
 
     public void setUuid(UUID uuid) {
@@ -145,10 +146,4 @@ public class ConversationMessage implements Serializable {
         return message.hashCode();
     }
 
-    public void logDate(){
-        Log.d("ConvMessage", "---------------- Logging date for message -------------");
-        Log.d("ConvMessage", getMessage());
-        Log.d("ConvMessage", "Date: " + new SimpleDateFormat("yyyy:MM:dd:hh:mm:ss").format(timestamp));
-        Log.d("ConvMessage", "---------------- End Logging date for message -------------");
-    }
 }

@@ -93,6 +93,7 @@ public class ConversationBase {
     }
 
     public void setMessageSent(UUID uuid, Buddy bob){
+        Log.d("ConvBase", "Setting Message sent: " + uuid.toString());
         ConversationMessage msg = getMessage(uuid);
         msg.setSent(true);
         updateMessage(msg, bob);

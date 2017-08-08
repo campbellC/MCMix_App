@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,6 +165,9 @@ public class ConversationActivity extends AppCompatActivity {
         }
         mConversationHandler.handleMessageFromUser(msg);
         message_entry.setText(null);
+
+
+
     }
 
 
@@ -216,15 +220,19 @@ public class ConversationActivity extends AppCompatActivity {
 
             ConversationMessage msg = mBase.getMessageFromCursor(cursor);
             int type = getItemViewType(cursor);
-            // in either case of message we check if convertView can be used to recycle views, if not
             // we inflate a new view of the correct type and then insert the data from the message.
+            // cursor adapters already implement view recycling so we don't need to be explicit about it here.
             switch (type){
                 case FROM_ALICE:
                     ((TextView) view.findViewById(R.id.conversation_message_entry)).setText(msg.getMessage());
                     String formatted_date = Utility.format_date_for_display(msg.getTimestamp());
                     ((TextView) view.findViewById(R.id.conversation_message_timestamp)).setText(formatted_date);
                     if(msg.wasSent()){
+                        //\u2714 = unicode check mark
                         ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u2714");
+                    } else {
+                        // \u2022 = unicode bullet mark
+                        ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u2022");
                     }
                     break;
                 case FROM_BOB:
