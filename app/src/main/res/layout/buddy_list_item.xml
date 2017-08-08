@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
+              android:orientation="horizontal"
               android:layout_width="match_parent"
               android:layout_height="?android:attr/listPreferredItemHeight"
               android:padding="16dp">
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/buddylist_item_username"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/list_item_buddy_name"/>
+        android:gravity="center_vertical|start"
+        />
+
+    <TextView
+        android:id="@+id/buddylist_item_conversation_active"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical|center"
+        android:gravity="center_vertical|center"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
 
 </LinearLayout>

@@ -21,8 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
+import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
-import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
@@ -100,9 +100,17 @@ public class BuddyListActivity extends AppCompatActivity {
 
         @Override
         public void bindView(View view, Context context, Cursor cursor) {
-            TextView buddy_name_view = (TextView) view.findViewById(R.id.list_item_buddy_name);
-            String buddy_name = cursor.getString(cursor.getColumnIndex(MCMixDbContract.BuddyEntry.USERNAME_COLUMN));
-            buddy_name_view.setText(buddy_name);
+            Buddy bob = mBase.buddyFromCursor(cursor);
+
+            TextView buddy_name_view = (TextView) view.findViewById(R.id.buddylist_item_username);
+            buddy_name_view.setText(bob.getUsername());
+
+            TextView active_conversation_view = (TextView) view.findViewById(R.id.buddylist_item_conversation_active);
+            if(ConversationHandler.getOrCreateInstance().inConversationWith(bob)){
+                active_conversation_view.setText(getResources().getString(R.string.active_conversation_hint));
+            } else {
+                active_conversation_view.setText("");
+            }
         }
     }
     private void updateUI(){

@@ -9,6 +9,7 @@ package ac.panoramix.uoe.mcmix.Accounts;
 
 import android.content.ContentValues;
 import android.util.Base64;
+import android.util.Log;
 
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.keys.PublicKey;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Objects;
 
 import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
@@ -47,7 +49,8 @@ public class Buddy implements Serializable{
         if(obj == this) return true;
         if(!(obj instanceof Buddy)) return false;
         Buddy b = (Buddy) obj;
-        return b.getPublic_key().equals(mPublic_key)
+        boolean public_keys_equal = Arrays.equals(getPublic_key().toBytes(), b.getPublic_key().toBytes());
+        return public_keys_equal
                 && mUsername.equals(b.getUsername());
     }
 
