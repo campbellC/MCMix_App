@@ -27,6 +27,8 @@ import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHistory;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessagePayloadConverter;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.Diffie_Hellman;
+import ac.panoramix.uoe.mcmix.Database.BuddyBase;
+import ac.panoramix.uoe.mcmix.Database.ConversationBase;
 
 import static org.junit.Assert.*;
 
@@ -300,4 +302,48 @@ public class ExampleInstrumentedTest {
             assertEquals(name, new_user);
         }
     }
+
+    @Test
+    public void buddy_database_test() throws Exception {
+        Account bobA = new Account("test_Bob");
+        Buddy buddy = new Buddy(bobA.getUsername(), bobA.getKeyPair().getPublicKey());
+        BuddyBase base = BuddyBase.getOrCreateInstance(InstrumentationRegistry.getTargetContext());
+        base.addBuddy(buddy);
+        Buddy new_bob = base.getBuddy(bobA.getUsername());
+        assertEquals(new_bob.getUsername(), buddy.getUsername());
+        assertArrayEquals(new_bob.getPublic_key().toBytes(), buddy.getPublic_key().toBytes());
+    }
+
+    @Test
+    public void conversation_database_test() throws Exception {
+        Account bobA = new Account("test_Bob2");
+        Buddy buddy = new Buddy(bobA.getUsername(), bobA.getKeyPair().getPublicKey());
+        BuddyBase base = BuddyBase.getOrCreateInstance(InstrumentationRegistry.getTargetContext());
+        base.addBuddy(buddy);
+        ConversationMessage in_msg = new ConversationMessage("hi alice", true);
+        assertFalse(in_msg.wasSent());
+        ConversationBase conversationBase = ConversationBase.getOrCreateInstance(InstrumentationRegistry.getTargetContext());
+        conversationBase.addMessage(in_msg, buddy);
+        ConversationMessage out_msg = conversationBase.getMessage(in_msg.getUuid());
+        assertEquals(in_msg.getMessage(), out_msg.getMessage());
+        assertEquals(in_msg.isFrom_alice(), out_msg.isFrom_alice());
+        assertEquals(in_msg.getTimestamp(), out_msg.getTimestamp());
+        assertEquals(in_msg.getUuid(), out_msg.getUuid());
+        assertEquals(in_msg.wasSent(), out_msg.wasSent());
+        conversationBase.setMessageSent(in_msg.getUuid(), buddy);
+        out_msg = conversationBase.getMessage(in_msg.getUuid());
+        assertTrue(out_msg.wasSent());
+
+
+        in_msg = new ConversationMessage("hi alice", false);
+        conversationBase.addMessage(in_msg, buddy);
+        out_msg = conversationBase.getMessage(in_msg.getUuid());
+        assertEquals(in_msg.getMessage(), out_msg.getMessage());
+        assertEquals(in_msg.isFrom_alice(), out_msg.isFrom_alice());
+        assertEquals(in_msg.getTimestamp(), out_msg.getTimestamp());
+        assertEquals(in_msg.getUuid(), out_msg.getUuid());
+        assertEquals(in_msg.wasSent(), out_msg.wasSent());
+
+    }
+
 }

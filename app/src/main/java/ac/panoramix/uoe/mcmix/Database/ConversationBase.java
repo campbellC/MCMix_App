@@ -84,7 +84,7 @@ public class ConversationBase {
             String message = cursor.getString(cursor.getColumnIndex(MCMixDbContract.ConversationMessageEntry.MESSAGE_COLUMN));
             boolean sent = cursor.getInt(cursor.getColumnIndex(MCMixDbContract.ConversationMessageEntry.SENT_COLUMN)) > 0;
             boolean from_alice = cursor.getInt(cursor.getColumnIndex(MCMixDbContract.ConversationMessageEntry.FROM_ALICE)) > 0;
-            Date timestamp = new Date(cursor.getLong(cursor.getColumnIndex(MCMixDbContract.ConversationMessageEntry.FROM_ALICE)));
+            Date timestamp = new Date(cursor.getLong(cursor.getColumnIndex(MCMixDbContract.ConversationMessageEntry.TIMESTAMP_COLUMN)));
             UUID uuid = UUID.fromString(cursor.getString(cursor.getColumnIndex(MCMixDbContract.ConversationMessageEntry.UUID_COLUMN)));
             return new ConversationMessage(message, from_alice, sent, timestamp, uuid);
         } else {
@@ -93,6 +93,7 @@ public class ConversationBase {
     }
 
     public void setMessageSent(UUID uuid, Buddy bob){
+        Log.d("ConvBase", "Setting Message sent: " + uuid.toString());
         ConversationMessage msg = getMessage(uuid);
         msg.setSent(true);
         updateMessage(msg, bob);
