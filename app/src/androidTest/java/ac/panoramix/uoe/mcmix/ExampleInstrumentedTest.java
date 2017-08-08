@@ -23,7 +23,6 @@ import java.util.Arrays;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
-import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHistory;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessagePayloadConverter;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.Diffie_Hellman;
@@ -239,38 +238,6 @@ public class ExampleInstrumentedTest {
 
     }
 
-    @Test
-    public void message_history_serialization() throws Exception {
-        Account Alice = new Account("Alice");
-        Account Bob = new Account("Bob");
-        Buddy buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
-        ConversationHistory history  = new ConversationHistory();
-
-        ConversationMessage msg_from_alice = new ConversationMessage("test message", true);
-        history.add(msg_from_alice);
-        ConversationMessage msg_from_bob = new ConversationMessage("test_message_from_bob", false);
-
-
-        history.add(msg_from_bob);
-
-        new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(history);
-        File file;
-        String filename = "history.ser";
-        file = File.createTempFile(filename, null, InstrumentationRegistry.getTargetContext().getFilesDir());
-        FileOutputStream fos = new FileOutputStream(file);
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(history);
-        oos.close();
-
-        FileInputStream fis = new FileInputStream(file);
-        ObjectInputStream ois = new ObjectInputStream(fis) ;
-        ConversationHistory hist_copy = (ConversationHistory) ois.readObject();
-        ois.close();
-
-        assertEquals(hist_copy.size(), 2);
-        assertEquals(hist_copy.get(0), msg_from_alice);
-        assertEquals(hist_copy.get(1), msg_from_bob);
-    }
 
 
 
