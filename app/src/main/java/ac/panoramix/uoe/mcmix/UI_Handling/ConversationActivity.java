@@ -2,10 +2,12 @@ package ac.panoramix.uoe.mcmix.UI_Handling;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,10 +96,45 @@ public class ConversationActivity extends AppCompatActivity {
         dial_bob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mConversationHandler.startConversation(bob);
-                DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
-                changeDialView();
-                Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast),Toast.LENGTH_SHORT).show();
+                //TODO: if in conversation with someone else, check whether there are unsent outgoing messages
+                // and give the user a chance to decide whether they want to delete thhose before doing anything
+
+                /* On clicking this button the user wishes to dial bob and therefore cease any other
+                conversations. If they have outgoing messages waiting to be sent then this may be
+                unintended. Therefore we check if they meant to by offering them a chance to wait
+                first instead.
+                 */
+                if(mConversationHandler.inConversation() && !mConversationHandler.outgoingQueueIsEmpty()){
+                    AlertDialog.Builder alert = new AlertDialog.Builder(ConversationActivity.this);
+                    alert.setTitle("Unsent Message Warning");
+                    alert.setMessage("You have unsent messages in your currently active conversation. Do you want " +
+                            "to not send these and start a new conversation?");
+
+
+                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            mConversationHandler.startConversation(bob);
+                            DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
+                            changeDialView();
+                            Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast), Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    alert.show();
+
+                } else {
+                    mConversationHandler.startConversation(bob);
+                    DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
+                    changeDialView();
+                    Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast), Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -182,14 +219,14 @@ public class ConversationActivity extends AppCompatActivity {
             while(send_message_switcher.getCurrentView() != send_message_view){
                 send_message_switcher.showNext();
             }
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText("Active Conversation.");
+            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.active_conversation_hint));
         } else {
             while(send_message_switcher.getCurrentView() != dial_bob_view){
                 send_message_switcher.showNext();
             }
             dial_bob.setTransformationMethod(null);
             dial_bob.setText(getResources().getString(R.string.start_conversation_button_text) + " with " + bob.getUsername());
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText("Inactive Conversation.");
+            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.inactive_conversation_hint));
         }
 
     }

@@ -51,8 +51,14 @@ public class DialHandler {
         if(user_wants_to_dialcheck) {
             return DialMessagePayloadConverter.getDialCheck();
         } else if (bob != null){
+            /*  Firstly record that we dialed bob before setting the handler to
+                dialcheck for now forwards. We don't want to keep dialling the same
+                person repeatedly.
+             */
             last_outgoing_dial = bob;
-            return DialMessagePayloadConverter.dialBuddy(bob);
+            String dial = DialMessagePayloadConverter.dialBuddy(bob);
+            handle_user_request_to_dialcheck();
+            return dial;
         } else {
             return DialMessagePayloadConverter.dial_nobody();
         }
