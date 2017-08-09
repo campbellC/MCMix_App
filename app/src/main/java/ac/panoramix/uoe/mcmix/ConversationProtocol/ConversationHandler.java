@@ -140,10 +140,6 @@ public class ConversationHandler {
         // This one liner splits the payload into strings of the correct length for sending over the wire
         for(String s : Splitter.fixedLength(MCMixConstants.C_MESSAGE_BYTES).split(payload) ){
             ConversationMessage msg = new ConversationMessage(s, true);
-            //TODO: delete this debugging code
-            Log.d("ConvActivity", "msg: " + msg.getMessage());
-            Log.d("ConvHandler", "uuid: " + msg.getUuid().toString());
-            Log.d("ConvHandler", "wasSent: " + msg.wasSent());
             addMessageToHistory(msg);
             outgoingMessages.add(msg.getUuid());
             broadcastMessagesUpdated();
