@@ -6,9 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +45,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
      */
     ListView conversation_view;
     ConversationAdapter mAdapter;
+    ImageButton hang_up_button;
 
     /* The bottom portion of the screen is either a send message
         area or a button for dialing bob.
@@ -96,42 +97,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
         dial_bob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /* On clicking this button the user wishes to dial bob and therefore cease any other
-                conversations. If they have outgoing messages waiting to be sent then this may be
-                unintended. Therefore we check if they meant to by offering them a chance to wait
-                first instead.
-                 */
-                if(mConversationHandler.inConversation() && !mConversationHandler.outgoingQueueIsEmpty()){
-                    AlertDialog.Builder alert = new AlertDialog.Builder(ConversationActivity.this);
-                    alert.setTitle("Unsent Message Warning");
-                    alert.setMessage("You have unsent messages in your currently active conversation. Do you want " +
-                            "to not send these and start a new conversation?");
-
-
-                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            mConversationHandler.startConversation(bob);
-                            DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
-                            changeDialView();
-                            Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast), Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        }
-                    });
-
-                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    alert.show();
-
-                } else {
-                    mConversationHandler.startConversation(bob);
-                    DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
-                    changeDialView();
-                    Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast), Toast.LENGTH_SHORT).show();
-                }
+                startConversation();
             }
         });
 
@@ -151,7 +117,59 @@ public class ConversationActivity extends DialResponderBaseActivity {
         conversation_view = (ListView) findViewById(R.id.conversation_history_view);
         conversation_view.setAdapter(mAdapter);
 
+        hang_up_button = (ImageButton) findViewById(R.id.toolbar_active_conversation);
+        hang_up_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mConversationHandler.inConversationWith(bob)) {
+                    mConversationHandler.endConversation();
+                    changeDialView();
+                } else {
+                    startConversation();
+                }
+            }
+        });
         changeDialView();
+    }
+
+    private void startConversation(){
+
+                /* On clicking this button the user wishes to dial bob and therefore cease any other
+                conversations. If they have outgoing messages waiting to be sent then this may be
+                unintended. Therefore we check if they meant to by offering them a chance to wait
+                first instead.
+                 */
+        if(mConversationHandler.inConversation() && !mConversationHandler.outgoingQueueIsEmpty()){
+            AlertDialog.Builder alert = new AlertDialog.Builder(ConversationActivity.this);
+            alert.setTitle("Unsent Message Warning");
+            alert.setMessage("You have unsent messages in your currently active conversation. Do you want " +
+                    "to not send these and start a new conversation?");
+
+
+            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    mConversationHandler.startConversation(bob);
+                    DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
+                    changeDialView();
+                    Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            });
+
+            alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    dialog.cancel();
+                }
+            });
+
+            alert.show();
+
+        } else {
+            mConversationHandler.startConversation(bob);
+            DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
+            changeDialView();
+            Toast.makeText(ConversationActivity.this, getResources().getString(R.string.dial_buddy_toast), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -173,7 +191,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateUI();
+        updateMessageView();
     }
 
     /**
@@ -208,7 +226,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
         return mConversationHandler.inConversationWith(bob);
     }
 
-    private void updateUI(){
+    private void updateMessageView(){
         mAdapter.changeCursor(mBase.getMessageCursor(bob));
     }
     private void changeDialView(){
@@ -216,14 +234,17 @@ public class ConversationActivity extends DialResponderBaseActivity {
             while(send_message_switcher.getCurrentView() != send_message_view){
                 send_message_switcher.showNext();
             }
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.active_conversation_hint));
+            hang_up_button.setImageResource(R.mipmap.ic_call_end_white_24dp);
+            hang_up_button.setColorFilter(Color.argb(255, 255,0,0));
         } else {
             while(send_message_switcher.getCurrentView() != dial_bob_view){
                 send_message_switcher.showNext();
             }
             dial_bob.setTransformationMethod(null);
             dial_bob.setText(getResources().getString(R.string.start_conversation_button_text) + " with " + bob.getUsername());
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.inactive_conversation_hint));
+            hang_up_button.setImageResource(android.R.drawable.sym_action_call);
+            hang_up_button.setColorFilter(null);
+
         }
 
     }
@@ -296,7 +317,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
     private class MessageSentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateUI();
+            updateMessageView();
         }
     }
 

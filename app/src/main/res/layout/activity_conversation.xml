@@ -45,9 +45,10 @@
                     android:id="@+id/previous"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="8dp"
                     android:background="@null"
-                    app:srcCompat="@drawable/ic_ab_back_holo_light_am"
-                    android:layout_marginRight="8dp"/>
+                    android:contentDescription="previous"
+                    app:srcCompat="@drawable/ic_ab_back_holo_light_am"/>
 
                 <TextView
                     android:layout_weight="1"
@@ -58,13 +59,14 @@
                     style="@style/TextAppearance.AppCompat.Title"/>
 
 
-                <TextView
-                    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-                    android:layout_width="0dp"
+                <ImageButton
                     android:id="@+id/toolbar_active_conversation"
-                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textAlignment="center"/>
+                    android:layout_gravity="end|center_vertical"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/hang_up_text"
+                    app:srcCompat="@mipmap/ic_call_end_white_24dp"/>
 
                 <TextView
                     style="@style/TextAppearance.AppCompat.Title"
