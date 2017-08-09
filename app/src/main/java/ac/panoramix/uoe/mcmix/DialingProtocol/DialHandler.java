@@ -1,10 +1,10 @@
 package ac.panoramix.uoe.mcmix.DialingProtocol;
 
-import org.libsodium.jni.keys.PublicKey;
+import android.content.Intent;
 
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
-import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
+import ac.panoramix.uoe.mcmix.MCMixConstants;
 
 /**
  * Created by: Chris Campbell
@@ -14,6 +14,10 @@ import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
  */
 
 public class DialHandler {
+    /* The primary purpose of this class is to be an interface between the user and
+        the network for dialing purposes. The user can request to make dials to a buddy
+        and the network can deliver and request dial payloads from/for the server.
+     */
 
     private static DialHandler mDialHandler;
     private DialHandler(){
@@ -65,17 +69,17 @@ public class DialHandler {
     }
 
     public synchronized void handle_dial_from_server(String dial){
-        //TODO: currently this method makes calls to the server for the public key. Should this be wrapped in a PKS class?
         if(DialMessagePayloadConverter.is_username(dial)){
+            /* On recieving a dial the dialhandler must alert the user. This is done via
+                a broadcast to which user facing activities can respond as required. The dialhandler
+                must also store the dial in the database of dials.
+             */
             last_incoming_dial_was_null = false;
             String bob_username = DialMessagePayloadConverter.get_username(dial);
-            //TODO: the below line is used to check whether we have seen the person before. For now just create new buddy always.
-            last_incoming_dial = null;
-//            last_incoming_dial = MCMixApplication.getBuddy(bob_username);
-            if(last_incoming_dial == null) {
-                PublicKey bob_pk = ServerHandler.getOrCreateInstance().get_public_key_for_username(bob_username);
-                last_incoming_dial = new Buddy(bob_username, bob_pk);
-            }
+            Intent intent = new Intent();
+            intent.setAction(MCMixConstants.INCOMING_DIAL_RECEIVED_BROADCAST_TAG);
+            intent.putExtra(MCMixConstants.BUDDY_EXTRA, bob_username);
+            MCMixApplication.getContext().sendBroadcast(intent);
         } else {
             last_incoming_dial_was_null = true;
         }

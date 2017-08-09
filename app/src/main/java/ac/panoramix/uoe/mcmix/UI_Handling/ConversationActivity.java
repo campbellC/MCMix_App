@@ -33,7 +33,7 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
 
-public class ConversationActivity extends AppCompatActivity {
+public class ConversationActivity extends DialResponderBaseActivity {
 
     /* A ConversationActivity does not exist without a Buddy who the
      *   conversation is with.
@@ -96,9 +96,6 @@ public class ConversationActivity extends AppCompatActivity {
         dial_bob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: if in conversation with someone else, check whether there are unsent outgoing messages
-                // and give the user a chance to decide whether they want to delete thhose before doing anything
-
                 /* On clicking this button the user wishes to dial bob and therefore cease any other
                 conversations. If they have outgoing messages waiting to be sent then this may be
                 unintended. Therefore we check if they meant to by offering them a chance to wait

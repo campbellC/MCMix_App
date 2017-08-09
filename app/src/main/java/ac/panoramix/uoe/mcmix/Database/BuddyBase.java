@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
+import ac.panoramix.uoe.mcmix.MCMixConstants;
 
 /**
  * Created by: Chris Campbell
@@ -113,4 +114,9 @@ public class BuddyBase {
         return values;
     }
 
+    public void deleteBuddy(String name){
+        mDatabase.delete(MCMixDbContract.BuddyEntry.TABLE_NAME,
+                MCMixDbContract.BuddyEntry.USERNAME_COLUMN + " = ?",
+                new String[] {name});
+    }
 }

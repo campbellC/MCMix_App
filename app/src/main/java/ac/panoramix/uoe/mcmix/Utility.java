@@ -160,7 +160,7 @@ public class Utility {
     public static String format_date_for_display(Date date){
         String ret;
         if(DateUtils.isToday(date.getTime())){
-           ret = new SimpleDateFormat("hh:mm").format(date);
+           ret = new SimpleDateFormat("HH:mm").format(date);
         } else {
             ret = new SimpleDateFormat("MMM dd").format(date);
         }

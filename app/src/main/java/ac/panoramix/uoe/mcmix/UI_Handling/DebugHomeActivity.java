@@ -100,7 +100,7 @@ public class DebugHomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mDialRecievedReceiver = new DialRecievedReceiver();
-        IntentFilter intentFilter = new IntentFilter(MCMixConstants.DIAL_ADDED_BROADCAST_TAG);
+        IntentFilter intentFilter = new IntentFilter(MCMixConstants.INCOMING_DIAL_RECEIVED_BROADCAST_TAG);
         getApplicationContext().registerReceiver(mDialRecievedReceiver, intentFilter);
     }
 
