@@ -31,8 +31,6 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".UI_Handling.HomeActivity">
-        </activity>
         <activity android:name=".UI_Handling.LoginActivity">
         </activity>
         <activity android:name=".UI_Handling.UserRegistrationActivity">
