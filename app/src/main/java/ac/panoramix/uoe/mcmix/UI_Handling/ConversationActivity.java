@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +44,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
      */
     ListView conversation_view;
     ConversationAdapter mAdapter;
+    Button hang_up_button;
 
     /* The bottom portion of the screen is either a send message
         area or a button for dialing bob.
@@ -151,6 +151,16 @@ public class ConversationActivity extends DialResponderBaseActivity {
         conversation_view = (ListView) findViewById(R.id.conversation_history_view);
         conversation_view.setAdapter(mAdapter);
 
+        hang_up_button = (Button) findViewById(R.id.toolbar_active_conversation);
+        hang_up_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mConversationHandler.inConversationWith(bob)) {
+                    mConversationHandler.endConversation();
+                    changeDialView();
+                }
+            }
+        });
         changeDialView();
     }
 
@@ -173,7 +183,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateUI();
+        updateMessageView();
     }
 
     /**
@@ -208,7 +218,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
         return mConversationHandler.inConversationWith(bob);
     }
 
-    private void updateUI(){
+    private void updateMessageView(){
         mAdapter.changeCursor(mBase.getMessageCursor(bob));
     }
     private void changeDialView(){
@@ -216,14 +226,17 @@ public class ConversationActivity extends DialResponderBaseActivity {
             while(send_message_switcher.getCurrentView() != send_message_view){
                 send_message_switcher.showNext();
             }
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.active_conversation_hint));
+            hang_up_button.setText(getResources().getString(R.string.hang_up_text));
+            hang_up_button.setEnabled(true);
         } else {
             while(send_message_switcher.getCurrentView() != dial_bob_view){
                 send_message_switcher.showNext();
             }
             dial_bob.setTransformationMethod(null);
             dial_bob.setText(getResources().getString(R.string.start_conversation_button_text) + " with " + bob.getUsername());
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.inactive_conversation_hint));
+            hang_up_button.setText(getResources().getString(R.string.inactive_conversation_hint));
+            hang_up_button.setEnabled(false);
+
         }
 
     }
@@ -296,7 +309,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
     private class MessageSentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateUI();
+            updateMessageView();
         }
     }
 

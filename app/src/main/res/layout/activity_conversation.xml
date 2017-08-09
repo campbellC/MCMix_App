@@ -58,11 +58,12 @@
                     style="@style/TextAppearance.AppCompat.Title"/>
 
 
-                <TextView
+                <Button
                     style="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
                     android:layout_width="0dp"
                     android:id="@+id/toolbar_active_conversation"
                     android:layout_weight="1"
+                    android:background="@null"
                     android:layout_height="match_parent"
                     android:textAlignment="center"/>
 
