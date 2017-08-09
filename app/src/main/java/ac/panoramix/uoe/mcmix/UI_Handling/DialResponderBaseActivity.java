@@ -6,8 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
+
+import org.libsodium.jni.keys.PublicKey;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -16,8 +20,11 @@ import java.util.concurrent.TimeoutException;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
+import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
+import ac.panoramix.uoe.mcmix.Utility;
 
 /**
  * Created by: Chris Campbell
@@ -63,9 +70,13 @@ public abstract class DialResponderBaseActivity extends AppCompatActivity {
             Buddy b = BuddyBase.getOrCreateInstance(context).getBuddy(username);
 
             if(b != null){
-                // In this case we know the person and so offer to start a conversation with them
-                AlertDialog.Builder alert = knownBuddyDialog(b);
-                alert.show();
+                /* In this case we know the person and so offer to start a conversation with them if
+                 we are not already in conversation with them.
+                 */
+                if(!ConversationHandler.getOrCreateInstance().inConversationWith(b)) {
+                    AlertDialog.Builder alert = knownBuddyDialog(b);
+                    alert.show();
+                }
             } else {
                 // Otherwise this is an unknown person and we must first offer to add them as a contact
                 AlertDialog.Builder alert = unknownBuddyDialog(username);
@@ -104,13 +115,7 @@ public abstract class DialResponderBaseActivity extends AppCompatActivity {
 
             alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    new GetPublicKeyTask().execute(name);
-                    Buddy bob = BuddyBase.getOrCreateInstance(getApplicationContext()).getBuddy(name);
-                    if(bob == null) {
-                        Toast.makeText(DialResponderBaseActivity.this, "Error retrieving this person's details. Please try again later.", Toast.LENGTH_SHORT).show();
-                    }
-                    ConversationHandler.getOrCreateInstance().startConversation(bob);
-                    launchConversation(bob);
+                    new StartConversationWithNewBuddyTask().execute(name);
                 }
             });
 
@@ -131,4 +136,43 @@ public abstract class DialResponderBaseActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public class StartConversationWithNewBuddyTask extends AsyncTask<String,Integer,String> {
+        String username;
+        ServerHandler mServerHandler;
+        Buddy bob;
+
+        public StartConversationWithNewBuddyTask() {
+            super();
+            mServerHandler = ServerHandler.getOrCreateInstance();
+            bob = null;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            username = params[0];
+            PublicKey pk = mServerHandler.get_public_key_for_username(username);
+            if (pk != null) {
+                bob = new Buddy(username, pk);
+            }
+            return "Finished creating user attempt.";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if (bob == null) {
+                Toast.makeText(MCMixApplication.getContext(), "Username does not exists, connection is down or user has no public key.", Toast.LENGTH_LONG).show();
+            } else {
+                BuddyBase.getOrCreateInstance(MCMixApplication.getContext()).updateBuddy(bob);
+                Log.d("DialResponse", "Added or updated key for  " + bob.getUsername() + ": " + Utility.uint_string_from_bytes(bob.getPublic_key().toBytes()));
+                Intent intent = new Intent();
+                intent.setAction(MCMixConstants.BUDDY_ADDED_BROADCAST_TAG);
+                MCMixApplication.getContext().sendBroadcast(intent);
+                Log.d("DialResponse", "Sent Broadcast");
+                ConversationHandler.getOrCreateInstance().startConversation(bob);
+                launchConversation(bob);
+
+            }
+        }
+    }
 }
