@@ -5,6 +5,8 @@ package ac.panoramix.uoe.mcmix.ConversationProtocol;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.common.base.Splitter;
+
 import org.libsodium.jni.crypto.Random;
 
 import java.util.Date;
@@ -136,7 +138,7 @@ public class ConversationHandler {
     }
     synchronized public void handleMessageFromUser(String payload){
         // This one liner splits the payload into strings of the correct length for sending over the wire
-        for(String s : payload.split("(?<=\\G.{"+ Integer.toString(MCMixConstants.C_MESSAGE_BYTES) + "})")){
+        for(String s : Splitter.fixedLength(MCMixConstants.C_MESSAGE_BYTES).split(payload) ){
             ConversationMessage msg = new ConversationMessage(s, true);
             //TODO: delete this debugging code
             Log.d("ConvActivity", "msg: " + msg.getMessage());

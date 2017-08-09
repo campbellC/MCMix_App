@@ -94,6 +94,9 @@ public class ConversationActivity extends AppCompatActivity {
         dial_bob.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: if in conversation with someone else, check whether there are unsent outgoing messages
+                // and give the user a chance to decide whether they want to delete thhose before doing anything
+
                 mConversationHandler.startConversation(bob);
                 DialHandler.getOrCreateInstance().handle_user_request_to_dial(bob);
                 changeDialView();
