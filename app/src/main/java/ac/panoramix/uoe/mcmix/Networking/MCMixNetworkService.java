@@ -76,9 +76,6 @@ public class MCMixNetworkService extends Service {
                 String incoming_dial = mServerHandler.d_recv_dial();
                 if(incoming_dial != null){
                     mDialHandler.handle_dial_from_server(incoming_dial);
-                    Intent intent = new Intent();
-                    intent.setAction(MCMixConstants.DIAL_ADDED_BROADCAST_TAG);
-                    sendBroadcast(intent);
                 }
                 String outgoing_dial = mDialHandler.get_dial_for_server();
                 mServerHandler.d_send_dial(outgoing_dial);

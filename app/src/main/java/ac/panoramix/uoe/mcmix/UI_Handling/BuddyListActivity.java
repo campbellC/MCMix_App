@@ -28,7 +28,7 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 
-public class BuddyListActivity extends AppCompatActivity {
+public class BuddyListActivity extends DialResponderBaseActivity {
 
     private BuddyBase mBase = BuddyBase.getOrCreateInstance(MCMixApplication.getContext());
     private ListView mBuddyListview;
@@ -145,9 +145,4 @@ public class BuddyListActivity extends AppCompatActivity {
         updateUI();
     }
 
-    private void launchConversation(Buddy bob){
-        Intent intent = new Intent(BuddyListActivity.this, ConversationActivity.class);
-        intent.putExtra(MCMixConstants.BUDDY_EXTRA, bob);
-        startActivity(intent);
-    }
 }

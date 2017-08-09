@@ -32,7 +32,7 @@ public final class MCMixConstants {
 
     public static final String BUDDY_ADDED_BROADCAST_TAG = "ac.panoramix.uoe.mcmix.BUDDY_ADDED";
     public static final String MESSAGES_UPDATED_BROADCAST_TAG = "ac.panoramix.uoe.mcmix.MESSAGES_UPDATED";
-    public static final String DIAL_ADDED_BROADCAST_TAG = "ac.panoramix.uoe.mcmix.INCOMING_DIAL_RECEIVED";
+    public static final String INCOMING_DIAL_RECEIVED_BROADCAST_TAG = "ac.panoramix.uoe.mcmix.INCOMING_DIAL_RECEIVED";
 
 
 }
