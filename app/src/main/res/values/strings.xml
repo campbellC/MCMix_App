@@ -12,6 +12,7 @@
 
     <string name="buddy_list_title_text">Buddies</string>
     <string name="active_conversation_hint">Active</string>
+    <string name="inactive_conversation_hint">Inactive</string>
     <!-- Strings related to home activity -->
     <string name="add_buddy_button_text">Add Buddy</string>
     <string name="start_conversation_button_text">Start Conversation</string>

@@ -182,14 +182,14 @@ public class ConversationActivity extends AppCompatActivity {
             while(send_message_switcher.getCurrentView() != send_message_view){
                 send_message_switcher.showNext();
             }
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText("Active Conversation.");
+            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.active_conversation_hint));
         } else {
             while(send_message_switcher.getCurrentView() != dial_bob_view){
                 send_message_switcher.showNext();
             }
             dial_bob.setTransformationMethod(null);
             dial_bob.setText(getResources().getString(R.string.start_conversation_button_text) + " with " + bob.getUsername());
-            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText("Inactive Conversation.");
+            ((TextView) findViewById(R.id.toolbar_active_conversation)).setText(getResources().getString(R.string.inactive_conversation_hint));
         }
 
     }
