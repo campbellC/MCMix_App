@@ -5,6 +5,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.google.common.base.Splitter;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libsodium.jni.SodiumConstants;
@@ -313,4 +315,17 @@ public class ExampleInstrumentedTest {
 
     }
 
+
+    @Test
+    public void splitting_messages_test() throws Exception {
+        String payload = "this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.                   this is a test string that is over 320 characters long. ";
+        for(String s : Splitter.fixedLength(MCMixConstants.C_MESSAGE_BYTES).split(payload) ){
+            assertTrue(s.length() <= MCMixConstants.C_MESSAGE_BYTES);
+            ConversationMessage msg = new ConversationMessage(s, true);
+            //TODO: delete this debugging code
+            Log.d("ConvActivity", "msg: " + msg.getMessage());
+            Log.d("ConvHandler", "uuid: " + msg.getUuid().toString());
+            Log.d("ConvHandler", "wasSent: " + msg.wasSent());
+        }
+    }
 }

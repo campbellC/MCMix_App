@@ -45,6 +45,7 @@ public class ConversationMessage implements Serializable {
 
 
     public ConversationMessage(String message, boolean from_alice, boolean sent, Date timestamp, UUID uuid) {
+        assert message.length() <= MCMixConstants.C_MESSAGE_BYTES;
         this.message = message;
         this.from_alice = from_alice;
         this.sent = sent;
@@ -62,7 +63,7 @@ public class ConversationMessage implements Serializable {
 
     /* Constructors */
     public ConversationMessage(String message, boolean from_alice) {
-        assert message.length() < MCMixConstants.C_MESSAGE_BYTES;
+        assert message.length() <= MCMixConstants.C_MESSAGE_BYTES;
         assert CharMatcher.ascii().matchesAllOf(message);
         this.message = message;
         this.from_alice = from_alice;
@@ -81,6 +82,7 @@ public class ConversationMessage implements Serializable {
     }
 
     public ConversationMessage(byte[] message, boolean from_alice) {
+        assert message.length <= MCMixConstants.C_MESSAGE_BYTES;
         // need to handle 0-padded arrays.
         if(message.length == 0 || message[0] ==  0){
             this.message = "";
@@ -100,10 +102,10 @@ public class ConversationMessage implements Serializable {
     /* Utility Methods */
     public byte[] getBytes(){
         byte[] initial_message = message.getBytes(sEncoding);
-        if(initial_message.length == 160){
+        if(initial_message.length == MCMixConstants.C_MESSAGE_BYTES){
             return initial_message;
         } else {
-            byte[] padded_message = new byte[160];
+            byte[] padded_message = new byte[MCMixConstants.C_MESSAGE_BYTES];
             System.arraycopy(initial_message, 0, padded_message, 0, initial_message.length);
             return padded_message;
         }
