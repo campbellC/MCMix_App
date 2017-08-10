@@ -19,7 +19,7 @@ public final class MCMixConstants {
 
     public static final int C_MESSAGE_BYTES = 160; // length in bytes of a conversation message
     public static final int DEAD_DROP_BYTES = 32; // sha256 has 256 bits = 32 bytes
-    public static final int C_CIPHERTEXT_BYTES = C_MESSAGE_BYTES + 16; // length in bytes of encrypted messages. //TODO: find proof that this is correct fomula
+    public static final int C_CIPHERTEXT_BYTES = C_MESSAGE_BYTES + 16; // length in bytes of encrypted messages.
     public static final int CONVERSATION_PAYLOAD_BYTES = DEAD_DROP_BYTES + SodiumConstants.NONCE_BYTES + C_CIPHERTEXT_BYTES;
     public static final int CONVERSATION_PAYLOAD_LENGTH = CONVERSATION_PAYLOAD_BYTES / 8;
     public static final int MAX_MESSAGES_IN_QUEUE = 50;

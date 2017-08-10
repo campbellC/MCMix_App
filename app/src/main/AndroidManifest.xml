@@ -42,8 +42,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".UI_Handling.DebugHomeActivity">
-        </activity>
         <activity android:name=".UI_Handling.BuddyListActivity">
         </activity>
     </application>

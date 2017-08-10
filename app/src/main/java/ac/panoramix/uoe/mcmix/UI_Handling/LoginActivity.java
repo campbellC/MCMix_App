@@ -34,8 +34,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
         mPassword_text = (EditText) findViewById(R.id.login_password);
-        //TODO: remove debugging password
-        mPassword_text.setText("horse_battery");
 
         mLogin_button = (Button) findViewById(R.id.login_button);
         mLogin_button.setOnClickListener(new View.OnClickListener() {
@@ -77,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
             if(mServerHandler.is_logged_in()){
                 Intent serviceIntent = new Intent(getApplicationContext(), MCMixNetworkService.class);
                 startService(serviceIntent);
-                //TODO: fix which activity is launched by this
                 Intent intent = new Intent(getApplicationContext(), BuddyListActivity.class);
                 // These flags make it so that pressing Back will not return the user to the login screen
                 new UpdatePublicKeyTask().execute();

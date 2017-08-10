@@ -321,11 +321,6 @@ public class ExampleInstrumentedTest {
         String payload = "this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.this is a test string that is over 320 characters long.                   this is a test string that is over 320 characters long. ";
         for(String s : Splitter.fixedLength(MCMixConstants.C_MESSAGE_BYTES).split(payload) ){
             assertTrue(s.length() <= MCMixConstants.C_MESSAGE_BYTES);
-            ConversationMessage msg = new ConversationMessage(s, true);
-            //TODO: delete this debugging code
-            Log.d("ConvActivity", "msg: " + msg.getMessage());
-            Log.d("ConvHandler", "uuid: " + msg.getUuid().toString());
-            Log.d("ConvHandler", "wasSent: " + msg.wasSent());
         }
     }
 }
