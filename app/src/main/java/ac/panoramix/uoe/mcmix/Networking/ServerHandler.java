@@ -49,7 +49,7 @@ public class ServerHandler {
     public static final int PORT = 5013;
     public static final String GOOD_STATUS = "good";
     public static final String protocol = "https";
-    public static final String CREATE_USER_URL = "/dial/create_user/";
+    public static final String CREATE_USER_URL = "/pks/create_user/";
     public static final String LOGIN_URL = "/accounts/login/";
     public static final String LOGOUT_URL = "/accounts/logout/";
     public static final String C_GET_MESSAGE_URL = "/conversation/get_message";

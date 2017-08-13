@@ -54,8 +54,7 @@ public class UserRegistrationActivity extends AppCompatActivity {
         username_input = (EditText) findViewById(R.id.user_creation_username);
         password_input = (EditText) findViewById(R.id.user_creation_password);
         password_repeat_input= (EditText) findViewById(R.id.user_creation_password_repeat);
-        password_repeat_input.setText("horse_battery");
-        password_input.setText("horse_battery");
+
         user_create_button = (Button) findViewById(R.id.user_creation_button);
         user_create_button.setOnClickListener(new View.OnClickListener() {
             @Override
