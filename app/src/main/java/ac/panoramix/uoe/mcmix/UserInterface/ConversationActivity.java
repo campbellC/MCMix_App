@@ -192,6 +192,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
     protected void onResume() {
         super.onResume();
         updateMessageView();
+        changeDialView();
     }
 
     /**
