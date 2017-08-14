@@ -55,10 +55,6 @@ public class Utility {
     }
 
 
-    public static String filename_for_conversation(Account alice, Buddy bob){
-        String name = alice.getUsername() + "_" + bob.getUsername() + ".conv";
-        return name;
-    }
 
 
     public static String uint_string_from_bytes(byte[] payload){
