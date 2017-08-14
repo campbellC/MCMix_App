@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;

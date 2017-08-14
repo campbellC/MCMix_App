@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -13,16 +13,11 @@ import android.widget.Toast;
 
 import org.libsodium.jni.keys.PublicKey;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
-import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.Utility;
 

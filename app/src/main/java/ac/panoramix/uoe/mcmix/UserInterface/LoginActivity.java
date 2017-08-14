@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.Intent;
 import android.os.AsyncTask;

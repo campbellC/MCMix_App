@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".UI_Handling.ConversationActivity"
+            android:name=".UserInterface.ConversationActivity"
             android:windowSoftInputMode="adjustResize">
         </activity>
 
@@ -31,18 +31,18 @@
             android:exported="true">
         </service>
 
-        <activity android:name=".UI_Handling.LoginActivity">
+        <activity android:name=".UserInterface.LoginActivity">
         </activity>
-        <activity android:name=".UI_Handling.UserRegistrationActivity">
+        <activity android:name=".UserInterface.UserRegistrationActivity">
         </activity>
-        <activity android:name=".UI_Handling.StartUpActivity">
+        <activity android:name=".UserInterface.StartUpActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".UI_Handling.BuddyListActivity">
+        <activity android:name=".UserInterface.BuddyListActivity">
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,15 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
-import ac.panoramix.uoe.mcmix.Networking.UpdatePublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
