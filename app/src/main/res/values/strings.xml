@@ -33,6 +33,7 @@
     <!-- Strings related to login -->
     <string name="login_button">Log in</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="login_banner_text">Login</string>
 
     <!-- Strings related to updating keys -->
     <string name="update_all_keys_button">Update all keys</string>
