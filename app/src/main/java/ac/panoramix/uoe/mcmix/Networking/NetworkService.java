@@ -67,9 +67,6 @@ public class NetworkService extends Service {
                 }
                 String outgoing = mConversationHandler.getNextMessageForServer(mServerHandler.getC_round_number());
                 boolean sent_message = mServerHandler.c_send_message(outgoing);
-                if (sent_message){
-                    mConversationHandler.confirmMessageSent();
-                }
             }
 
             if(mServerHandler.d_round_finished()){

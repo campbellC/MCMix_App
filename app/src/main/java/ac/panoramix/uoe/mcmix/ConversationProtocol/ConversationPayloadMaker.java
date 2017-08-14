@@ -36,6 +36,18 @@ public class ConversationPayloadMaker {
                 DiffieHellman.shared_secret(alice, bob).toBytes());
     }
 
+    public boolean encryptedPayloadIsFromBob(String payload){
+        payload = payload.trim();
+        byte[] payload_bytes = Utility.bytes_from_uint_string(payload);
+        for(int i = 0; i < MCMixConstants.DEAD_DROP_BYTES; ++i){
+            if (payload_bytes[i] != 0){
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     public ConversationMessage encryptedPayloadToMessage(String payload){
         payload = payload.trim();
         Log.d("ConvMsgConverter","decrypting payload: " + payload);
@@ -93,5 +105,6 @@ public class ConversationPayloadMaker {
     public String constructOutgoingPayload(ConversationMessage msg, long round_number){
         return Utility.uint_string_from_bytes(constructOutgoingPayloadBytes(msg, round_number));
     }
+
 
 }
