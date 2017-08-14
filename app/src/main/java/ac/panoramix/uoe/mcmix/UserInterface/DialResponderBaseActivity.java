@@ -82,7 +82,7 @@ public abstract class DialResponderBaseActivity extends AppCompatActivity {
         protected AlertDialog.Builder knownBuddyDialog(final Buddy bob){
             AlertDialog.Builder alert = new AlertDialog.Builder(DialResponderBaseActivity.this);
             alert.setTitle("Incoming Dial From Buddy");
-            alert.setMessage(bob.getUsername() + " has dialed you. Would you like" +
+            alert.setMessage(bob.getUsername() + " has dialed you. Would you like " +
                     "to end any current conversation and start a new one with them?");
 
 
