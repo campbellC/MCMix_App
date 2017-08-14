@@ -26,7 +26,7 @@ import java.util.Arrays;
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
-import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessagePayloadConverter;
+import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationPayloadMaker;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.DiffieHellman;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.Database.ConversationBase;
@@ -109,8 +109,8 @@ public class ExampleInstrumentedTest {
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
-        ConversationMessagePayloadConverter alice_converter = new ConversationMessagePayloadConverter(Alice, b_buddy);
-        ConversationMessagePayloadConverter bob_converter = new ConversationMessagePayloadConverter(Bob, a_buddy);
+        ConversationPayloadMaker alice_converter = new ConversationPayloadMaker(Alice, b_buddy);
+        ConversationPayloadMaker bob_converter = new ConversationPayloadMaker(Bob, a_buddy);
         // generate a message from alice to bob. create payload
 
         ConversationMessage alice_msg = new ConversationMessage("This is a random string 09432802938470928374", true);

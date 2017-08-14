@@ -12,7 +12,7 @@ import ac.panoramix.uoe.mcmix.Utility;
  * contact: c.j.campbell@ed.ac.uk
  */
 
-public class DialMessagePayloadConverter {
+public class DialPayloadMaker {
     private static String DIAL_CHECK = "1";
 
 

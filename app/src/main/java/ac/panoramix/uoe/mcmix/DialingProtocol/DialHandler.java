@@ -53,28 +53,28 @@ public class DialHandler {
 
     public synchronized String get_dial_for_server(){
         if(user_wants_to_dialcheck) {
-            return DialMessagePayloadConverter.getDialCheck();
+            return DialPayloadMaker.getDialCheck();
         } else if (bob != null){
             /*  Firstly record that we dialed bob before setting the handler to
                 dialcheck for now forwards. We don't want to keep dialling the same
                 person repeatedly.
              */
             last_outgoing_dial = bob;
-            String dial = DialMessagePayloadConverter.dialBuddy(bob);
+            String dial = DialPayloadMaker.dialBuddy(bob);
             handle_user_request_to_dialcheck();
             return dial;
         } else {
-            return DialMessagePayloadConverter.dial_nobody();
+            return DialPayloadMaker.dial_nobody();
         }
     }
 
     public synchronized void handle_dial_from_server(String dial){
-        if(DialMessagePayloadConverter.is_username(dial)){
+        if(DialPayloadMaker.is_username(dial)){
             /* On recieving a dial the dialhandler must alert the user. This is done via
                 a broadcast to which user facing activities can respond as required.
              */
             last_incoming_dial_was_null = false;
-            String bob_username = DialMessagePayloadConverter.get_username(dial);
+            String bob_username = DialPayloadMaker.get_username(dial);
             Intent intent = new Intent();
             intent.setAction(MCMixConstants.INCOMING_DIAL_RECEIVED_BROADCAST_TAG);
             intent.putExtra(MCMixConstants.BUDDY_EXTRA, bob_username);

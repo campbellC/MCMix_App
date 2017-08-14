@@ -9,7 +9,6 @@ import com.google.common.base.Splitter;
 
 import org.libsodium.jni.crypto.Random;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -41,7 +40,7 @@ public class ConversationHandler {
 
     private Buddy bob;
     private LinkedList<UUID> outgoingMessages;
-    private ConversationMessagePayloadConverter mConverter;
+    private ConversationPayloadMaker mConverter;
     private ConversationBase mBase = ConversationBase.getOrCreateInstance(MCMixApplication.getContext());
 
     /**
@@ -106,7 +105,7 @@ public class ConversationHandler {
         Log.d("ConvHandler","Starting conversation with " + new_bob.getUsername());
         bob = new_bob;
         outgoingMessages.clear();
-        mConverter = new ConversationMessagePayloadConverter(MCMixApplication.getAccount(), bob);
+        mConverter = new ConversationPayloadMaker(MCMixApplication.getAccount(), bob);
     }
     synchronized public boolean inConversation(){
         return (bob != null);

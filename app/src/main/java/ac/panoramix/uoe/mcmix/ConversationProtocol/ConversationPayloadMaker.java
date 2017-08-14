@@ -24,12 +24,12 @@ import ac.panoramix.uoe.mcmix.Utility;
 conversation message payloads.
  */
 
-public class ConversationMessagePayloadConverter {
+public class ConversationPayloadMaker {
     Account Alice;
     Buddy Bob;
     SecretBox mBox;
 
-    public ConversationMessagePayloadConverter(Account alice, Buddy bob){
+    public ConversationPayloadMaker(Account alice, Buddy bob){
         Alice = alice;
         Bob = bob;
         mBox = new SecretBox(
