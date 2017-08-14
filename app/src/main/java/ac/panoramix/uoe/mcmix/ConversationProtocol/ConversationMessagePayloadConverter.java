@@ -33,7 +33,7 @@ public class ConversationMessagePayloadConverter {
         Alice = alice;
         Bob = bob;
         mBox = new SecretBox(
-                Diffie_Hellman.shared_secret(alice, bob).toBytes());
+                DiffieHellman.shared_secret(alice, bob).toBytes());
     }
 
     public ConversationMessage encryptedPayloadToMessage(String payload){
@@ -69,7 +69,7 @@ public class ConversationMessagePayloadConverter {
     }
 
     private byte[] constructOutgoingPayloadBytes(ConversationMessage msg, long round_number){
-        byte[] dead_drop = Diffie_Hellman.dead_drop(Alice, Bob, round_number);
+        byte[] dead_drop = DiffieHellman.dead_drop(Alice, Bob, round_number);
 
         //when we have a dead drop and a message, construct into an outgoing payload for the protocol
         byte[] payload = new byte[MCMixConstants.CONVERSATION_PAYLOAD_BYTES];

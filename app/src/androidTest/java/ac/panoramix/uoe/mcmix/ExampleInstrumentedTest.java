@@ -27,7 +27,7 @@ import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessagePayloadConverter;
-import ac.panoramix.uoe.mcmix.ConversationProtocol.Diffie_Hellman;
+import ac.panoramix.uoe.mcmix.ConversationProtocol.DiffieHellman;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.Database.ConversationBase;
 
@@ -56,8 +56,8 @@ public class ExampleInstrumentedTest {
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
         for (long r = 0; r < 100; ++r) {
-            byte[] Alice_dd = Diffie_Hellman.dead_drop(Alice, b_buddy, r);
-            byte[] Bob_dd = Diffie_Hellman.dead_drop(Bob, a_buddy, r);
+            byte[] Alice_dd = DiffieHellman.dead_drop(Alice, b_buddy, r);
+            byte[] Bob_dd = DiffieHellman.dead_drop(Bob, a_buddy, r);
             assertEquals(Alice_dd.length, Bob_dd.length);
             assertEquals(Alice_dd.length, MCMixConstants.DEAD_DROP_BYTES);
             assertTrue(Arrays.equals(Alice_dd, Bob_dd));
@@ -70,8 +70,8 @@ public class ExampleInstrumentedTest {
         Buddy b_buddy = new Buddy("Bob", Bob.getKeyPair().getPublicKey());
         Buddy a_buddy = new Buddy("Alice", Alice.getKeyPair().getPublicKey());
 
-        Point Alice_secret = Diffie_Hellman.shared_secret(Alice, b_buddy);
-        Point Bob_secret =  Diffie_Hellman.shared_secret(Bob, a_buddy);
+        Point Alice_secret = DiffieHellman.shared_secret(Alice, b_buddy);
+        Point Bob_secret =  DiffieHellman.shared_secret(Bob, a_buddy);
         assertEquals(Alice_secret.toString(), Bob_secret.toString());
         Log.d("testing", Alice_secret.toString());
     }

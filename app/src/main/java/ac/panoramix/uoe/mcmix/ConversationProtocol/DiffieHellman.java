@@ -16,7 +16,7 @@ import ac.panoramix.uoe.mcmix.Utility;
  * contact: c.j.campbell@ed.ac.uk
  */
 
-public class Diffie_Hellman {
+public class DiffieHellman {
 
     public static Point shared_secret(Account alice, Buddy bob){
         return new Point(bob.getPublic_key().toBytes()).mult(alice.getKeyPair().getPrivateKey().toBytes());

@@ -71,8 +71,7 @@ public class DialHandler {
     public synchronized void handle_dial_from_server(String dial){
         if(DialMessagePayloadConverter.is_username(dial)){
             /* On recieving a dial the dialhandler must alert the user. This is done via
-                a broadcast to which user facing activities can respond as required. The dialhandler
-                must also store the dial in the database of dials.
+                a broadcast to which user facing activities can respond as required.
              */
             last_incoming_dial_was_null = false;
             String bob_username = DialMessagePayloadConverter.get_username(dial);
