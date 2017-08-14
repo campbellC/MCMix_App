@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.Networking.UpdatePublicKeyTask;
-import ac.panoramix.uoe.mcmix.Networking.MCMixNetworkService;
+import ac.panoramix.uoe.mcmix.Networking.NetworkService;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.R;
 
@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
             mServerHandler.log_cookies();
             Log.d("LoginTask", Boolean.toString(mServerHandler.is_logged_in()));
             if(mServerHandler.is_logged_in()){
-                Intent serviceIntent = new Intent(getApplicationContext(), MCMixNetworkService.class);
+                Intent serviceIntent = new Intent(getApplicationContext(), NetworkService.class);
                 startService(serviceIntent);
                 Intent intent = new Intent(getApplicationContext(), BuddyListActivity.class);
                 // These flags make it so that pressing Back will not return the user to the login screen

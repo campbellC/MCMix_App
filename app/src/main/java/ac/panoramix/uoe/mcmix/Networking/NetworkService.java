@@ -13,7 +13,7 @@ import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 
 
-public class MCMixNetworkService extends Service {
+public class NetworkService extends Service {
 
     private static Timer sTimer = new Timer();
 

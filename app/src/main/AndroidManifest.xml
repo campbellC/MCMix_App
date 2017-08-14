@@ -26,7 +26,7 @@
         </activity>
 
         <service
-            android:name=".Networking.MCMixNetworkService"
+            android:name=".Networking.NetworkService"
             android:enabled="true"
             android:exported="true">
         </service>

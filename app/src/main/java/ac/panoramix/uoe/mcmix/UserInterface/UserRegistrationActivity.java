@@ -62,6 +62,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
                     Toast.makeText(UserRegistrationActivity.this, "Username does not meet requirements", Toast.LENGTH_SHORT).show();
                 } else if (!password_input.getText().toString().equals(password_repeat_input.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "Passwords do not match.", Toast.LENGTH_LONG).show();
+                } else if (password_input.getText().toString().length() < MCMixConstants.PASSWORD_MIN_LENGTH){
+                    Toast.makeText(getApplicationContext(), "Passwords must be 8 characters or longer.", Toast.LENGTH_LONG).show();
+
                 } else {
                     new_account = new Account(username_input.getText().toString());
                     new CreateUserTask().execute(username_input.getText().toString(), password_input.getText().toString());

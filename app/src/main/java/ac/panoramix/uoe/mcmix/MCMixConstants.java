@@ -11,6 +11,7 @@ import org.libsodium.jni.SodiumConstants;
 
 public final class MCMixConstants {
 
+    public static final int PASSWORD_MIN_LENGTH = 8;
     public static final String ACCOUNT_STORAGE_FILE = "ACCOUNT_STORAGE.ser";
 
     public static int USERNAME_LENGTH_IN_UINTS = 1;
