@@ -112,14 +112,20 @@ public class ConversationHandler {
     }
 
     synchronized public void handleMessageFromServer(String incoming_payload){
-        //Log.d("ConvHandler", "handling message from server: " + incoming_payload);
+       // Log.d("ConvHandler", "handling message from server: " + incoming_payload);
+
         if(inConversation() && buddyLastMessageWasSentTo != null && buddyLastMessageWasSentTo.equals(bob)){
             // if not in conversation then this message is random noise we sent out so drop it, otherwise
             // add to the conversation history for bob
-            ConversationMessage msg = mConverter.encryptedPayloadToMessage(incoming_payload);
-            Log.d("ConvHandler", "Message contents" + msg.toString());
-            if(!msg.isEmpty()) {
-                addMessageToHistory(msg);
+            if(lastMessageUUID == null || mConverter.encryptedPayloadIsFromBob(incoming_payload)) {
+                confirmMessageSent();
+                ConversationMessage msg = mConverter.encryptedPayloadToMessage(incoming_payload);
+                Log.d("ConvHandler", "Message contents" + msg.toString());
+                if (!msg.isEmpty()) {
+                    addMessageToHistory(msg);
+                }
+            } else {
+                Log.d("ConvHandler", "Reflected message detected");
             }
         }
     }
@@ -145,6 +151,15 @@ public class ConversationHandler {
         }
     }
 
+    synchronized public boolean isPending(ConversationMessage msg){
+        UUID uuid = msg.getUuid();
+        for(Iterator<UUID> it = outgoingMessages.iterator(); it.hasNext();){
+            if(uuid.equals(it.next())){
+                return true;
+            }
+        }
+        return false;
+    }
     synchronized public void handleDeleteRequestFromUser(ConversationMessage msg){
         UUID uuid = msg.getUuid();
         // Firstly we check if this msg is waiting to be sent, in which case we delete this
@@ -193,7 +208,7 @@ public class ConversationHandler {
         return outgoing_payload;
     }
 
-    synchronized public void confirmMessageSent(){
+    synchronized private void confirmMessageSent(){
         if(inConversation() && buddyLastMessageWasSentTo!= null && buddyLastMessageWasSentTo.equals(bob) && lastMessageUUID != null) {
             Log.d("ConvHandler", "Message confirmed sent: " + lastMessageUUID.toString());
             mBase.setMessageSent(lastMessageUUID, bob);

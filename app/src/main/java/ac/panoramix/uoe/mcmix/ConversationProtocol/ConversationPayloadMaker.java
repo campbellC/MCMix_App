@@ -2,11 +2,15 @@ package ac.panoramix.uoe.mcmix.ConversationProtocol;
 
 import android.util.Log;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
+
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Random;
 import org.libsodium.jni.crypto.SecretBox;
 
 import java.util.Date;
+import java.util.List;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
@@ -35,6 +39,17 @@ public class ConversationPayloadMaker {
         mBox = new SecretBox(
                 DiffieHellman.shared_secret(alice, bob).toBytes());
     }
+
+    public boolean encryptedPayloadIsFromBob(String payload){
+        int i = 0;
+        for(String s: Splitter.on(' ').split(payload)){
+            if(i >= MCMixConstants.DEAD_DROP_UINTS) break;
+            i++;
+            if(!s.equals("0")) return false;
+        }
+        return true;
+    }
+
 
     public ConversationMessage encryptedPayloadToMessage(String payload){
         payload = payload.trim();
@@ -93,5 +108,6 @@ public class ConversationPayloadMaker {
     public String constructOutgoingPayload(ConversationMessage msg, long round_number){
         return Utility.uint_string_from_bytes(constructOutgoingPayloadBytes(msg, round_number));
     }
+
 
 }

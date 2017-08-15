@@ -123,13 +123,18 @@ public class ConversationActivity extends DialResponderBaseActivity {
             public void onClick(View v) {
                 if(mConversationHandler.inConversationWith(bob)) {
                     mConversationHandler.endConversation();
-                    changeDialView();
+                    updateUI();
                 } else {
                     startConversation();
                 }
             }
         });
         changeDialView();
+    }
+
+    private void updateUI() {
+        changeDialView();
+        updateMessageView();
     }
 
     private void startConversation(){
@@ -285,9 +290,12 @@ public class ConversationActivity extends DialResponderBaseActivity {
                     if(msg.wasSent()){
                         //\u2714 = unicode check mark
                         ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u2714");
-                    } else {
+                    } else if (mConversationHandler.isPending(msg)) {
                         // \u2022 = unicode bullet mark
                         ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u2022");
+                    } else {
+                        // \u274c = unicode cross mark
+                        ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u274C");
                     }
                     break;
                 case FROM_BOB:
