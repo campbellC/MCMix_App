@@ -40,7 +40,7 @@ public class ConversationPayloadMaker {
         payload = payload.trim();
         byte[] payload_bytes = Utility.bytes_from_uint_string(payload);
         for(int i = 0; i < MCMixConstants.DEAD_DROP_BYTES; ++i){
-            if (payload_bytes[i] != 0){
+            if (payload_bytes[i] != (byte) 0){
                 return false;
             }
         }

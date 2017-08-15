@@ -123,14 +123,18 @@ public class ConversationActivity extends DialResponderBaseActivity {
             public void onClick(View v) {
                 if(mConversationHandler.inConversationWith(bob)) {
                     mConversationHandler.endConversation();
-                    changeDialView();
-                    updateMessageView();
+                    updateUI();
                 } else {
                     startConversation();
                 }
             }
         });
         changeDialView();
+    }
+
+    private void updateUI() {
+        changeDialView();
+        updateMessageView();
     }
 
     private void startConversation(){

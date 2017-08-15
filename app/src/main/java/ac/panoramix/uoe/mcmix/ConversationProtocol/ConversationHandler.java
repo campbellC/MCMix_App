@@ -112,7 +112,8 @@ public class ConversationHandler {
     }
 
     synchronized public void handleMessageFromServer(String incoming_payload){
-        //Log.d("ConvHandler", "handling message from server: " + incoming_payload);
+       // Log.d("ConvHandler", "handling message from server: " + incoming_payload);
+
         if(inConversation() && buddyLastMessageWasSentTo != null && buddyLastMessageWasSentTo.equals(bob)){
             // if not in conversation then this message is random noise we sent out so drop it, otherwise
             // add to the conversation history for bob
