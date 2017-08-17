@@ -28,6 +28,11 @@ import ac.panoramix.uoe.mcmix.Utility;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/* This abstract base class for the other UI classes that are active for logged in users
+    allows the UI thread to interrupt the user when they receive an incoming dial. Behaviour depends
+    on whether they know the person (i.e. it is a Buddy in their Buddy Database) or if it
+    is an unknown user.
+ */
 public abstract class DialResponderBaseActivity extends AppCompatActivity {
     private DialReceiver mDialReceiver;
 

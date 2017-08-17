@@ -17,6 +17,10 @@ import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.Networking.UpdatePublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 
+/* This is the login screen for the app. It performs some simple client side protections like
+ password length checking. However, the server still performs these
+protections too.
+ */
 public class LoginActivity extends AppCompatActivity {
     TextView mUsername_text;
     EditText mPassword_text;
@@ -51,6 +55,9 @@ public class LoginActivity extends AppCompatActivity {
      * contact: c.j.campbell@ed.ac.uk
      */
 
+    /* This class simply logs in. If it fails then the user is notified, otherwise
+    it launches the Buddy List activity.
+     */
      private class LoginTask extends AsyncTask<String, Integer, String> {
         ServerHandler mServerHandler;
         public LoginTask(){

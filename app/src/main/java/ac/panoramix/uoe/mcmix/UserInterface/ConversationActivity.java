@@ -33,6 +33,12 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
 
+/*
+    This class gives the user a view of the history of the conversation with this Buddy.
+    If the conversation is active then it also allows the user to submit messages to the protocol.
+    If the conversation is not active then the user can press a button to dial the buddy and
+    start a conversation.
+ */
 public class ConversationActivity extends DialResponderBaseActivity {
 
     /* A ConversationActivity does not exist without a Buddy who the
