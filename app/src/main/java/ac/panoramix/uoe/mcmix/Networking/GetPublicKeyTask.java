@@ -7,12 +7,11 @@ import android.widget.Toast;
 
 import org.libsodium.jni.keys.PublicKey;
 
-import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Utility;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 
 /**
  * Created by: Chris Campbell

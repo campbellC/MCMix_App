@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.R;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 
 public class StartUpActivity extends AppCompatActivity {
 

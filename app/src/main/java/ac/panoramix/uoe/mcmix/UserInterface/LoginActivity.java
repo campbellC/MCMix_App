@@ -11,10 +11,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ac.panoramix.uoe.mcmix.MCMixApplication;
+import ac.panoramix.uoe.mcmix.Networking.NetworkService;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.Networking.UpdatePublicKeyTask;
-import ac.panoramix.uoe.mcmix.Networking.NetworkService;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.R;
 
 public class LoginActivity extends AppCompatActivity {

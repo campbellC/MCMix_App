@@ -31,7 +31,10 @@ import ac.panoramix.uoe.mcmix.ConversationProtocol.DiffieHellman;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.Database.ConversationBase;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Instrumentation test, which will execute on an Android device.

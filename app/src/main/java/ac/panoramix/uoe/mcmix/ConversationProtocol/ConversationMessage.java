@@ -1,16 +1,12 @@
 package ac.panoramix.uoe.mcmix.ConversationProtocol;
 
-import android.util.Log;
-
 import com.google.common.base.CharMatcher;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
-
 
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 

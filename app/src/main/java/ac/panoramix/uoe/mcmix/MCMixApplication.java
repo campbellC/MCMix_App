@@ -4,20 +4,14 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -27,7 +21,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
-import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 
 /**
  * Created by: Chris Campbell

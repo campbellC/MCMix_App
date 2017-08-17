@@ -13,11 +13,11 @@ import android.widget.Toast;
 import java.util.regex.Pattern;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 
 public class UserRegistrationActivity extends AppCompatActivity {
 

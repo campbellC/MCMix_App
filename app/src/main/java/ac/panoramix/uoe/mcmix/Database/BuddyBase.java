@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
-import ac.panoramix.uoe.mcmix.MCMixConstants;
 
 /**
  * Created by: Chris Campbell

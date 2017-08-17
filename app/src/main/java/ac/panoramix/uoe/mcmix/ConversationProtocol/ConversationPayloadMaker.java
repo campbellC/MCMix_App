@@ -3,14 +3,12 @@ package ac.panoramix.uoe.mcmix.ConversationProtocol;
 import android.util.Log;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.crypto.Random;
 import org.libsodium.jni.crypto.SecretBox;
 
 import java.util.Date;
-import java.util.List;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;

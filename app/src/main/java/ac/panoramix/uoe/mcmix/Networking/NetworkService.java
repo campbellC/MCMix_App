@@ -10,7 +10,6 @@ import java.util.TimerTask;
 
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
-import ac.panoramix.uoe.mcmix.MCMixConstants;
 
 
 public class NetworkService extends Service {
