@@ -1,16 +1,12 @@
 package ac.panoramix.uoe.mcmix.ConversationProtocol;
 
-import android.util.Log;
-
 import com.google.common.base.CharMatcher;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
-
 
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 
@@ -21,12 +17,14 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
  * contact: c.j.campbell@ed.ac.uk
  */
 
-/** This class encapsulates a single message for the protocol.
+/** This class encapsulates a single message for the protocol. It is the fundamental
+ * unit of the ConversationProtocol package.
  * The upper limit for the length of a message is MCMixConstants.C_MESSAGE_BYTES.
+ * We assume throughout this app that ASCII is the encoding used. Therefore this must be
+ * protected with asserts as much as possible.
  */
 
 public class ConversationMessage implements Serializable {
-
 
     private String message;
     final public static Charset sEncoding = StandardCharsets.US_ASCII;
@@ -100,6 +98,10 @@ public class ConversationMessage implements Serializable {
     }
 
     /* Utility Methods */
+    /*
+        getBytes returns an array of bytes which is the sEncoding-encoded form. Note that
+        throughout this is currently ASCII encoding.
+     */
     public byte[] getBytes(){
         byte[] initial_message = message.getBytes(sEncoding);
         if(initial_message.length == MCMixConstants.C_MESSAGE_BYTES){
@@ -130,6 +132,7 @@ public class ConversationMessage implements Serializable {
     }
 
     public boolean isEmpty() {return message.equals(""); }
+
     /* Object methods */
     @Override
     public boolean equals(Object obj) {

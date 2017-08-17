@@ -7,10 +7,6 @@ package ac.panoramix.uoe.mcmix.Accounts;
  * contact: c.j.campbell@ed.ac.uk
  */
 
-import android.content.ContentValues;
-import android.util.Base64;
-import android.util.Log;
-
 import org.libsodium.jni.SodiumConstants;
 import org.libsodium.jni.keys.PublicKey;
 
@@ -20,8 +16,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
-
-import ac.panoramix.uoe.mcmix.Database.MCMixDbContract;
 
 /** This class is the "friend" class for mcmix. The only information
  * you need to know about a friend to call them is their public key and username.

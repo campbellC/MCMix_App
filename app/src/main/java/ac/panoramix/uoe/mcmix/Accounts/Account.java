@@ -14,10 +14,11 @@ import org.libsodium.jni.keys.KeyPair;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Account implements Serializable{
+    /* The Account class of the client application.
+       This class is only used for the owner of the android device. For
+       contacts use the Buddy class. */
 
     private String mUsername;
     private byte[] seed;

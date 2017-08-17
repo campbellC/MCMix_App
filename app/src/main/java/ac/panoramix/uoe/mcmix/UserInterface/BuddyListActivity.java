@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,10 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,12 +27,23 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 
+/* This class is the 'home' screen of the app. It is simply a list
+    of the buddies. Each buddy is clickable and clicking on it loads
+    the conversation corresponding to that buddy.
+
+    If the buddy is in active conversation then this is displayed in the list.
+ */
 public class BuddyListActivity extends DialResponderBaseActivity {
 
     private BuddyBase mBase = BuddyBase.getOrCreateInstance(MCMixApplication.getContext());
     private ListView mBuddyListview;
     private BuddyCursorAdapter mAdapter;
     private ImageButton mAddBuddyButton;
+
+
+    /* Since this screen displays the List Buddy, it requires a broadcast receiver
+        to detect when a buddy is added or updated in the list.
+     */
     MessageSentReceiver mMessageSentReceiver;
 
     @Override
@@ -89,6 +99,9 @@ public class BuddyListActivity extends DialResponderBaseActivity {
 
     }
 
+    /* A CursorAdapter allows the ListView to display the entries in the database and
+        recycle item views to save memory and provide proper scrolling speed.
+     */
     private class BuddyCursorAdapter extends CursorAdapter {
         public BuddyCursorAdapter(Context context, Cursor cursor){
             super(context, cursor, 0);
@@ -116,6 +129,8 @@ public class BuddyListActivity extends DialResponderBaseActivity {
     private void updateUI(){
         mAdapter.changeCursor(mBase.getBuddiesCursor());
     }
+
+    /* this class responds to the addition/update of buddies in the list */
     private class MessageSentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

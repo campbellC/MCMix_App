@@ -16,6 +16,10 @@ import ac.panoramix.uoe.mcmix.Utility;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/* This class is a simple wrapper class that performs the non-interactive diffie-hellman
+key exchange for obtaining the symmetric key. It also constructs the shared dead-drop for alice
+and bob by performing a SHA256 hash.
+ */
 public class DiffieHellman {
 
     public static Point shared_secret(Account alice, Buddy bob){

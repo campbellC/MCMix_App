@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,6 +33,12 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
 
+/*
+    This class gives the user a view of the history of the conversation with this Buddy.
+    If the conversation is active then it also allows the user to submit messages to the protocol.
+    If the conversation is not active then the user can press a button to dial the buddy and
+    start a conversation.
+ */
 public class ConversationActivity extends DialResponderBaseActivity {
 
     /* A ConversationActivity does not exist without a Buddy who the
@@ -123,13 +129,18 @@ public class ConversationActivity extends DialResponderBaseActivity {
             public void onClick(View v) {
                 if(mConversationHandler.inConversationWith(bob)) {
                     mConversationHandler.endConversation();
-                    changeDialView();
+                    updateUI();
                 } else {
                     startConversation();
                 }
             }
         });
         changeDialView();
+    }
+
+    private void updateUI() {
+        changeDialView();
+        updateMessageView();
     }
 
     private void startConversation(){
@@ -192,6 +203,7 @@ public class ConversationActivity extends DialResponderBaseActivity {
     protected void onResume() {
         super.onResume();
         updateMessageView();
+        changeDialView();
     }
 
     /**
@@ -284,9 +296,12 @@ public class ConversationActivity extends DialResponderBaseActivity {
                     if(msg.wasSent()){
                         //\u2714 = unicode check mark
                         ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u2714");
-                    } else {
+                    } else if (mConversationHandler.isPending(msg)) {
                         // \u2022 = unicode bullet mark
                         ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u2022");
+                    } else {
+                        // \u274c = unicode cross mark
+                        ((TextView) view.findViewById(R.id.sent_confirmation_tick)).setText("\u274C");
                     }
                     break;
                 case FROM_BOB:

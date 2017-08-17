@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,10 +13,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.R;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 
+/* This is a dummy class that has the simple role of establshing whether this user
+has already created and saved an account. If so then it launches the log in screen
+and if not then it launches the UserRegistration screen.
+ */
 public class StartUpActivity extends AppCompatActivity {
 
     @Override

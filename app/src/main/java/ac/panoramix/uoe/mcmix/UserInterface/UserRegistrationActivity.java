@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,19 +10,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
+import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
-import ac.panoramix.uoe.mcmix.Networking.UpdatePublicKeyTask;
 import ac.panoramix.uoe.mcmix.R;
 import ac.panoramix.uoe.mcmix.Utility;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 
+/* This class allows the user to create an account.
+Note that this does not log in the user and does not submit the user's public key. The user
+must pass through the log in screen and only upon logging in does this happen.
+
+Some client side validation is done on the username and password but most of the validation occurs
+on the server side.
+ */
 public class UserRegistrationActivity extends AppCompatActivity {
 
 
@@ -32,14 +35,6 @@ public class UserRegistrationActivity extends AppCompatActivity {
     private EditText username_input;
     private EditText password_input;
     private EditText password_repeat_input;
-
-    public Account getNew_account() {
-        return new_account;
-    }
-
-    public void setNew_account(Account new_account) {
-        this.new_account = new_account;
-    }
 
     private Account new_account;
 
@@ -66,6 +61,9 @@ public class UserRegistrationActivity extends AppCompatActivity {
                     Toast.makeText(UserRegistrationActivity.this, "Username does not meet requirements", Toast.LENGTH_SHORT).show();
                 } else if (!password_input.getText().toString().equals(password_repeat_input.getText().toString())) {
                     Toast.makeText(getApplicationContext(), "Passwords do not match.", Toast.LENGTH_LONG).show();
+                } else if (password_input.getText().toString().length() < MCMixConstants.PASSWORD_MIN_LENGTH){
+                    Toast.makeText(getApplicationContext(), "Passwords must be 8 characters or longer.", Toast.LENGTH_LONG).show();
+
                 } else {
                     new_account = new Account(username_input.getText().toString());
                     new CreateUserTask().execute(username_input.getText().toString(), password_input.getText().toString());

@@ -4,20 +4,14 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -27,7 +21,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 import ac.panoramix.uoe.mcmix.Accounts.Account;
-import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 
 /**
  * Created by: Chris Campbell
@@ -36,6 +29,15 @@ import ac.panoramix.uoe.mcmix.Accounts.Buddy;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+This is the Application object of MCMix. This is alive throughout the execution of the program.
+The user's Account is stored as a field of this class so that any objects can easily access it from
+any point in the execution. Also it currently establishes the trust management of
+the SSL certificate. Once this is not self-signed this should be removed.
+
+One important role is this class initialises the CookieHandler which must be done for the server handler
+class to operate properly.
+ */
 public class MCMixApplication extends Application {
     private static Application sApplication;
 

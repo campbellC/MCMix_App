@@ -27,11 +27,13 @@
     <!-- Strings related to user creation -->
     <string name="user_creation_password_repeat_hint">Password again...</string>
     <string name="user_creation_button">Create User</string>
-    <string name="user_creation_banner_text">Please create a user account. The username must be no longer than 8 characters and use only letters and numbers. Passwords must be 8 characters or more and not common.</string>
+    <string name="user_creation_banner_text">Account Creation</string>
+    <string name="user_creation_hint_text"> The username must be no longer than 8 characters and use only letters and numbers.</string>
 
     <!-- Strings related to login -->
     <string name="login_button">Log in</string>
     <string name="title_activity_login">Sign in</string>
+    <string name="login_banner_text">Login</string>
 
     <!-- Strings related to updating keys -->
     <string name="update_all_keys_button">Update all keys</string>

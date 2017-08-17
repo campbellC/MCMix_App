@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -13,16 +13,11 @@ import android.widget.Toast;
 
 import org.libsodium.jni.keys.PublicKey;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import ac.panoramix.uoe.mcmix.Accounts.Buddy;
 import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.Database.BuddyBase;
 import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.MCMixConstants;
-import ac.panoramix.uoe.mcmix.Networking.GetPublicKeyTask;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.Utility;
 
@@ -33,6 +28,11 @@ import ac.panoramix.uoe.mcmix.Utility;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/* This abstract base class for the other UI classes that are active for logged in users
+    allows the UI thread to interrupt the user when they receive an incoming dial. Behaviour depends
+    on whether they know the person (i.e. it is a Buddy in their Buddy Database) or if it
+    is an unknown user.
+ */
 public abstract class DialResponderBaseActivity extends AppCompatActivity {
     private DialReceiver mDialReceiver;
 
@@ -87,7 +87,7 @@ public abstract class DialResponderBaseActivity extends AppCompatActivity {
         protected AlertDialog.Builder knownBuddyDialog(final Buddy bob){
             AlertDialog.Builder alert = new AlertDialog.Builder(DialResponderBaseActivity.this);
             alert.setTitle("Incoming Dial From Buddy");
-            alert.setMessage(bob.getUsername() + " has dialed you. Would you like" +
+            alert.setMessage(bob.getUsername() + " has dialed you. Would you like " +
                     "to end any current conversation and start a new one with them?");
 
 

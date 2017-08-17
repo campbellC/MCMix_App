@@ -11,6 +11,10 @@ import android.database.sqlite.SQLiteOpenHelper;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+    This class manages database creation, deletion and updates. Since there is only
+    one version of the app this is a mostly empty class behaviourally.
+ */
 public class MCMixDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "MCMix.db";
@@ -27,7 +31,7 @@ public class MCMixDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-        // For now we simply delete all tables
+        // For now we simply delete all tables. Later versions need to not delete a users buddies etc.
         db.execSQL(MCMixDbContract.SQL_DELETE_BUDDY_ENTRIES);
         db.execSQL(MCMixDbContract.SQL_DELETE_MESSAGES_ENTRIES);
         onCreate(db);

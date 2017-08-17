@@ -1,4 +1,4 @@
-package ac.panoramix.uoe.mcmix.UI_Handling;
+package ac.panoramix.uoe.mcmix.UserInterface;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,12 +11,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import ac.panoramix.uoe.mcmix.MCMixApplication;
+import ac.panoramix.uoe.mcmix.Networking.NetworkService;
 import ac.panoramix.uoe.mcmix.Networking.ServerHandler;
 import ac.panoramix.uoe.mcmix.Networking.UpdatePublicKeyTask;
-import ac.panoramix.uoe.mcmix.Networking.MCMixNetworkService;
-import ac.panoramix.uoe.mcmix.MCMixApplication;
 import ac.panoramix.uoe.mcmix.R;
 
+/* This is the login screen for the app. It performs some simple client side protections like
+ password length checking. However, the server still performs these
+protections too.
+ */
 public class LoginActivity extends AppCompatActivity {
     TextView mUsername_text;
     EditText mPassword_text;
@@ -51,6 +55,9 @@ public class LoginActivity extends AppCompatActivity {
      * contact: c.j.campbell@ed.ac.uk
      */
 
+    /* This class simply logs in. If it fails then the user is notified, otherwise
+    it launches the Buddy List activity.
+     */
      private class LoginTask extends AsyncTask<String, Integer, String> {
         ServerHandler mServerHandler;
         public LoginTask(){
@@ -73,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
             mServerHandler.log_cookies();
             Log.d("LoginTask", Boolean.toString(mServerHandler.is_logged_in()));
             if(mServerHandler.is_logged_in()){
-                Intent serviceIntent = new Intent(getApplicationContext(), MCMixNetworkService.class);
+                Intent serviceIntent = new Intent(getApplicationContext(), NetworkService.class);
                 startService(serviceIntent);
                 Intent intent = new Intent(getApplicationContext(), BuddyListActivity.class);
                 // These flags make it so that pressing Back will not return the user to the login screen

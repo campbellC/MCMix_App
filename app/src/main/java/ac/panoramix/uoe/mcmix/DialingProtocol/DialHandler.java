@@ -13,11 +13,17 @@ import ac.panoramix.uoe.mcmix.MCMixConstants;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+    The primary purpose of this class is to be an interface between the user and
+    the network for dialing purposes. The user can request to make dials to a buddy
+    and the network can deliver and request dial payloads from/for the server.
+
+    It is implemented as a thread safe singleton to ensure the networking and user interface threads
+    do not interact badly through it. Since dialing history is not stored this is a considerably simpler
+    class than the ConversationHandler.
+ */
+
 public class DialHandler {
-    /* The primary purpose of this class is to be an interface between the user and
-        the network for dialing purposes. The user can request to make dials to a buddy
-        and the network can deliver and request dial payloads from/for the server.
-     */
 
     private static DialHandler mDialHandler;
     private DialHandler(){
@@ -36,6 +42,7 @@ public class DialHandler {
     private Buddy last_outgoing_dial = null;
     private boolean last_incoming_dial_was_null = true;
 
+    /* METHODS FOR USER INTERFACE INTERACTION */
     public synchronized void handle_user_request_to_dial(Buddy bob){
         this.bob = bob;
         user_wants_to_dialcheck = false;
@@ -51,6 +58,7 @@ public class DialHandler {
         bob = null;
     }
 
+    /* METHODS FOR NETWORKING THREAD INTERACTION */
     public synchronized String get_dial_for_server(){
         if(user_wants_to_dialcheck) {
             return DialPayloadMaker.getDialCheck();
@@ -85,14 +93,4 @@ public class DialHandler {
     }
 
 
-    public Buddy getLast_outgoing_dial() {
-        return last_outgoing_dial;
-    }
-
-    public synchronized Buddy get_last_incoming_dial_for_user(){
-        return last_incoming_dial;
-    }
-    public synchronized boolean was_last_dial_null(){
-        return last_incoming_dial_was_null;
-    }
 }
