@@ -9,6 +9,10 @@ import android.provider.BaseColumns;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/* This class defines the database Schema of the SQLite database underlying the application.
+    Currently this is two tables that store Buddies and ConversationMessages.
+    This class also provides SQL commands for creating and deleting these tables.
+ */
 public final class MCMixDbContract {
     private MCMixDbContract() {}
 

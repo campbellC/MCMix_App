@@ -19,6 +19,10 @@ import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationMessage;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+    This class is a wrapper for the database to allow easy manipulation of the ConversationMessage table by
+    other classes.
+ */
 public class ConversationBase {
 
     private SQLiteDatabase mDatabase;
@@ -36,6 +40,10 @@ public class ConversationBase {
     }
 
 
+    /*
+        This method returns the messages sent to and from the buddy bob (e.g.
+        for display on the ConversationActivity page).
+     */
     public Cursor getMessageCursor(Buddy bob){
         Cursor cursor = mDatabase.query(
                 MCMixDbContract.BuddyEntry.TABLE_NAME, // get a buddy id for this buddy
@@ -59,6 +67,8 @@ public class ConversationBase {
                 MCMixDbContract.ConversationMessageEntry.TIMESTAMP_COLUMN + " ASC", //order by time sent/received
                 null); //no limit on numbers
     }
+
+    /* getMessage allows retrieving a message based just on the unique UUID field of the message */
     public ConversationMessage getMessage(UUID message_uuid){
         Cursor cursor = mDatabase.query(
                 MCMixDbContract.ConversationMessageEntry.TABLE_NAME,
@@ -120,6 +130,7 @@ public class ConversationBase {
     }
 
 
+    /* ContentValues are objects that allow insertion into a SQLite database */
     public ContentValues getContentValues(ConversationMessage message, Buddy bob) {
         ContentValues values = new ContentValues();
         values.put(MCMixDbContract.ConversationMessageEntry.MESSAGE_COLUMN, message.getMessage());

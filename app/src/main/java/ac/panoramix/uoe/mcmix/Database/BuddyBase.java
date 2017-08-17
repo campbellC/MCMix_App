@@ -20,6 +20,10 @@ import ac.panoramix.uoe.mcmix.Accounts.Buddy;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+    This class is a wrapper for the database to allow easy manipulation of the Buddy table by
+    other classes.
+ */
 public class BuddyBase {
     private SQLiteDatabase mDatabase;
     private static BuddyBase mBase;
@@ -45,15 +49,10 @@ public class BuddyBase {
             return null;
         }
     }
-    public List<Buddy> getBuddies(){
-        ArrayList<Buddy> ret = new ArrayList<>();
-        Cursor cursor = getBuddiesCursor();
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            Buddy bob = buddyFromCursor(cursor);
-            ret.add(bob);
-        }
-        return ret;
-    }
+
+    /*
+        getBuddiesCursor retrieves the complete list of Buddies (e.g. for displaying on the Buddylist page)
+     */
     public Cursor getBuddiesCursor(){
         return mDatabase.query(
                 MCMixDbContract.BuddyEntry.TABLE_NAME,//table name
@@ -65,6 +64,10 @@ public class BuddyBase {
                 MCMixDbContract.BuddyEntry.USERNAME_COLUMN, //order alphabetically by username
                 null); //no limit on numbers
     }
+
+    /* This function allows retrieval of a Buddy just by its username.
+        If the Buddy is not currently known then null is returned.
+     */
     public Buddy getBuddy(String username){
         Cursor cursor = mDatabase.query(
                 MCMixDbContract.BuddyEntry.TABLE_NAME,
@@ -106,6 +109,7 @@ public class BuddyBase {
         updateBuddy(bob);
     }
 
+    /* ContentValues are objects that allow insertion into a SQLite database */
     public ContentValues getContentValues(Buddy bob) {
         ContentValues values = new ContentValues();
         values.put(MCMixDbContract.BuddyEntry.USERNAME_COLUMN, bob.getUsername());
