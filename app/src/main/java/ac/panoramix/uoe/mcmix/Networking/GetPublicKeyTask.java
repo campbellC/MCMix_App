@@ -21,7 +21,8 @@ import ac.panoramix.uoe.mcmix.Utility;
  */
 
 /**
- * This class allows the user to fetch
+ * This class allows the user to fetch the public key of a buddy from the server
+ * knowing only the username.
  */
 public class GetPublicKeyTask extends AsyncTask<String,Integer,String> {
     String username;
@@ -50,11 +51,11 @@ public class GetPublicKeyTask extends AsyncTask<String,Integer,String> {
             Toast.makeText(MCMixApplication.getContext(), "Username does not exists, connection is down or user has no public key.", Toast.LENGTH_LONG).show();
         } else {
             BuddyBase.getOrCreateInstance(MCMixApplication.getContext()).updateBuddy(bob);
-            Log.d("GetKey", "Added or updated key for  " + bob.getUsername() +": "+ Utility.uint_string_from_bytes(bob.getPublic_key().toBytes()));
+            Log.d("GetKey", "Added or updated key for  " + bob.getUsername());
+            // Broadcast that a buddy has been added or updated
             Intent intent = new Intent();
             intent.setAction(MCMixConstants.BUDDY_ADDED_BROADCAST_TAG);
             MCMixApplication.getContext().sendBroadcast(intent);
-            Log.d("GetPublicKey", "Sent Broadcast");
         }
     }
 

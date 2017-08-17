@@ -13,6 +13,9 @@ import ac.panoramix.uoe.mcmix.MCMixApplication;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/* This class updates the public key for this user on the server. If the account is new
+    then this will create the entry in the database on the server.
+ */
 public class UpdatePublicKeyTask extends AsyncTask<String, Integer, String> {
     ServerHandler mServerHandler;
     String response;

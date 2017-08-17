@@ -12,6 +12,14 @@ import ac.panoramix.uoe.mcmix.ConversationProtocol.ConversationHandler;
 import ac.panoramix.uoe.mcmix.DialingProtocol.DialHandler;
 
 
+/*
+    This class is a Service subclass. This means that the Android OS is less likely to kill it
+    than a normal activity. However, it still runs in the UI thread and so needs to launch separate
+    threads for networking. We use a Timer for this.
+
+    The service simply polls the server for a change in round number and when it is
+    detected requests an incoming payload and asks the handlers for the next outgoing payloads.
+ */
 public class NetworkService extends Service {
 
     private static Timer sTimer = new Timer();
@@ -68,6 +76,10 @@ public class NetworkService extends Service {
                 boolean sent_message = mServerHandler.c_send_message(outgoing);
             }
 
+            /**
+             * Dialing portion of networking code. We check the server for a change of round number
+             * if there is one we get incoming message and submit the next message.
+             */
             if(mServerHandler.d_round_finished()){
                 String incoming_dial = mServerHandler.d_recv_dial();
                 if(incoming_dial != null){

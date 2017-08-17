@@ -37,6 +37,13 @@ import ac.panoramix.uoe.mcmix.Utility;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+This class is the authority on the Server API. It knows how to communicate
+with the server and how to interact with the different protocols by requesting
+and submitting messages etc. The authorisation is handled by the CookieHandler which is
+initialised by MCMixApplication.
+ */
+
 public class ServerHandler {
 
 
@@ -46,7 +53,6 @@ public class ServerHandler {
     public static final String protocol = "https";
     public static final String CREATE_USER_URL = "/pks/create_user/";
     public static final String LOGIN_URL = "/accounts/login/";
-    public static final String LOGOUT_URL = "/accounts/logout/";
     public static final String C_GET_MESSAGE_URL = "/conversation/get_message";
     public static final String C_SEND_MESSAGE_URL = "/conversation/send_message";
     public static final String C_GET_ROUND_NUMBER_URL = "/conversation/get_round_number";
@@ -78,10 +84,15 @@ public class ServerHandler {
     }
 
 
+    /* BASIC NETWORK INTERACTION METHODS */
     private URL mURL;
     private HttpsURLConnection mConnection;
     private long c_round_number = 0;
     private long d_round_number = 0;
+
+    /* This method simply checks all of the connections (e.g. wifi or 4g)
+    and asks if any are connected to the network.
+     */
     private boolean is_connected_to_network() {
         ConnectivityManager check = (ConnectivityManager) MCMixApplication.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         Network[] networks = check.getAllNetworks();
@@ -95,6 +106,9 @@ public class ServerHandler {
         return false;
     }
 
+    /* The server uses CSRF tokens to prevent CSRF attacks. In order
+        to use the POST API the ServerHandler must attach the CSRF token to each request.
+     */
     private String get_current_csrftoken(){
         CookieManager cm = (CookieManager) CookieHandler.getDefault();
         for(HttpCookie cookie_ret :cm.getCookieStore().get(sURI)) {
@@ -114,6 +128,9 @@ public class ServerHandler {
         Log.d("ServerHandler"," ---------Logging cookies ends---------- ");
     }
 
+    /* this function merely attempts to connect to a given URL. False is
+        returned if for some reason a connection is not possible.
+     */
     public synchronized boolean establish_connection( String resource){
         Log.d("ServerHandler", "Establishing connection with resource: " + resource);
         if(is_connected_to_network()){
@@ -135,54 +152,12 @@ public class ServerHandler {
         }
     }
 
-    public boolean is_logged_in() {
-        CookieManager cm = (CookieManager) CookieHandler.getDefault();
-        for(HttpCookie cookie :cm.getCookieStore().get(sURI)) {
-            if(cookie.getName().equals("sessionid") && !cookie.hasExpired()) {
-                return true;
-            }
-        }
-        return false;
 
-    }
-
-    public synchronized boolean log_in(String username, String password){
-        if(is_connected_to_network() && establish_connection(LOGIN_URL)){
-            try {
-                mConnection.connect();
-                mConnection.getInputStream();
-                mConnection.disconnect();
-                String csrftoken = get_current_csrftoken();
-
-                //log_cookies();
-                //Log.d("ServerHandler","csrf_token = " + csrftoken);
-
-                establish_connection(LOGIN_URL);
-                mConnection.setDoOutput(true);
-                mConnection.setRequestMethod("POST");
-
-                String formParameters = "csrfmiddlewaretoken=" + csrftoken
-                        + "&username=" +username
-                        + "&password=" + password;
-                OutputStream out = mConnection.getOutputStream();
-                out.write(formParameters.getBytes("UTF-8"));
-                mConnection.connect();
-                mConnection.getInputStream();
-                mConnection.disconnect();
-                return is_logged_in();
-            } catch (IOException e ){
-                Log.d("ServerHandler", "Bad connection to log in ", e);
-                return false;
-            } finally {
-                if (mConnection != null)
-                    mConnection.disconnect();
-            }
-        } else {
-            Log.d("ServerHandler", "Not connected to network");
-            return false;
-        }
-    }
-
+    /* This is a boilerplate method that allows other methods to easily make requests to the
+    servers by building up a set of paramaters to send in a POST request. The returned value
+    is JSON and the server always returns a 'status' element in the JSON to allow other methods
+    to check whether this was as successful request etc.
+     */
     private synchronized JSONObject send_post_for_response(String resource, Map<String,String> parameters) {
         assert is_logged_in();
         if(is_connected_to_network() && establish_connection(resource)){
@@ -227,29 +202,12 @@ public class ServerHandler {
         }
     }
 
-    public synchronized boolean d_round_finished(){
-        JSONObject response = send_post_for_response(D_GET_ROUND_NUMBER, new HashMap<String, String>());
-        if(response == null) return false;
-        try{
-            String status = response.getString("status");
-            switch(status){
-                case GOOD_STATUS:
-                    long new_round_number = response.getLong("round_number");
-                    if(new_round_number != d_round_number) {
-                        d_round_number = new_round_number;
-                        return true;
-                    } else {
-                        return false;
-                    }
-                default:
-                    Log.d("ServHandler", "On request for receiving d_round_number server returned status:" + status);
-                    return false;
-            }
-        } catch (JSONException e) {
-            Log.d("ServHandler", "json_response does not have a key", e);
-            return false;
-        }
-    }
+    /* METHODS FOR INTERACTING WITH THE CONVERSATION PROTOCOL */
+
+    /* This method compares the server side round number with
+        the current round number stored in the ServerHandler. If these differ then a round
+        must have finished
+     */
     public synchronized boolean c_round_finished(){
         JSONObject response = send_post_for_response(C_GET_ROUND_NUMBER_URL, new HashMap<String, String>());
         if(response == null) return false;
@@ -276,6 +234,10 @@ public class ServerHandler {
     public long getC_round_number(){
         return c_round_number;
     }
+    /*
+        This method requests the message returned to this user in the last conversation round.
+        null is returned if no such message exists, for example if the user just came online.
+     */
     public String c_recv_message(){
         JSONObject response = send_post_for_response(C_GET_MESSAGE_URL, new HashMap<String, String>());
         if (response == null) return null;
@@ -295,6 +257,7 @@ public class ServerHandler {
         }
     }
 
+    /* This message submits a payload to the server */
     public boolean c_send_message(String message){
         Map<String,String> parameters = new HashMap<String,String>();
         parameters.put("message", message);
@@ -317,6 +280,7 @@ public class ServerHandler {
     }
 
 
+    /* METHODS FOR ACCOUNT HANDLING, CREATION, LOGIN ETC */
     public static final String USERNAME_ALREADY_EXISTS = "user_already_exists";
     public static final String PASSWORD_DOES_NOT_CONFORM = "password_does_not_conform";
     public String create_user(String username, String password){
@@ -369,6 +333,51 @@ public class ServerHandler {
         }
     }
 
+    public boolean is_logged_in() {
+        CookieManager cm = (CookieManager) CookieHandler.getDefault();
+        for(HttpCookie cookie :cm.getCookieStore().get(sURI)) {
+            if(cookie.getName().equals("sessionid") && !cookie.hasExpired()) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    public synchronized boolean log_in(String username, String password){
+        if(is_connected_to_network() && establish_connection(LOGIN_URL)){
+            try {
+                mConnection.connect();
+                mConnection.getInputStream();
+                mConnection.disconnect();
+                String csrftoken = get_current_csrftoken();
+                establish_connection(LOGIN_URL);
+                mConnection.setDoOutput(true);
+                mConnection.setRequestMethod("POST");
+
+                String formParameters = "csrfmiddlewaretoken=" + csrftoken
+                        + "&username=" +username
+                        + "&password=" + password;
+                OutputStream out = mConnection.getOutputStream();
+                out.write(formParameters.getBytes("UTF-8"));
+                mConnection.connect();
+                mConnection.getInputStream();
+                mConnection.disconnect();
+                return is_logged_in();
+            } catch (IOException e ){
+                Log.d("ServerHandler", "Bad connection to log in ", e);
+                return false;
+            } finally {
+                if (mConnection != null)
+                    mConnection.disconnect();
+            }
+        } else {
+            Log.d("ServerHandler", "Not connected to network");
+            return false;
+        }
+    }
+    /* METHODS FROM INTERACTING WITH THE DIALING PROTOCOL */
     public String d_recv_dial(){
         JSONObject response = send_post_for_response(D_GET_DIAL_URL, new HashMap<String, String>());
         if (response == null) return null;
@@ -407,5 +416,28 @@ public class ServerHandler {
             return false;
         }
 
+    }
+    public synchronized boolean d_round_finished(){
+        JSONObject response = send_post_for_response(D_GET_ROUND_NUMBER, new HashMap<String, String>());
+        if(response == null) return false;
+        try{
+            String status = response.getString("status");
+            switch(status){
+                case GOOD_STATUS:
+                    long new_round_number = response.getLong("round_number");
+                    if(new_round_number != d_round_number) {
+                        d_round_number = new_round_number;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                default:
+                    Log.d("ServHandler", "On request for receiving d_round_number server returned status:" + status);
+                    return false;
+            }
+        } catch (JSONException e) {
+            Log.d("ServHandler", "json_response does not have a key", e);
+            return false;
+        }
     }
 }
