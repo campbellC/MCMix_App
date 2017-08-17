@@ -29,6 +29,15 @@ import ac.panoramix.uoe.mcmix.Accounts.Account;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+This is the Application object of MCMix. This is alive throughout the execution of the program.
+The user's Account is stored as a field of this class so that any objects can easily access it from
+any point in the execution. Also it currently establishes the trust management of
+the SSL certificate. Once this is not self-signed this should be removed.
+
+One important role is this class initialises the CookieHandler which must be done for the server handler
+class to operate properly.
+ */
 public class MCMixApplication extends Application {
     private static Application sApplication;
 

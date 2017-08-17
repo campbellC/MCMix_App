@@ -23,10 +23,16 @@ import java.util.regex.Pattern;
  * contact: c.j.campbell@ed.ac.uk
  */
 
+/*
+This class provides utility functions used in other classes.
+ */
 public class Utility {
+
+
+    /* METHODS FOR BYTE MANIPULATION */
+
     /** Takes next 8 bytes and returns corresponding long
      * requires array to be at least 8 bytes past offset
-     *
      **/
     public static long bytesToLongWithOffset(byte[] b, int offset){
         byte[] shorter = new byte[8];
@@ -54,43 +60,13 @@ public class Utility {
 
 
 
-    public static String uint_string_from_bytes(byte[] payload){
-        assert(payload.length % 8 == 0);
-        String ret_str = "";
-        for(int offset = 0; offset < payload.length; offset += 8){
-           long next = bytesToLongWithOffset(payload, offset);
-           ret_str += " " +  UnsignedLongs.toString(next);
-        }
-        return ret_str.trim();
-    }
-
-    public static byte[] bytes_from_uint_string(String long_str){
-        assert( Pattern.compile("([0-9]|\\s)+").matcher(long_str).matches());
-        String trimmed = long_str.trim();
-        String[] nums_strs = trimmed.split("\\s+");
-        byte[] nums_bytes = new byte[nums_strs.length * 8];
-        for(int i = 0; i < nums_strs.length; i ++ ){
-            long nextLong = UnsignedLongs.parseUnsignedLong(nums_strs[i]);
-            System.arraycopy(longToBytes(nextLong), 0, nums_bytes, i * 8, 8);
-        }
-        return nums_bytes;
-    }
-
-    public static void saveAccountToDisk(){
-        try {
-            FileOutputStream fos = MCMixApplication.getContext().openFileOutput(MCMixConstants.ACCOUNT_STORAGE_FILE, Context.MODE_PRIVATE);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(MCMixApplication.getAccount());
-            oos.close();
-            fos.close();
-        }catch (FileNotFoundException e){
-            Log.d("Utility", "Cannot open to save account", e);
-        } catch (IOException e) {
-            Log.d("UserRegAct", "Cannot save account to disk", e);
-        }
-    }
+    /* METHODS FOR UINT STRING MANIPULATION */
 
 
+
+    /* This function takes a string of characters and encodes it
+    as 64 bit UINTS that the server can parse
+     */
     public static String UInt_String_From_String(String username){
 
         if(username.length() == 0){
@@ -125,6 +101,7 @@ public class Utility {
         }
     }
 
+    /* This is the inverse function to UInt_String_From_String */
     public static String String_From_UInt_String(String uints){
         byte[] as_bytes = bytes_from_uint_string(uints);
         int num_null_bytes = 0;
@@ -149,7 +126,34 @@ public class Utility {
         }
     }
 
+    public static String uint_string_from_bytes(byte[] payload){
+        assert(payload.length % 8 == 0);
+        String ret_str = "";
+        for(int offset = 0; offset < payload.length; offset += 8){
+            long next = bytesToLongWithOffset(payload, offset);
+            ret_str += " " +  UnsignedLongs.toString(next);
+        }
+        return ret_str.trim();
+    }
 
+    public static byte[] bytes_from_uint_string(String long_str){
+        assert( Pattern.compile("([0-9]|\\s)+").matcher(long_str).matches());
+        String trimmed = long_str.trim();
+        String[] nums_strs = trimmed.split("\\s+");
+        byte[] nums_bytes = new byte[nums_strs.length * 8];
+        for(int i = 0; i < nums_strs.length; i ++ ){
+            long nextLong = UnsignedLongs.parseUnsignedLong(nums_strs[i]);
+            System.arraycopy(longToBytes(nextLong), 0, nums_bytes, i * 8, 8);
+        }
+        return nums_bytes;
+    }
+
+
+    /* OTHER METHODS */
+    /* This message formats the date for the display in conversation activity.
+        If it is on this day then it gives the actual time in 24 hour format. Otherwise
+        it gives a date instead
+     */
     public static String format_date_for_display(Date date){
         String ret;
         if(DateUtils.isToday(date.getTime())){
@@ -158,5 +162,20 @@ public class Utility {
             ret = new SimpleDateFormat("MMM dd").format(date);
         }
         return ret;
+    }
+
+    /* This method allows other objects to persist the account information to disk */
+    public static void saveAccountToDisk(){
+        try {
+            FileOutputStream fos = MCMixApplication.getContext().openFileOutput(MCMixConstants.ACCOUNT_STORAGE_FILE, Context.MODE_PRIVATE);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(MCMixApplication.getAccount());
+            oos.close();
+            fos.close();
+        }catch (FileNotFoundException e){
+            Log.d("Utility", "Cannot open to save account", e);
+        } catch (IOException e) {
+            Log.d("UserRegAct", "Cannot save account to disk", e);
+        }
     }
 }
